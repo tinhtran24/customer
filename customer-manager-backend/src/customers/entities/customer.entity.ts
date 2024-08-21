@@ -6,7 +6,11 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
+import User from "../../users/entities/user.entity";
 
 export type Contact = {
   name: string;
@@ -14,19 +18,22 @@ export type Contact = {
 };
 
 export enum ENUM_STATUS_TYPE {
-  NEW = 'Khách hàng mới',
-  NOT_RECEIVE_CALL = 'Chưa nghe máy',
+  NEW_CUSTOMERS = 'KH mới',
+  NOT_RECEIVE_CALL = 'KH Chưa nghe máy',
+  POTENTIAL_CUSTOMERS = 'KH tiềm năng',
+  NON_EXIGENCY_CUSTOMERS = 'KH không có nhu cầu',
+  OLD_PATIENT = 'BN Cũ',
+  NEW_PATIENT = 'BN Mới',
+  CANCEL_PATIENT = 'BN Bỏ',
+  RE_TREATMENT_PATIENT = 'BN Điều trị lại'
 }
 @Entity()
-class Customer {
+class Customer extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'tax_code', nullable: true })
-  taxCode: string;
-
-  @Column({ nullable: true })
-  urn: string;
+  @Column({ name: 'code' })
+  code: string;
 
   @Column({ name: 'full_name' })
   fullName: string;
@@ -46,12 +53,22 @@ class Customer {
   @Column({
     name: 'status',
     enum: ENUM_STATUS_TYPE,
-    default: ENUM_STATUS_TYPE.NEW,
+    default: ENUM_STATUS_TYPE.NEW_CUSTOMERS,
   })
   status: ENUM_STATUS_TYPE;
 
+  @ManyToOne(() => User, (user) => user.customers)
+  @JoinColumn({ name: 'user_in_charge'})
+  userInCharge: User
+
   @Column({ name: 'call_count_number' , nullable: true })
   callCountNumber: number;
+
+  @Column({ name: 'group' , nullable: true })
+  group: string;
+
+  @Column({ name: 'source' , nullable: true })
+  source: string;
 
   @Column({ name: 'total_order' })
   totalOrder: number;
@@ -62,6 +79,12 @@ class Customer {
   @ManyToOne(() => Ward, (ward) => ward.customers)
   @JoinColumn({ name: 'ward_code' })
   ward: Ward;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;

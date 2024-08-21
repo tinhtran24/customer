@@ -4,6 +4,9 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import {  paginate, Pagination } from "../core/paginate";
+import { CustomerTranQueryDto } from "./dto/filter-customer.dto";
+import { IPaginationOptions } from "../core/paginate/paginate.interface";
 
 @Injectable()
 export class CustomersService {
@@ -12,23 +15,34 @@ export class CustomersService {
     private customersRepository: Repository<Customer>,
   ) {}
 
+  async customerTranPaginateQuery(
+      options: IPaginationOptions,
+      queryOptions: CustomerTranQueryDto,
+  ): Promise<Pagination<Customer>> {
+    let { sortType } = queryOptions;
+    if (['DESC', 'ASC'].indexOf(sortType) === -1) {
+      sortType = 'DESC';
+    }
+    const queryBuilder = this.customersRepository.createQueryBuilder('customer')
+
+    queryBuilder.orderBy('customer.createdAt', sortType)
+    return await paginate<Customer>(queryBuilder, options);
+  }
+
   async getAllCustomers() {
-    const customers = await this.customersRepository.find({
+    return await this.customersRepository.find({
       relations: ['ward.district.province'],
     });
-    return customers;
   }
 
   async getCustomerById(customerId: number) {
     try {
-      const customers = await this.customersRepository.findOne({
+      return await this.customersRepository.findOne({
         where: {
           id: customerId,
         },
         relations: ['ward.district.province'],
       });
-
-      return customers;
     } catch (error) {
       throw new ServiceUnavailableException();
     }
@@ -37,8 +51,6 @@ export class CustomersService {
   async createCustomer(createCustomerDto: CreateCustomerDto) {
     try {
       const newCustomer = await this.customersRepository.create({
-        taxCode: createCustomerDto.taxCode,
-        urn: createCustomerDto.urn,
         fullName: createCustomerDto.fullName,
         street: createCustomerDto.street,
         contacts: createCustomerDto.contacts,
@@ -66,8 +78,6 @@ export class CustomersService {
 
       if (existedCustomer) {
         const updatedCustomer = await this.customersRepository.create({
-          taxCode: updateCustomerDto.taxCode,
-          urn: updateCustomerDto.urn,
           fullName: updateCustomerDto.fullName,
           street: updateCustomerDto.street,
           contacts: updateCustomerDto.contacts,
