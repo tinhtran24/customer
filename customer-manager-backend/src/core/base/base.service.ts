@@ -24,7 +24,10 @@ export abstract class BaseService<Entity extends BaseEntity> {
         order?: FindOptionsOrder<Entity>,
         ...relations: string[]
     ): Promise<[Entity[], number]> {
-        const queryBuilder = getQueryBuilder(this.repo, query, where, order, ...relations);
+        const queryBuild: PaginationDto = {
+            ...query
+        }
+        const queryBuilder = getQueryBuilder(this.repo, queryBuild, where, order, ...relations);
         return queryBuilder.getManyAndCount();
     }
 

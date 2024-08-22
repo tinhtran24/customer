@@ -11,7 +11,7 @@ export class PaginationDto {
     @IsNumberString()
     @ApiProperty({
         example: 2,
-        description: 'count pages by page size (default: 10)'
+        description: 'count pages by page size'
     })
     page?: string;
 }

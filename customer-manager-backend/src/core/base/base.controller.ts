@@ -5,6 +5,7 @@ import { BaseEntity } from './base.entity';
 import { BaseService } from './base.service';
 import { ApiCreate, ApiDelete, ApiGetAll, ApiGetDetail, ApiUpdate } from './base.swagger';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { getPagingData } from '../pagination/paginate';
 
 export function BaseController<Entity extends BaseEntity>($ref: any, name?: string) {
     abstract class Controller {
@@ -22,14 +23,19 @@ export function BaseController<Entity extends BaseEntity>($ref: any, name?: stri
         @Get('')
         @ApiGetAll($ref, name)
         @ApiBearerAuth()
-        getAll(@Query() query: PaginationDto): Promise<[Entity[], number]> {
-            return this.service.getAllWithPagination(
+        async getAll(@Query() query: PaginationDto): Promise<{ data: Entity[]; meta: any }>  {
+            const [entities, count] = await this.service.getAllWithPagination(
                 query,
                 {},
                 //@ts-ignore
                 { createdAt: 'DESC' },
                 ...this.relations
             );
+
+            return {
+                data: entities,
+                meta: getPagingData(count, Number(query.page), Number(query.limit)),
+            };
         }
 
         @Get(':id')

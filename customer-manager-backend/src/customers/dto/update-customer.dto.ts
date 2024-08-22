@@ -8,68 +8,64 @@ import {
 import { Exclude, Transform } from 'class-transformer';
 import { Contact, ENUM_STATUS_TYPE } from 'src/customers/entities/customer.entity';
 import { stringCleaner } from 'src/utils/stringCleaner';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
-  @IsOptional()
-  @IsString()
-  @Transform(({ value }) => {
-    return stringCleaner(value);
-  })
-  taxCode: string;
-
-  @IsOptional()
-  @IsString()
-  @Transform(({ value }) => {
-    return stringCleaner(value);
-  })
-  urn: string;
-
   @IsNotEmpty({ message: FULLNAME_MUST_NOT_EMPTY })
+  @ApiProperty()
   @Transform(({ value }) => {
     return stringCleaner(value);
   })
   fullName: string;
 
   @IsString()
+  @ApiProperty()
   gender: string;
 
   @IsString()
+  @ApiProperty()
   status: ENUM_STATUS_TYPE;
 
   @IsNumber()
+  @ApiProperty()
   callCountNumber: number;
 
   @IsNumber()
+  @ApiProperty()
   totalOrder: number;
 
   @IsDate()
+  @ApiProperty()
   lastConnected: Date;
 
   @IsOptional()
   @IsString()
+  @ApiProperty()
   group: string;
 
   @IsOptional()
   @IsString()
+  @ApiProperty()
   source: string;
 
   @IsString()
   @IsNotEmpty({ message: USER_INCHARGE_MUST_NOT_EMPTY })
+  @ApiProperty()
   userInChargeId: string;
 
   @IsOptional()
   @IsString()
+  @ApiProperty()
   @Transform(({ value }) => {
     return stringCleaner(value);
   })
   street: string;
 
   @IsOptional()
+  @ApiProperty()
   contacts: Contact[];
 
   @IsNotEmpty({ message: WARDCODE_MUST_NOT_EMPTY })
+  @ApiProperty()
   wardCode: string;
-
-  @Exclude()
-  deletedAt: Date;
 }

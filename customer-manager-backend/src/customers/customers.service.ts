@@ -4,17 +4,18 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from 'src/core/base/base.dto';
+import { BaseService } from 'src/core/base/base.service';
 
 @Injectable()
-export class CustomersService {
-  getAllWithPagination(query: PaginationDto, arg1: {}, arg2: { createdAt: string; }, arg3: string[]): Promise<[Customer[], number]> {
-    throw new Error('Method not implemented.');
-  }
+export class CustomersService extends BaseService<Customer> {
+  name = 'Customer';
+
   constructor(
-    @InjectRepository(Customer)
-    private customersRepository: Repository<Customer>,
-  ) {}
+      @InjectRepository(Customer)
+      private readonly customersRepository: Repository<Customer>,
+  ) {
+      super(customersRepository);
+  }
   
   async getAllCustomers() {
     return await this.customersRepository.find({

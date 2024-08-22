@@ -26,6 +26,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from 'src/core/base/base.dto';
 import { ApiGetAll } from 'src/core/base/base.swagger';
 import { CustomersService } from './customers.service';
+import { getPagingData } from 'src/core/pagination/paginate';
 
 // @Public()
 @Controller('customers')
@@ -38,14 +39,17 @@ export class CustomersController {
   @Get('')
   @ApiGetAll('Get All', 'Customer')
   @ApiBearerAuth()
-  getAll(@Query() query: PaginationDto): Promise<[Customer[], number]> {
-      return this.customersService.getAllWithPagination(
+  async getAll(@Query() query: PaginationDto): Promise<any> {
+      const [entities, count] = await this.customersService.getAllWithPagination(
           query,
           {},
           //@ts-ignore
-          { createdAt: 'DESC' },
-          ['ward.district.province']
+          { createdAt: 'DESC' }
       );
+      return {
+        data: entities,
+        meta: getPagingData(count, Number(query.page), Number(query.limit)),
+    };
   }
 
   @Get(':id')

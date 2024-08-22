@@ -11,7 +11,6 @@ import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { RolesModule } from './roles/roles.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { CustomersModule } from './customers/customers.module';
-import { HttpExceptionFilter } from 'src/filter/http-exception.filter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ProductModule } from "./products/product.module";
 
@@ -61,7 +60,6 @@ import { ProductModule } from "./products/product.module";
     AppService,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: ThrottlerGuard },
-    { provide: APP_FILTER, useValue: new HttpExceptionFilter() },
   ],
 })
 export class AppModule {}
