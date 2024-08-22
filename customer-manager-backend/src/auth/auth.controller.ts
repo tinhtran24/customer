@@ -20,8 +20,10 @@ import {
 } from 'src/utils/messageConstants';
 import { RefreshTokenDto } from 'src/auth/dto/refreshToken.dto';
 import { RefreshAuthGuard } from 'src/auth/refresh.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Auth API')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

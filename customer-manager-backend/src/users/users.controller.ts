@@ -19,9 +19,11 @@ import {
 } from 'src/utils/messageConstants';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/role.enum';
+import { ApiTags } from '@nestjs/swagger';
 
 @Roles(RoleEnum.Admin)
 @Controller('users')
+@ApiTags('User API')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

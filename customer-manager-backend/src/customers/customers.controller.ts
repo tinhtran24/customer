@@ -11,8 +11,8 @@ import {
   Post,
   Res,
   Header,
+  Query,
 } from '@nestjs/common';
-import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
@@ -22,18 +22,34 @@ import {
 } from 'src/utils/messageConstants';
 import * as Excel from 'exceljs';
 import { Response } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from 'src/core/base/base.dto';
+import { ApiGetAll } from 'src/core/base/base.swagger';
+import { CustomersService } from './customers.service';
 
 // @Public()
 @Controller('customers')
+@ApiTags('Customer API')
 export class CustomersController {
-  constructor(private readonly customersService: CustomersService) {}
+  constructor(
+    private readonly customersService: CustomersService,
+  ) {}
 
-  @Get()
-  async getAllCustomers(): Promise<Customer[]> {
-    return await this.customersService.getAllCustomers();
+  @Get('')
+  @ApiGetAll('Get All', 'Customer')
+  @ApiBearerAuth()
+  getAll(@Query() query: PaginationDto): Promise<[Customer[], number]> {
+      return this.customersService.getAllWithPagination(
+          query,
+          {},
+          //@ts-ignore
+          { createdAt: 'DESC' },
+          ['ward.district.province']
+      );
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   async getCustomerById(@Param('id') id: string): Promise<Customer> {
     const customer = await this.customersService.getCustomerById(id);
 
@@ -44,6 +60,7 @@ export class CustomersController {
   }
 
   @Post()
+  @ApiBearerAuth()
   async createCustomer(@Body() createCustomerDto: CreateCustomerDto) {
     const newCustomer =
       await this.customersService.createCustomer(createCustomerDto);
@@ -58,6 +75,7 @@ export class CustomersController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   async updateCustomer(
     @Param('id') id: string,
     @Body() updateCustomerDto: UpdateCustomerDto,
@@ -76,6 +94,7 @@ export class CustomersController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   async deleteCustomer(@Param('id') id: string) {
     const deletedCustomer = await this.customersService.deleteCustomer(
       id,
@@ -99,6 +118,7 @@ export class CustomersController {
     'Content-Disposition',
     'attachment; filename=' + 'Customer Export' + '.xlsx',
   )
+  @ApiBearerAuth()
   async excel(@Res() response: Response) {
     try {
       const data = await this.customersService.getAllCustomers();

@@ -1,13 +1,9 @@
 import Ward from 'src/addresses/entities/ward.entity';
 import {
   Column,
-  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn
 } from 'typeorm';
 import User from "../../users/entities/user.entity";
 import { BaseEntity } from "../../core/base/base.entity";
