@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateCustomerDto } from './create-customer.dto';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID } from 'class-validator';
 import {
-  FULLNAME_MUST_NOT_EMPTY,
+  FULLNAME_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
   WARDCODE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
 import { Exclude, Transform } from 'class-transformer';
@@ -44,6 +44,18 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
 
   @IsDate()
   lastConnected: Date;
+
+  @IsOptional()
+  @IsString()
+  group: string;
+
+  @IsOptional()
+  @IsString()
+  source: string;
+
+  @IsString()
+  @IsNotEmpty({ message: USER_INCHARGE_MUST_NOT_EMPTY })
+  userInChargeId: string;
 
   @IsOptional()
   @IsString()

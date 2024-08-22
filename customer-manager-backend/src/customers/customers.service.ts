@@ -4,9 +4,6 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  paginate, Pagination } from "../core/paginate";
-import { CustomerTranQueryDto } from "./dto/filter-customer.dto";
-import { IPaginationOptions } from "../core/paginate/paginate.interface";
 
 @Injectable()
 export class CustomersService {
@@ -14,28 +11,13 @@ export class CustomersService {
     @InjectRepository(Customer)
     private customersRepository: Repository<Customer>,
   ) {}
-
-  async customerTranPaginateQuery(
-      options: IPaginationOptions,
-      queryOptions: CustomerTranQueryDto,
-  ): Promise<Pagination<Customer>> {
-    let { sortType } = queryOptions;
-    if (['DESC', 'ASC'].indexOf(sortType) === -1) {
-      sortType = 'DESC';
-    }
-    const queryBuilder = this.customersRepository.createQueryBuilder('customer')
-
-    queryBuilder.orderBy('customer.createdAt', sortType)
-    return await paginate<Customer>(queryBuilder, options);
-  }
-
   async getAllCustomers() {
     return await this.customersRepository.find({
       relations: ['ward.district.province'],
     });
   }
 
-  async getCustomerById(customerId: number) {
+  async getCustomerById(customerId: string) {
     try {
       return await this.customersRepository.findOne({
         where: {
@@ -50,15 +32,7 @@ export class CustomersService {
 
   async createCustomer(createCustomerDto: CreateCustomerDto) {
     try {
-      const newCustomer = await this.customersRepository.create({
-        fullName: createCustomerDto.fullName,
-        street: createCustomerDto.street,
-        contacts: createCustomerDto.contacts,
-        wardCode: createCustomerDto.wardCode,
-        totalOrder: createCustomerDto.totalOrder,
-        gender: createCustomerDto.gender,
-        status: createCustomerDto.status,
-      });
+      const newCustomer = await this.customersRepository.create(createCustomerDto);
 
       await this.customersRepository.insert(newCustomer);
 
@@ -68,7 +42,7 @@ export class CustomersService {
     }
   }
 
-  async updateCustomer(id: number, updateCustomerDto: UpdateCustomerDto) {
+  async updateCustomer(id: string, updateCustomerDto: UpdateCustomerDto) {
     try {
       const existedCustomer = await this.customersRepository.findOne({
         where: {
@@ -77,24 +51,12 @@ export class CustomersService {
       });
 
       if (existedCustomer) {
-        const updatedCustomer = await this.customersRepository.create({
-          fullName: updateCustomerDto.fullName,
-          street: updateCustomerDto.street,
-          contacts: updateCustomerDto.contacts,
-          wardCode: updateCustomerDto.wardCode,
-          totalOrder: updateCustomerDto.totalOrder,
-          gender: updateCustomerDto.gender,
-          status: updateCustomerDto.status,
-          callCountNumber: updateCustomerDto.callCountNumber,
-          lastConnected: updateCustomerDto.lastConnected,
-        });
-
-        await this.customersRepository.update(
-          existedCustomer.id,
-          updateCustomerDto,
+        return await this.customersRepository.update(
+            existedCustomer.id,
+            updateCustomerDto,
         );
-
-        return updatedCustomer;
+      } else {
+        return await this.customersRepository.create(updateCustomerDto)
       }
     } catch (error) {
       throw new ServiceUnavailableException();
@@ -103,7 +65,7 @@ export class CustomersService {
     return null;
   }
 
-  async deleteCustomer(id: number) {
+  async deleteCustomer(id: string) {
     try {
       const existedCustomer = await this.customersRepository.findOne({
         where: {

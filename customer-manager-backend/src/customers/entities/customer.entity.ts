@@ -6,11 +6,11 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  BaseEntity,
   CreateDateColumn,
   UpdateDateColumn
 } from 'typeorm';
 import User from "../../users/entities/user.entity";
+import { BaseEntity } from "../../core/base/base.entity";
 
 export type Contact = {
   name: string;
@@ -29,9 +29,6 @@ export enum ENUM_STATUS_TYPE {
 }
 @Entity()
 class Customer extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({ name: 'code' })
   code: string;
 
@@ -50,16 +47,15 @@ class Customer extends BaseEntity {
   @Column({ name: 'ward_code' })
   wardCode: string;
 
+  @Column({ name: 'user_in_charge' })
+  userInChargeId: string;
+
   @Column({
     name: 'status',
     enum: ENUM_STATUS_TYPE,
     default: ENUM_STATUS_TYPE.NEW_CUSTOMERS,
   })
   status: ENUM_STATUS_TYPE;
-
-  @ManyToOne(() => User, (user) => user.customers)
-  @JoinColumn({ name: 'user_in_charge'})
-  userInCharge: User
 
   @Column({ name: 'call_count_number' , nullable: true })
   callCountNumber: number;
@@ -80,14 +76,9 @@ class Customer extends BaseEntity {
   @JoinColumn({ name: 'ward_code' })
   ward: Ward;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
-
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt: Date;
+  @ManyToOne(() => User, (user) => user.customers)
+  @JoinColumn({ name: 'user_in_charge'})
+  userInCharge: User
 }
 
 export default Customer;

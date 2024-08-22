@@ -13,6 +13,7 @@ import { AddressesModule } from './addresses/addresses.module';
 import { CustomersModule } from './customers/customers.module';
 import { HttpExceptionFilter } from 'src/filter/http-exception.filter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ProductModule } from "./products/product.module";
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     RolesModule,
     AddressesModule,
     CustomersModule,
+    ProductModule
   ],
 
   controllers: [AppController],

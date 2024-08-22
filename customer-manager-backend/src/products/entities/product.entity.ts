@@ -1,27 +1,17 @@
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn,
-    BaseEntity, UpdateDateColumn, DeleteDateColumn,
 } from 'typeorm';
+import { BaseEntity } from "../../core/base/base.entity";
 
 @Entity('product')
 export class Product extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
-
     @Column()
-    label: string;
+    title: string;
 
     @Column()
     description: string;
 
     @Column()
     price: number;
-
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedAt: Date;
-
-    @DeleteDateColumn({ name: 'deleted_at' })
-    deletedAt: Date;
 }

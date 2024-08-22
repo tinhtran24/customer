@@ -35,7 +35,7 @@ export class CustomersController {
 
   @Get(':id')
   async getCustomerById(@Param('id') id: string): Promise<Customer> {
-    const customer = await this.customersService.getCustomerById(Number(id));
+    const customer = await this.customersService.getCustomerById(id);
 
     if (!customer) {
       throw new NotFoundException(CUSTOMER_NOT_FOUND);
@@ -63,7 +63,7 @@ export class CustomersController {
     @Body() updateCustomerDto: UpdateCustomerDto,
   ) {
     const updatedCustomer = await this.customersService.updateCustomer(
-      Number(id),
+      id,
       updateCustomerDto,
     );
 
@@ -78,7 +78,7 @@ export class CustomersController {
   @Delete(':id')
   async deleteCustomer(@Param('id') id: string) {
     const deletedCustomer = await this.customersService.deleteCustomer(
-      Number(id),
+      id,
     );
 
     if (!deletedCustomer) {

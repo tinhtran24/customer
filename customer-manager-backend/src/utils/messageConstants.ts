@@ -40,5 +40,6 @@ export const TAXCODE_MUST_NOT_EMPTY: string = 'Mã số thuế không được b
 export const FULLNAME_MUST_NOT_EMPTY: string =
   'Tên Công ty không được bỏ trống';
 export const WARDCODE_MUST_NOT_EMPTY: string = 'Địa chỉ không được bỏ trống';
+export const USER_INCHARGE_MUST_NOT_EMPTY: string = 'Người phụ trách không được bỏ trống';
 export const CUSTOMER_NOT_FOUND: string = 'Khách hàng không tồn tại';
 export const CUSTOMER_ALREADY_EXISTED: string = 'Khách hàng này đã có rồi';

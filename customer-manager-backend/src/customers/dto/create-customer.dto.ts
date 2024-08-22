@@ -1,8 +1,8 @@
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID } from 'class-validator';
 import { Contact, ENUM_STATUS_TYPE } from 'src/customers/entities/customer.entity';
 import {
-  FULLNAME_MUST_NOT_EMPTY,
+  FULLNAME_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
   WARDCODE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
 import { stringCleaner } from 'src/utils/stringCleaner';
@@ -44,6 +44,18 @@ export class CreateCustomerDto {
   @IsOptional()
   @IsDate()
   lastConnected: Date;
+
+  @IsOptional()
+  @IsString()
+  group: string;
+
+  @IsOptional()
+  @IsString()
+  source: string;
+
+  @IsString()
+  @IsNotEmpty({ message: USER_INCHARGE_MUST_NOT_EMPTY })
+  userInChargeId: string;
 
   @IsOptional()
   @IsString()

@@ -1,5 +1,4 @@
-export interface CustomerTranQueryDto {
+export interface CustomerQueryDto {
     sortType?: 'DESC' | 'ASC';
-    name?: string;
-    email?: string;
+    q?: string;
 }
