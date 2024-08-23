@@ -1,10 +1,10 @@
 import { CustomRepository } from "src/core/decorator/repository.decorator";
 import Customer from "./entities/customer.entity";
-import { BaseTreeRepository } from "src/core/base/base.tree.repository";
 import { OrderType } from "src/core/type/query";
+import { BaseRepository } from "src/core/base/base.repository";
 
 @CustomRepository(Customer)
-export class CustomerRepository extends BaseTreeRepository<Customer> {
+export class CustomerRepository extends BaseRepository<Customer> {
     protected qbName = 'Customer';
 
     protected orderBy = { name: 'updatedAt', order: OrderType.ASC };

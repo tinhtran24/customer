@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { delay } from 'src/middleware/delay.middleware';
 import helmet from 'helmet';
 import { useSwagger } from "./app.swagger";
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(

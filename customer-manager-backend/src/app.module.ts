@@ -47,7 +47,7 @@ import { AppoinmentModule } from './appointment/appoinment.module';
         },
       ],
     }),
-    DatabaseModule,
+    DatabaseModule.forRoot(),
     UsersModule,
     AuthModule,
     RolesModule,

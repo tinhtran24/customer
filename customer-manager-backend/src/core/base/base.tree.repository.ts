@@ -59,7 +59,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询树
+     * 
      * @param params
      */
     async findTrees(params: TreeQueryParams<E> = {}): Promise<E[]> {
@@ -70,17 +70,16 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询顶层列表
+     * 
      * @param params
      */
     findRoots(params: TreeQueryParams<E> = {}): Promise<E[]> {
         const { addQuery, orderBy, withTrashed } = params;
         const escapeAlias = (alias: string) => this.manager.connection.driver.escape(alias);
         const escapeColumn = (column: string) => this.manager.connection.driver.escape(column);
-        const parentPropertyName = this.manager.connection.namingStrategy.joinColumnName(
-            this.metadata.treeParentRelation!.propertyName,
-            this.metadata.primaryColumns[0].propertyName,
-        );
+        const joinColumn = this.metadata.treeParentRelation!.joinColumns[0];
+        const parentPropertyName = joinColumn.givenDatabaseName || joinColumn.databaseName;
+
         let qb = this.getOrderByQuery(this.createQueryBuilder(this.qbName), orderBy);
         FindOptionsUtils.applyOptionsToTreeQueryBuilder(qb, pick(params, ['relations', 'depth']));
         qb.where(`${escapeAlias(this.qbName)}.${escapeColumn(parentPropertyName)} IS NULL`);
@@ -90,7 +89,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询后代列表
+     * 
      * @param entity
      * @param params
      */
@@ -101,7 +100,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询后代树
+     * 
      * @param entity
      * @param params
      */
@@ -130,7 +129,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询后代数量
+     * 
      * @param entity
      * @param params
      */
@@ -139,7 +138,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 创建后代查询器
+     * 
      * @param closureTableAlias
      * @param entity
      * @param params
@@ -157,7 +156,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询祖先列表
+     * 
      * @param entity
      * @param params
      */
@@ -168,7 +167,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询祖先树
+     * 
      * @param entity
      * @param params
      */
@@ -192,7 +191,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 查询祖先数量
+     * 
      * @param entity
      * @param params
      */
@@ -201,7 +200,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 创建祖先查询器
+     * 
      * @param closureTableAlias
      * @param entity
      * @param params
@@ -219,7 +218,7 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
     }
 
     /**
-     * 打平并展开树
+     * 
      * @param trees
      * @param level
      */

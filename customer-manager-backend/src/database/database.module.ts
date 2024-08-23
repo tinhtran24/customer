@@ -1,24 +1,50 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
+import {
+  getDataSourceToken,
+} from '@nestjs/typeorm';
+import { CUSTOM_REPOSITORY_METADATA } from 'src/core/constants';
+import { DataSource, ObjectType } from 'typeorm';
+import { databaseProviders } from './database.provider';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('POSTGRES_HOST'),
-        port: configService.get('POSTGRES_PORT'),
-        username: configService.get('POSTGRES_USER'),
-        password: configService.get('POSTGRES_PASSWORD'),
-        database: configService.get('POSTGRES_DB'),
-        entities: [__dirname + '/../**/*.entity.{js,ts}'],
-        synchronize: true,
-        logging: true
-      }),
-    }),
-  ],
+  imports: [...databaseProviders],
+  exports: [...databaseProviders],
 })
-export class DatabaseModule {}
+export class DatabaseModule {
+  static forRoot(): DynamicModule {
+    return {
+      global: true,
+      module: DatabaseModule,
+      exports: [...databaseProviders],
+    };
+  }
+
+  static forRepository<T extends Type<any>>(
+    repositories: T[],
+    dataSourceName?: string,
+  ): DynamicModule {
+    const providers: Provider[] = [];
+
+    for (const Repo of repositories) {
+      const entity = Reflect.getMetadata(CUSTOM_REPOSITORY_METADATA, Repo);
+
+      if (!entity) {
+        continue;
+      }
+
+      providers.push({
+        inject: [getDataSourceToken(dataSourceName)],
+        provide: Repo,
+        useFactory: (dataSource: DataSource): InstanceType<typeof Repo> => {
+          const base = dataSource.getRepository<ObjectType<any>>(entity);
+          return new Repo(base.target, base.manager, base.queryRunner);
+        },
+      });
+    }
+    return {
+      exports: providers,
+      module: DatabaseModule,
+      providers,
+    };
+  }
+}
