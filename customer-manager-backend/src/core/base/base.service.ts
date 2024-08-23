@@ -1,122 +1,280 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { NotFoundException } from '@nestjs/common';
-import { DeepPartial, FindOptionsOrder, FindOptionsWhere, Repository } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { PaginationDto } from './base.dto';
-import { BaseEntity } from './base.entity';
-import { getQueryBuilder } from "../helper/queryBuilder";
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { isNil } from 'lodash';
+import { IPaginationMeta, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { IsNull, Not, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { BaseRepository } from './base.repository';
+import { BaseTreeRepository } from './base.tree.repository';
+import { QueryHook, QueryListParams, QueryParams, QueryTrashMode } from '../type/query';
+import { PaginateDto } from './base.dto';
+import { manualPaginate } from '../pagination/paginate';
 
-export abstract class BaseService<Entity extends BaseEntity> {
-    abstract name: string;
 
-    protected constructor(public readonly repo: Repository<Entity>) {}
+/**
+ * @description CURD
+ * @export
+ * @abstract
+ * @class BaseService
+ * @template E 
+ * @template P 
+ * @template M 
+ */
+export abstract class BaseService<
+    E extends ObjectLiteral,
+    R extends BaseRepository<E> | BaseTreeRepository<E>,
+    P extends QueryListParams<E> = QueryListParams<E>,
+    M extends IPaginationMeta = IPaginationMeta,
+> {
+    /**
+     * @description
+     * @protected
+     * @type {DataServiceRepo<E>}
+     */
+    protected repository: R;
 
-    async getAll(
-        where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-        ...relations: string[]
-    ): Promise<Entity[]> {
-        return this.repo.find({ where, relations });
-    }
-
-    async getAllWithPagination(
-        query: PaginationDto,
-        where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-        order?: FindOptionsOrder<Entity>,
-        ...relations: string[]
-    ): Promise<[Entity[], number]> {
-        const queryBuild: PaginationDto = {
-            ...query
+    /**
+     * @description
+     * @protected
+     */
+    protected enable_trash = false;
+name
+    constructor(repository: R) {
+        this.repository = repository;
+        if (
+            !(
+                this.repository instanceof BaseRepository ||
+                this.repository instanceof BaseTreeRepository
+            )
+        ) {
+            throw new Error(
+                'Repository must instance of BaseRepository or BaseTreeRepository in DataService!',
+            );
         }
-        const queryBuilder = getQueryBuilder(this.repo, queryBuild, where, order, ...relations);
-        return queryBuilder.getManyAndCount();
     }
 
-    async getOne(
-        where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-        ...relations: string[]
-    ): Promise<Entity | null> {
-        return this.repo.findOne({ where, relations });
-    }
-
-    async getOneById(id: string, ...relations: string[]): Promise<Entity | null> {
-        //@ts-ignore
-        return this.repo.findOne({ where: { id }, relations });
-    }
-
-    async getOneOrFail(
-        where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[]
-    ): Promise<Entity> {
-        const entity = await this.repo.findOne({ where });
-        if (!entity) {
-            const errorMessage = `${this.name} not found`;
-            throw new NotFoundException(errorMessage);
+    /**
+     * @description 
+     * @param {P} [params]
+     * @param {QueryHook<E>} [callback]
+     */
+    async list(params?: P, callback?: QueryHook<E>): Promise<E[]> {
+        const options = params ?? ({} as P);
+        // @ts-ignore
+        const queryName = this.repository.getQBName();
+        const trashed = options.trashed ?? QueryTrashMode.NONE;
+        if (this.repository instanceof BaseTreeRepository) {
+            let addQuery: QueryParams<E>['addQuery'];
+            if (trashed === QueryTrashMode.ONLY) {
+                addQuery = (qb) => qb.where(`${queryName}.deletedAt IS NOT NULL`);
+            }
+            const tree = await this.repository.findTrees({
+                ...options,
+                addQuery,
+                withTrashed: trashed === QueryTrashMode.ALL || trashed === QueryTrashMode.ONLY,
+            });
+            return this.repository.toFlatTrees(tree);
         }
-        return entity;
+        const qb = await this.buildListQuery(this.repository.buildBaseQuery(), options, callback);
+        return qb.getMany();
     }
 
-    async getOneByIdOrFail(id: string, ...relations: string[]): Promise<Entity> {
-        //@ts-ignore
-        const entity = await this.repo.findOne({ where: { id }, relations });
-        if (!entity) {
-            const errorMessage = `${this.name} not found`;
-            throw new NotFoundException(errorMessage);
+    /**
+     * @description 
+     * @param {PaginateDto<M>} options
+     * @param {P} [params]
+     * @param {QueryHook<E>} [callback]
+     */
+    async paginate(
+        options: PaginateDto<M> & P,
+        callback?: QueryHook<E>,
+    ): Promise<Pagination<E, M>> {
+        const queryOptions = options ?? ({} as P);
+        if (this.repository instanceof BaseTreeRepository) {
+            const data = await this.list(queryOptions, callback);
+            return manualPaginate(options, data) as Pagination<E, M>;
         }
-        return entity;
+        const query = await this.buildListQuery(
+            this.repository.buildBaseQuery(),
+            queryOptions,
+            callback,
+        );
+        return paginate(query, options);
     }
 
-    async create(data: DeepPartial<Entity>): Promise<Entity> {
-        return this.repo.create(data).save();
+    /**
+     * @description 
+     * @param {string} id
+     * @param {QueryHook<E>} [callback]
+     * @returns {*}  {Promise<E>}
+     */
+    async detail(id: string, trashed?: boolean, callback?: QueryHook<E>): Promise<E> {
+        const query = await this.buildItemQuery(this.repository.buildBaseQuery(), callback);
+        const qb = query.where(`${this.repository.getQBName()}.id = :id`, { id });
+        if (trashed) qb.withDeleted();
+        const item = await qb.getOne();
+        if (!item) throw new NotFoundException(`${this.repository.getQBName()} ${id} not exists!`);
+        return item;
     }
 
-    async createMany(data: DeepPartial<Entity>[]): Promise<Entity[]> {
-        const result: Entity[] = [];
-        const newEntities = this.repo.create(data);
-        for (let i = 0; i < newEntities.length; i++) {
-            const newEntity = await newEntities[i].save();
-            result.push(newEntity);
+    /**
+     * @description 
+     * @param {*} data
+     * @returns {*}  {Promise<E>}
+     */
+    create(data: any): Promise<E> {
+        throw new ForbiddenException(`Can not to create ${this.repository.getQBName()}!`);
+    }
+
+    /**
+     * @description 
+     * @param {*} data
+     * @returns {*}  {Promise<E>}
+     */
+    update(data: any): Promise<E> {
+        throw new ForbiddenException(`Can not to update ${this.repository.getQBName()}!`);
+    }
+
+    /**
+     * 
+     * @param id
+     * @param trash
+     */
+    async delete(id: string, trash = true) {
+        const item = await this.repository.findOneOrFail({
+            where: { id } as any,
+            withDeleted: this.enable_trash ? true : undefined,
+        });
+        if (this.enable_trash && trash && isNil(item.deletedAt)) {
+            // await this.repository.softRemove(item);
+            (item as any).deletedAt = new Date();
+            if (this.repository instanceof BaseTreeRepository) {
+                const dt = await this.repository.findDescendantsTree(item);
+                (item as any).parent = null;
+                for (const child of dt.children) {
+                    child.parent = null;
+                    await this.repository.save(child);
+                }
+            }
+            await (this.repository as any).save(item);
+            return this.detail(id, true);
         }
-        return result;
+        return this.repository.remove(item);
     }
 
-    async update(entity: Entity, data: QueryDeepPartialEntity<Entity>) {
-        const keys = Object.keys(data);
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            entity[key] = data[key];
+    /**
+     * @description 
+     * @param {string[]} data
+     * @param {P} [params]
+     * @param {boolean} [trash]
+     * @param {QueryHook<E>} [callback]
+     * @returns 
+     */
+    async deleteList(data: string[], params?: P, trash?: boolean, callback?: QueryHook<E>) {
+        const isTrash = trash === undefined ? true : trash;
+        for (const id of data) {
+            await this.delete(id, isTrash);
         }
-        return entity.save();
+        return this.list(params, callback);
     }
 
-    async updateBy(
-        where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
-        data: QueryDeepPartialEntity<Entity>
+    /**
+     * @description 
+     * @param {string[]} data
+     * @param {PaginateDto<M>} pageOptions
+     * @param {P} [params]
+     * @param {boolean} [trash]
+     * @param {QueryHook<E>} [callback]
+     * @returns 
+     */
+    async deletePaginate(
+        data: string[],
+        options: PaginateDto<M> & P,
+        trash?: boolean,
+        callback?: QueryHook<E>,
     ) {
-        const entity = await this.getOneOrFail(where);
-        return this.update(entity, data);
+        const isTrash = trash === undefined ? true : trash;
+        for (const id of data) {
+            await this.delete(id, isTrash);
+        }
+        return this.paginate(options, callback);
     }
 
-    async updateById(id: string, data: QueryDeepPartialEntity<Entity>) {
-        const entity = await this.getOneByIdOrFail(id);
-        return this.update(entity, data);
+    /**
+     * 
+     * @param id
+     * @param callback
+     */
+    async restore(id: string, callback?: QueryHook<E>) {
+        if (!this.enable_trash) {
+            throw new ForbiddenException(
+                `Can not to retore ${this.repository.getQBName()},because trash not enabled!`,
+            );
+        }
+        const item = await this.repository.findOneOrFail({
+            where: { id } as any,
+            withDeleted: true,
+        });
+        if ((item as any).deletedAt) {
+            await this.repository.restore(item.id);
+        }
+        return this.detail(item.id, false, callback);
     }
 
-    async deleteBy(where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[]) {
-        const entity = await this.getOneOrFail(where);
-        return this.repo.remove(entity);
+    /**
+     * @description 
+     * @param {string[]} data
+     * @param {P} [params]
+     * @param {QueryHook<E>} [callback]
+     * @returns
+     */
+    async restoreList(data: string[], params?: P, callback?: QueryHook<E>) {
+        for (const id of data) {
+            await this.restore(id);
+        }
+        return this.list(params, callback);
     }
 
-    async deleteById(id: string) {
-        const entity = await this.getOneByIdOrFail(id);
-        return this.repo.remove(entity);
+    /**
+     * @description 
+     * @param {string[]} data
+     * @param {PaginateDto<M>} pageOptions
+     * @param {*} [params]
+     * @param {QueryHook<E>} [callback]
+     * @returns 
+     */
+    async restorePaginate(data: string[], options: PaginateDto<M> & P, callback?: QueryHook<E>) {
+        for (const id of data) {
+            await this.restore(id);
+        }
+        return this.paginate(options, callback);
     }
 
-    async softDelete(where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[]) {
-        const entity = await this.getOneOrFail(where);
-        return this.repo.softRemove(entity);
+    /**
+     * @description QueryBuilder
+     * @protected
+     * @param {SelectQueryBuilder<E>} query
+     * @param {QueryHook<E>} [callback]
+     */
+    protected async buildItemQuery(query: SelectQueryBuilder<E>, callback?: QueryHook<E>) {
+        if (callback) return callback(query);
+        return query;
     }
 
-    async softDeleteById(id: string) {
-        const entity = await this.getOneByIdOrFail(id);
-        return this.repo.softRemove(entity);
+    /**
+     * QueryBuilder
+     * @param qb
+     * @param options
+     * @param callback
+     */
+    protected async buildListQuery(qb: SelectQueryBuilder<E>, options: P, callback?: QueryHook<E>) {
+        const queryName = this.repository.getQBName();
+        const { trashed } = options;
+        if (trashed === QueryTrashMode.ALL || trashed === QueryTrashMode.ONLY) {
+            qb.withDeleted();
+            if (trashed === QueryTrashMode.ONLY) {
+                qb.where(`${queryName}.deletedAt = :deleted`, { deleted: Not(IsNull()) });
+            }
+        }
+        if (callback) return callback(qb);
+        return qb;
     }
 }

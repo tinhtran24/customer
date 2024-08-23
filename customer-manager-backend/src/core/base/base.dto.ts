@@ -1,17 +1,78 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNumberString, IsOptional } from 'class-validator';
+import { Injectable } from '@nestjs/common';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsDefined, IsNumber, IsNumberString, IsOptional, IsUUID, Min } from 'class-validator';
+import { IPaginationMeta, IPaginationOptions } from 'nestjs-typeorm-paginate';
+import { DtoValidation } from '../decorator/validation.decorator';
+import { Transform } from 'class-transformer';
 
-export class PaginationDto {
-    @IsOptional()
-    @IsNumberString()
-    @ApiProperty({ example: 15, description: 'count items' })
-    limit?: string;
-
-    @IsOptional()
-    @IsNumberString()
-    @ApiProperty({
-        example: 2,
-        description: 'count pages by page size'
+@DtoValidation({ type: 'query' })
+export class ListQueryDto  {
+    @ApiPropertyOptional({
+        description: '页码',
+        minimum: 1,
+        default: 1,
     })
-    page?: string;
+    @Transform(({ value }) => Number(value))
+    @Min(1, { message: 'Min 1' })
+    @IsNumber()
+    @IsOptional()
+    page: number = 1;
+
+    @ApiPropertyOptional({
+        default: 10,
+        type: Number,
+        description: 'Per page',
+    })
+    @Transform(({ value }) => Number(value))
+    @Min(1, { message: '5' })
+    @IsNumber()
+    @IsOptional()
+    limit: number = 10;
+}
+
+export interface PaginateDto<C extends IPaginationMeta = IPaginationMeta>
+    extends Omit<IPaginationOptions<C>, 'page' | 'limit'> {
+    page: number;
+    limit: number;
+}
+
+@Injectable()
+@DtoValidation()
+export class DeleteDto {
+    @IsBoolean()
+    @IsOptional()
+    trash?: boolean;
+}
+
+@Injectable()
+export class DeleteMultiDto extends DeleteDto {
+    @IsUUID(undefined, {
+        each: true,
+        message: 'ID',
+    })
+    @IsDefined({
+        each: true,
+        message: 'ID',
+    })
+    items: string[] = [];
+}
+
+@Injectable()
+export class QueryDetailDto {
+    @IsBoolean()
+    @IsOptional()
+    trashed?: boolean;
+}
+
+@Injectable()
+export class DeleteRestoreDto {
+    @IsUUID(undefined, {
+        each: true,
+        message: 'ID',
+    })
+    @IsDefined({
+        each: true,
+        message: 'ID',
+    })
+    items: string[] = [];
 }

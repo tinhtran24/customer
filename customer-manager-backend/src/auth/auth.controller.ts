@@ -20,7 +20,7 @@ import {
 } from 'src/utils/messageConstants';
 import { RefreshTokenDto } from 'src/auth/dto/refreshToken.dto';
 import { RefreshAuthGuard } from 'src/auth/refresh.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Auth API')

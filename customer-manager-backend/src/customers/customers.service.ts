@@ -5,24 +5,16 @@ import Customer from 'src/customers/entities/customer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/core/base/base.service';
+import { CustomerRepository } from './customer.repository';
 
 @Injectable()
-export class CustomersService extends BaseService<Customer> {
-  name = 'Customer';
-
-  constructor(
-      @InjectRepository(Customer)
-      private readonly customersRepository: Repository<Customer>,
-  ) {
-      super(customersRepository);
+export class CustomersService extends BaseService<Customer, CustomerRepository> {
+  constructor(protected customersRepository: CustomerRepository) {
+    super(customersRepository);
   }
+
+  protected enable_trash = true;
   
-  async getAllCustomers() {
-    return await this.customersRepository.find({
-      relations: ['ward.district.province'],
-    });
-  }
-
   async getCustomerById(customerId: string) {
     try {
       return await this.customersRepository.findOne({

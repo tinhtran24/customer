@@ -1,15 +1,32 @@
-import { Product } from "./entities/product.entity";
 import { BaseController } from "../core/base/base.controller";
 import { Controller } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProductService } from "./product.service";
+import { Crud } from "src/core/decorator/crud.decorator";
+import { CreateProductDto, UpdateProductDto } from "./dto/create-product.dto";
 
+@Crud({
+    id: 'product',
+    enabled: [
+        { name: 'list', options: { allowGuest: false } },
+        { name: 'detail', options: { allowGuest: false } },
+        'store',
+        'update',
+        'delete',
+        'restore',
+        'deleteMulti',
+        'restoreMulti',
+    ],
+    dtos: {
+        create: CreateProductDto,
+        update: UpdateProductDto,
+    },
+})
 @Controller('Product')
 @ApiTags('Product API')
-export class ProductController extends BaseController<Product>(Product, 'product') {
-    relations = [];
-
-    constructor(private readonly productService: ProductService) {
+@ApiBearerAuth()
+export class ProductController extends BaseController<ProductService> {
+    constructor(protected productService: ProductService) {
         super(productService);
     }
 }

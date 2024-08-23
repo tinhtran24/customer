@@ -5,7 +5,6 @@ import {
     SchemaObject
 } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 import { FilterQueries } from '../helper/filter-query.decorator.util';
-import { PaginationDto } from './base.dto';
 
 export function OkResponse($ref: any, isPagination = false, data?: SchemaObject | ReferenceObject) {
     const properties: Record<string, SchemaObject | ReferenceObject> = {
@@ -75,7 +74,7 @@ export function ApiGetAll($ref: any, name?: string) {
 }
 
 export function ApiGetDetail($ref: any, name?: string) {
-    return applyDecorators(ApiOperation({ summary: 'Get detail ' + name }), ...FilterQueries(PaginationDto), OkResponse($ref));
+    return applyDecorators(ApiOperation({ summary: 'Get detail ' + name }), OkResponse($ref));
 }
 
 export function ApiUpdate($ref: any, name?: string) {

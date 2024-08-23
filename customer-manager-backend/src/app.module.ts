@@ -6,13 +6,14 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from 'src/database/database.module';
 import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { RolesModule } from './roles/roles.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { CustomersModule } from './customers/customers.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ProductModule } from "./products/product.module";
+import { AppoinmentModule } from './appointment/appoinment.module';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { ProductModule } from "./products/product.module";
     RolesModule,
     AddressesModule,
     CustomersModule,
-    ProductModule
+    ProductModule,
+    AppoinmentModule
   ],
 
   controllers: [AppController],

@@ -1,22 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Product } from "./entities/product.entity";
 import { BaseService } from "../core/base/base.service";
-import { CreateProductDto } from "./dto/create-product.dto";
+import { ProductRepository } from './product.repository';
 
 @Injectable()
-export class ProductService extends BaseService<Product> {
-    name = 'Product';
+export class ProductService extends BaseService<Product, ProductRepository> {
 
-    constructor(
-        @InjectRepository(Product)
-        private readonly roomRepo: Repository<Product>,
-    ) {
-        super(roomRepo);
+    constructor(protected productRepository: ProductRepository) {
+        super(productRepository);
     }
 
-    async create(input: CreateProductDto) {
-        return this.repo.create(input).save();
-    }
+    protected enable_trash = true;
+
+    
 }
