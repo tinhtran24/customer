@@ -136,11 +136,17 @@ export abstract class BaseService<
     /**
      * @description 
      * @param {*} data
+     * @param {string} id
      * @returns {*}  {Promise<E>}
      */
-    update(data: any): Promise<E> {
+    async update(id: string, data: any): Promise<E> {
         try {
-            return this.repository.save(data, { reload: true }) 
+            const item = this.repository.findOneOrFail({
+                where: { id } as any,
+                withDeleted: this.enable_trash ? true : undefined,
+            });
+            const updatedData = Object.assign(item, data);
+            return this.repository.save(updatedData, { reload: true })
         } catch {
             throw new ForbiddenException(`Can not to update ${this.repository.getQBName()}!`);
         }

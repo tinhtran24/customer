@@ -47,13 +47,15 @@ export abstract class BaseController<
         return (this.service as any).create(data);
     }
 
-    @Patch()
+    @Patch(':item')
     async update(
         @Body()
         data: any,
+        @Param('item', new ParseUUIDPipe())
+        item: string,
         ...args: any[]
     ) {
-        return (this.service as any).update(data);
+        return (this.service as any).update(item, data);
     }
 
     @Delete(':item')
