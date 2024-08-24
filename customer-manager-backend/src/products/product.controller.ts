@@ -22,7 +22,7 @@ import { CreateProductDto, UpdateProductDto } from "./dto/create-product.dto";
         update: UpdateProductDto,
     },
 })
-@Controller('Product')
+@Controller('product')
 @ApiTags('Product API')
 @ApiBearerAuth()
 export class ProductController extends BaseController<ProductService> {

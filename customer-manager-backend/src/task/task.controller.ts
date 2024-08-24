@@ -1,13 +1,13 @@
 import { Controller } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { BaseController } from "src/core/base/base.controller";
-import { AppoinmentService } from "./appoinment.service";
-import { CreateScheduleDto } from "./dto/create-appoinment.dto";
-import { UpdateScheduleDto } from "./dto/update-appoinment.dto";
+import { TaskService } from "./task.service";
 import { Crud } from "src/core/decorator/crud.decorator";
+import { CreateTaskDto } from "./dto/create-task.dto";
+import { UpdateTaskDto } from "./dto/update-task.dto";
 
 @Crud({
-    id: 'appoinment',
+    id: 'task',
     enabled: [
         { name: 'list', options: { allowGuest: false } },
         { name: 'detail', options: { allowGuest: false } },
@@ -19,15 +19,15 @@ import { Crud } from "src/core/decorator/crud.decorator";
         'restoreMulti',
     ],
     dtos: {
-        create: CreateScheduleDto,
-        update: UpdateScheduleDto,
+        create: CreateTaskDto,
+        update: UpdateTaskDto,
     },
 })
-@Controller('appoinment')
-@ApiTags('Appoinment API')
+@Controller('task')
+@ApiTags('Task API')
 @ApiBearerAuth()
-export class AppoinmentController  extends BaseController<AppoinmentService> {
-    constructor(protected appoinmentService: AppoinmentService) {
-        super(appoinmentService);
+export class TaskController  extends BaseController<TaskService> {
+    constructor(protected taskService: TaskService) {
+        super(taskService);
     }
 }

@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID, Matches } from 'class-validator';
-import { format, parse } from 'date-fns';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate } from 'class-validator';
 import { Contact, ENUM_STATUS_TYPE } from 'src/customers/entities/customer.entity';
 import {
   FULLNAME_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
@@ -27,6 +26,7 @@ export class CreateCustomerDto {
   gender: string;
 
   @IsString()
+  @ApiProperty()
   status: ENUM_STATUS_TYPE;
 
   @IsOptional()

@@ -14,6 +14,8 @@ import { CustomersModule } from './customers/customers.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ProductModule } from "./products/product.module";
 import { AppoinmentModule } from './appointment/appoinment.module';
+import { TaskModule } from './task/task.module';
+import { CustomerProductModule } from './customer-product/customer-product.module';
 
 @Module({
   imports: [
@@ -54,7 +56,9 @@ import { AppoinmentModule } from './appointment/appoinment.module';
     AddressesModule,
     CustomersModule,
     ProductModule,
-    AppoinmentModule
+    AppoinmentModule,
+    TaskModule,
+    CustomerProductModule
   ],
 
   controllers: [AppController],

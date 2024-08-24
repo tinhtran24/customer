@@ -5,12 +5,12 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity()
 export class Appoinment extends BaseEntity {
-  @Column()
+  @Column({ name: 'customer_id' })
   customerId: string;
 
   @ManyToOne(() => Customer, { cascade: false })
   @JoinColumn({ name: 'customer_id' })
-  customer: User;
+  customer: Customer;
 
   @Index()
   @Column({ name: 'user_in_charge' })

@@ -121,7 +121,11 @@ name
      * @returns {*}  {Promise<E>}
      */
     create(data: any): Promise<E> {
-        throw new ForbiddenException(`Can not to create ${this.repository.getQBName()}!`);
+        try {
+            return this.repository.save(data, { reload: true }) 
+        } catch {
+            throw new ForbiddenException(`Can not to create ${this.repository.getQBName()}!`);
+        }
     }
 
     /**
@@ -130,7 +134,11 @@ name
      * @returns {*}  {Promise<E>}
      */
     update(data: any): Promise<E> {
-        throw new ForbiddenException(`Can not to update ${this.repository.getQBName()}!`);
+        try {
+            return this.repository.save(data, { reload: true }) 
+        } catch {
+            throw new ForbiddenException(`Can not to update ${this.repository.getQBName()}!`);
+        }
     }
 
     /**
