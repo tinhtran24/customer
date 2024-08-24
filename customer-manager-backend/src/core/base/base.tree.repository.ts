@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { OrderQueryType, OrderType, TreeQueryParams } from '../type/query';
 import { getOrderByQuery } from '../pagination/paginate';
+import { PaginateDto } from './base.dto';
 
 export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<E> {
     /**
@@ -232,5 +233,13 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
             data.push(...(await this.toFlatTrees(children, level + 1)));
         }
         return data as E[];
+    }
+
+    async findPaginate(
+        paginate: PaginateDto,
+    ) {
+        throw new Error(
+            'Repository must instance of BaseRepository or BaseTreeRepository in DataService!',
+        );
     }
 }

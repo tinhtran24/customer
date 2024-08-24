@@ -36,7 +36,6 @@ export abstract class BaseService<
      * @protected
      */
     protected enable_trash = false;
-name
     constructor(repository: R) {
         this.repository = repository;
         if (
@@ -76,7 +75,13 @@ name
         const qb = await this.buildListQuery(this.repository.buildBaseQuery(), options, callback);
         return qb.getMany();
     }
-
+    
+    async findPaginate(
+        options: PaginateDto,
+    ){
+        return this.repository.findPaginate(options);
+    }
+    
     /**
      * @description 
      * @param {PaginateDto<M>} options

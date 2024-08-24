@@ -25,7 +25,7 @@ export abstract class BaseController<
 
     @Get()
     async list(@Query() options: PaginateDto<M> & P & TrashedDto, ...args: any[]) {
-        return (this.service as any).paginate(options);
+        return (this.service as any).findPaginate(options);
     }
 
     @Get(':item')

@@ -8,4 +8,6 @@ export class CustomerRepository extends BaseRepository<Customer> {
     protected qbName = 'Customer';
 
     protected orderBy = { name: 'updatedAt', order: OrderType.ASC };
+
+    protected relations = ['ward.district.province', 'userInCharge']
 }
