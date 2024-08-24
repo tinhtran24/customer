@@ -7,7 +7,7 @@ import {
     SerializeOptions,
     Type,
 } from '@nestjs/common';
-import { ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ApiBody } from '@nestjs/swagger';
 import { isNil } from 'lodash';
 import { BaseController } from '../base/base.controller';
 import { CrudItem, CrudOptions } from '../type/crud';
@@ -104,10 +104,10 @@ export const Crud = <T extends BaseController<any>>(options: CrudOptions) => {
                     Post()(Target, name, descriptor);
                     break;
                 case 'update':
-                    Patch()(Target, name, descriptor);
+                    Patch(':id')(Target, name, descriptor);
                     break;
                 case 'delete':
-                    Delete()(Target, name, descriptor);
+                    Delete(':id')(Target, name, descriptor);
                     break;
                 case 'restore':
                     Patch('restore')(Target, name, descriptor);

@@ -5,6 +5,7 @@ import { AppoinmentService } from "./appoinment.service";
 import { CreateScheduleDto } from "./dto/create-appoinment.dto";
 import { UpdateScheduleDto } from "./dto/update-appoinment.dto";
 import { Crud } from "src/core/decorator/crud.decorator";
+import { ListQueryDto } from "src/core/base/base.dto";
 
 @Crud({
     id: 'appoinment',
@@ -19,6 +20,7 @@ import { Crud } from "src/core/decorator/crud.decorator";
         'restoreMulti',
     ],
     dtos: {
+        query: ListQueryDto,
         create: CreateScheduleDto,
         update: UpdateScheduleDto,
     },

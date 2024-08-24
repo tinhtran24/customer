@@ -4,6 +4,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CustomerProductService } from "./customer-product.service";
 import { Crud } from "src/core/decorator/crud.decorator";
 import { CreateCustomerProductDto, UpdateCustomerProductDto } from "./dto/create-customer-product.dto";
+import { ListQueryDto } from "src/core/base/base.dto";
 
 @Crud({
     id: 'customer-product',
@@ -18,6 +19,7 @@ import { CreateCustomerProductDto, UpdateCustomerProductDto } from "./dto/create
         'restoreMulti',
     ],
     dtos: {
+        query: ListQueryDto,
         create: CreateCustomerProductDto,
         update: UpdateCustomerProductDto,
     },
