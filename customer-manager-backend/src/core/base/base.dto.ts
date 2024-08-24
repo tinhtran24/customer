@@ -8,7 +8,7 @@ import { Transform } from 'class-transformer';
 @DtoValidation({ type: 'query' })
 export class ListQueryDto  {
     @ApiPropertyOptional({
-        description: '页码',
+        description: 'page',
         minimum: 1,
         default: 1,
     })

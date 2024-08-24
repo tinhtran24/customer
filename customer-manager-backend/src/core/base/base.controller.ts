@@ -28,10 +28,10 @@ export abstract class BaseController<
         return (this.service as any).findPaginate(options);
     }
 
-    @Get(':item')
+    @Get(':id')
     async detail(
         @Query() { trashed }: QueryDetailDto,
-        @Param('item', new ParseUUIDPipe())
+        @Param('id', new ParseUUIDPipe())
         item: string,
         ...args: any[]
     ) {
@@ -47,20 +47,20 @@ export abstract class BaseController<
         return (this.service as any).create(data);
     }
 
-    @Patch(':item')
+    @Patch(':id')
     async update(
         @Body()
         data: any,
-        @Param('item', new ParseUUIDPipe())
+        @Param('id', new ParseUUIDPipe())
         item: string,
         ...args: any[]
     ) {
         return (this.service as any).update(item, data);
     }
 
-    @Delete(':item')
+    @Delete(':id')
     async delete(
-        @Param('item', new ParseUUIDPipe())
+        @Param('id', new ParseUUIDPipe())
         item: string,
         @Body()
         { trash }: DeleteDto,
@@ -80,9 +80,9 @@ export abstract class BaseController<
         return (this.service as any).deletePaginate(items, options, trash);
     }
 
-    @Patch('restore/:item')
+    @Patch('restore/:id')
     async restore(
-        @Param('item', new ParseUUIDPipe())
+        @Param('id', new ParseUUIDPipe())
         item: string,
         ...args: any[]
     ) {
