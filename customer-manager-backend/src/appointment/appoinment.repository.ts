@@ -8,4 +8,7 @@ export class AppoinmentRepository extends BaseRepository<Appoinment> {
     protected qbName = 'Appoinment';
 
     protected orderBy = { name: 'updatedAt', order: OrderType.ASC };
+
+    protected relations = ['userInCharge', 'customer'];
+
 }
