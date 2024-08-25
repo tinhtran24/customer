@@ -1,9 +1,12 @@
 import { isNil } from 'lodash';
-import { FindManyOptions, ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
+import { FindManyOptions, FindOneOptions, FindOptionsWhere, ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { OrderQueryType, OrderType } from '../type/query';
 import { getOrderByQuery } from '../pagination/paginate';
 import { PaginateDto } from './base.dto';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { isThisSecond } from 'date-fns';
+import { BaseEntity } from './base.entity';
+import { ServiceUnavailableException } from '@nestjs/common';
 
 
 export abstract class BaseRepository<E extends ObjectLiteral> extends Repository<E> {
@@ -45,6 +48,17 @@ export abstract class BaseRepository<E extends ObjectLiteral> extends Repository
     protected getOrderByQuery(qb: SelectQueryBuilder<E>, orderBy?: OrderQueryType) {
         const orderByQuery = orderBy ?? this.orderBy;
         return !isNil(orderByQuery) ? getOrderByQuery(qb, this.qbName, orderByQuery) : qb;
+    }
+
+    async findById(where: FindOptionsWhere<E> | FindOptionsWhere<E>[], p0: { id: string; }) {
+        try {
+            return await this.findOne({
+              where,
+              relations: this.relations,
+            });
+          } catch (error) {
+            throw new ServiceUnavailableException();
+          }
     }
 
     async findPaginate(
