@@ -3,50 +3,70 @@ export type Contact = {
   phone: string;
 };
 
-export type Customer = {
+export type UserInCharger = {
   id: string;
-  fullName: string;
-  taxCode: string;
-  urn: string;
-  street: string;
-  contacts: Contact[];
-  wardCode: string;
-  ward: any;
-  gender: string;
-  totalOrder: number;
-  status: string
+  name: string;
+  email: string;
+  roleId: any;
+  session: any;
+  createdAt: string;
+  updatedAt: string;
 };
 
-export type CustomerDataType = {
-  key: string;
-  customerId: string;
+export type Customer = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+  code: string;
   fullName: string;
-  taxCode: string;
-  urn: string;
-  address: string;
+  gender: string;
+  street: string;
+  contacts: any;
+  wardCode: string;
+  userInCharge: UserInCharger;
   status: string;
-  contacts: Contact[];
+  callCountNumber: number;
+  group: string;
+  source: string;
+  totalOrder: number;
+  ward: any;
+  userInChargeId: string;
+};
+
+export type Category = {
+  key: string;
+  name: string;
+  total: number;
 };
 
 export type NewCustomer = {
   fullName: string;
-  taxCode: string;
-  urn: string;
-  street: string;
-  contacts: Contact[];
-  wardCode: string;
+  code: string;
   gender: string;
+  callCountNumber: number;
   totalOrder: number;
-  status: string
+  group: string;
+  source: string;
+  status: string;
+  userInChargeId: string;
+  street: string;
+  contacts: any;
+  wardCode: string;
 };
 
 export type UpdateCustomer = {
   fullName: string;
-  taxCode: string;
-  urn: string;
+  code: string;
+  gender: string;
+  callCountNumber: number;
+  totalOrder: number;
+  group: string;
+  source: string;
+  status: string;
+  userInChargeId: string;
   street: string;
-  contacts: Contact[];
-  wardCode: string;
+  contacts: any;
 };
 
 export type LoginPayload = {
@@ -92,3 +112,66 @@ export type NewUser = {
 export type UpdateUser = {
   name: string;
 };
+
+//#region product
+export type Product = {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+};
+
+export type NewProduct = { title: string; description: string; price: number };
+
+export type NewCustomerProduct = {
+  customerId: string;
+  createdUserId: string;
+  productId: string;
+  quality: number;
+};
+//#endregion
+
+//#region Appointment
+export type Appointment = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  customerId: string; // update later
+  userInChargeId: string;
+  customerGroup: string;
+};
+
+export type NewAppointment = {
+  customerId: string;
+  userInChargeId: string;
+  customerGroup: string;
+};
+//#endregion
+
+export type PaginationMeta = {
+  totalItems: number;
+  itemCount: number;
+  itemsPerPage: number;
+  totalPages: number;
+  currentPage: number;
+};
+
+export type Pagination<T> = {
+  items: T[];
+  meta: PaginationMeta;
+};
+
+export enum ENUM_STATUS_TYPE {
+  NEW_CUSTOMERS = "KH mới",
+  NOT_RECEIVE_CALL = "KH Chưa nghe máy",
+  POTENTIAL_CUSTOMERS = "KH tiềm năng",
+  NON_EXIGENCY_CUSTOMERS = "KH không có nhu cầu",
+  OLD_PATIENT = "BN Cũ",
+  NEW_PATIENT = "BN Mới",
+  CANCEL_PATIENT = "BN Bỏ",
+  RE_TREATMENT_PATIENT = "BN Điều trị lại",
+}
