@@ -3,15 +3,42 @@ import z from "zod";
 
 export const CustomerFormSchema = z.object({
   id: z.number(),
-  taxCode: z.string().optional().nullish(),
-  urn: z.string().optional().nullish(),
   fullName: z
     .string({
       required_error: REQUIRED_FIELD,
     })
     .min(1, REQUIRED_FIELD),
-  street: z.string().optional().nullish(),
+  source: z
+    .string({
+      required_error: REQUIRED_FIELD,
+    })
+    .min(1, REQUIRED_FIELD),
+  group: z
+    .string({
+      required_error: REQUIRED_FIELD,
+    })
+    .min(1, REQUIRED_FIELD),
+  code: z
+    .string({
+      required_error: REQUIRED_FIELD,
+    })
+    .min(1, REQUIRED_FIELD),
+  street: z.string({
+    required_error: REQUIRED_FIELD,
+  }),
   ward: z
+    .string({
+      required_error: REQUIRED_FIELD,
+      invalid_type_error: "Chưa chọn Tỉnh/Thành",
+    })
+    .min(1, REQUIRED_FIELD),
+  province: z
+    .string({
+      required_error: REQUIRED_FIELD,
+      invalid_type_error: "Chưa chọn Quận/Huyện",
+    })
+    .min(1, REQUIRED_FIELD),
+  district: z
     .string({
       required_error: REQUIRED_FIELD,
       invalid_type_error: "Chưa chọn Phường/Xã",

@@ -1,11 +1,13 @@
-import { Breadcrumb, Divider, Spin, Flex } from "antd";
+import { Breadcrumb, Divider, Spin } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
-import { fetchAllProvinces, fetchCustomerById } from "@/app/lib/data";
+import { fetchCustomerById } from "@/app/lib/data";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense } from "react";
-import EditCustomerForm from "@/app/components/Customers/EditForm";
 import { notFound } from "next/navigation";
 import { shantell } from "@/app/utils/fontSetting";
+import { CustomersInfo } from "@/app/components/Customers/CustomerInfo";
+import { TabsCustomer } from "@/app/components/Customers/TabsCustomer";
+import { fetchAllProducts } from "@/app/lib/actions";
 
 export default async function DetailCustomerPage({
   params,
@@ -13,9 +15,9 @@ export default async function DetailCustomerPage({
   params: { id: string };
 }) {
   const id = params.id;
-  const [customer, provinces] = await Promise.all([
+  const [customer, products] = await Promise.all([
     fetchCustomerById(id),
-    fetchAllProvinces(),
+    fetchAllProducts()
   ]);
 
   if (!customer) {
@@ -23,7 +25,7 @@ export default async function DetailCustomerPage({
   }
 
   return (
-    <main>
+    <main style={{height: "100vh"}}>
       <AntdRegistry>
         <Breadcrumb
           items={[
@@ -41,7 +43,7 @@ export default async function DetailCustomerPage({
               ),
             },
             {
-              title: "Chi tiết",
+              title: "Chi tiết khách hàng",
             },
           ]}
         />
@@ -63,7 +65,14 @@ export default async function DetailCustomerPage({
         </div>
 
         <Suspense fallback={<Spin size="large" />}>
-          <EditCustomerForm customer={customer} provinces={provinces} />
+          <div style={{ display: "flex", gap: "2rem" }}>
+            <div style={{ width: "30%" }}>
+              <CustomersInfo customer={customer} />{" "}
+            </div>
+            <div style={{ width: "70%" }}>
+              <TabsCustomer customer={customer} products={products} customerId={id}/>
+            </div>
+          </div>
         </Suspense>
       </AntdRegistry>
     </main>
