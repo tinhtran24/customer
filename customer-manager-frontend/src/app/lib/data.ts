@@ -11,20 +11,31 @@ export async function fetchAllProvinces() {
   }
 }
 
-export async function fetchAllCustomers() {
+export async function fetchAllCustomers(queryParams: Record<string, string>) {
   try {
     const accessToken = cookies().get("accessToken");
-    const url = process.env.BACKEND_URL + "/customers";
-    const res = await fetch(url, {
+    const url = new URL(`${process.env.BACKEND_URL}/customers`);
+
+    Object.keys(queryParams).forEach((key) => {
+      url.searchParams.append(key, queryParams[key]);
+    });
+
+    const res = await fetch(url.toString(), {
       cache: "no-store",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken?.value}`,
       },
     });
-    const allCustomers = await res.json();
-    return allCustomers.sort((a: any, b: any) => Number(b?.id) - Number(a?.id));
-  } catch {
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    const data = await res.json();
+    return data.items || []; 
+  } catch (error) {
+    console.error("Error fetching customers:", error);
     return [];
   }
 }

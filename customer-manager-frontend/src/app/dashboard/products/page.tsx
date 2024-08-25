@@ -1,11 +1,13 @@
-import CustomerTable from "@/app/components/Customers/Table";
 import { Flex, Divider, Spin } from "antd";
-import { CreateCustomer } from "@/app/components/Customers/Button";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense } from "react";
 import { shantell } from "@/app/utils/fontSetting";
+import ProductTable from "@/app/components/Products/Table";
+import { CreateProduct } from "@/app/components/Products/CreateProductButton";
+import { fetchAllProducts } from "@/app/lib/actions";
 
-export default async function CustomerPage() {
+export default async function ProductPage() {
+  const products = await fetchAllProducts();
 
   return (
     <main>
@@ -21,15 +23,14 @@ export default async function CustomerPage() {
                 margin: 0,
               }}
             >
-              QUẢN LÝ KHÁCH HÀNG
+              QUẢN LÝ SẢN PHẨM
             </h2>
-            <CreateCustomer />
+            <CreateProduct />
           </Flex>
-
           <Divider style={{ margin: 0 }} />
 
           <Suspense fallback={<Spin size="large" />}>
-            <CustomerTable/>
+            <ProductTable products={products} />
           </Suspense>
         </Flex>
       </AntdRegistry>

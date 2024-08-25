@@ -9,16 +9,6 @@ export function CreateCustomer() {
           <Space size={"middle"}>
                <Button type="primary">
                    <Link href="/dashboard/customers/create">
-                       <span style={{ marginRight: 10 }}>Import</span> <PlusOutlined />
-                   </Link>
-               </Button>
-               <Button type="primary">
-                   <Link href="/dashboard/customers/create">
-                       <span style={{ marginRight: 10 }}>Export</span> <PlusOutlined />
-                   </Link>
-               </Button>
-               <Button type="primary">
-                   <Link href="/dashboard/customers/create">
                        <span style={{ marginRight: 10 }}>Tạo mới</span> <PlusOutlined />
                    </Link>
                </Button>

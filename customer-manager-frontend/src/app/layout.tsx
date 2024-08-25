@@ -31,13 +31,13 @@ export default function RootLayout({
             },
             components: {
               Layout: {
-                siderBg: "#F3D0D7",
+                siderBg: "#6e87b7",
               },
 
               Menu: {
-                itemBg: "#F3D0D7",
+                itemBg: "#6e87b7",
                 itemHoverBg: "#FFEFEF",
-                itemSelectedBg: "#CA8787",
+                itemSelectedBg: "#8e3e63",
                 itemActiveBg: "#CA8787",
                 itemSelectedColor: "white",
                 iconSize: 20,

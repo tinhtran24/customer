@@ -1,15 +1,22 @@
-import { fetchAllProvinces } from "@/app/lib/data";
-import CreateCustomerForm from "@/app/components/Customers/CreateForm";
+import { Breadcrumb, Divider } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
-import { Breadcrumb, Divider, Spin } from "antd";
+import { fetchAllProvinces, fetchCustomerById } from "@/app/lib/data";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Suspense } from "react";
+import UpdateCustomerForm from "@/app/components/Customers/UpdateForm";
 
-export default async function CreateCustomerPage() {
-  const provinces = await fetchAllProvinces();
+export default async function DetailCustomerPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const id = params.id;
+  const [customer, provinces] = await Promise.all([
+    fetchCustomerById(id),
+    fetchAllProvinces(),
+  ]);
 
   return (
-    <main>
+    <main style={{ height: "100%" }}>
       <AntdRegistry>
         <Breadcrumb
           items={[
@@ -27,15 +34,15 @@ export default async function CreateCustomerPage() {
               ),
             },
             {
-              title: "Tạo mới",
+              title: "Cập nhật thông tin khách hàng",
             },
           ]}
         />
 
-        <Divider />
+        <Divider style={{ margin: "24px 0px 10px 0px" }} />
 
         {/* <Suspense fallback={<Spin size="large" />}> */}
-          <CreateCustomerForm provinces={provinces} />
+        <UpdateCustomerForm provinces={provinces} customer={customer} />
         {/* </Suspense> */}
       </AntdRegistry>
     </main>

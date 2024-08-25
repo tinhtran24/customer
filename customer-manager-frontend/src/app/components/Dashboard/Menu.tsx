@@ -3,6 +3,7 @@ import {
   IdcardOutlined,
   FileTextOutlined,
   KeyOutlined,
+  LaptopOutlined
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import type { GetProp, MenuProps } from "antd";
@@ -43,9 +44,14 @@ export default function DashboardMenu() {
       icon: <IdcardOutlined />,
     },
     {
-      key: "/dashboard/policies",
-      label: "Đơn bảo hiểm",
+      key: "/dashboard/products",
+      label: "Sản phẩm",
       icon: <FileTextOutlined />,
+    },
+    {
+      key: "/dashboard/appointments",
+      label: "Lịch hẹn",
+      icon:<LaptopOutlined />,
     },
     userRole === "admin"
       ? {

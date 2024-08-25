@@ -1,4 +1,4 @@
-import { Contact, CustomerDataType } from "@/app/lib/definitions";
+import { Contact, Customer } from "@/app/lib/definitions";
 import { Modal, Button, Space, Divider, theme, Flex, Input } from "antd";
 import {
   InfoCircleOutlined,
@@ -13,7 +13,7 @@ export default function CustomerDetailModal({
   isDetailModalOpen,
   setIsDetailModalOpen,
 }: {
-  customer: CustomerDataType;
+  customer: Customer;
   isDetailModalOpen: boolean;
   setIsDetailModalOpen: (v: boolean) => void;
 }) {
@@ -58,36 +58,19 @@ export default function CustomerDetailModal({
           />
 
           <CopyToClipboardInput
-            value={customer.address}
+            value={customer.street}
             prefixIcon={
               <EnvironmentOutlined style={{ padding: "0px 5px 0px 0px" }} />
             }
           />
 
-          <CopyToClipboardInput
-            value={customer.taxCode}
-            prefixIcon={
-              <span style={{ padding: "0px 3px 0px 0px", fontSize: "8px" }}>
-                MST
-              </span>
-            }
-          />
-
-          <CopyToClipboardInput
-            value={customer.urn}
-            prefixIcon={
-              <span style={{ padding: "0px 3px 0px 0px", fontSize: "8px" }}>
-                URN
-              </span>
-            }
-          />
         </Flex>
 
         <Flex gap={"middle"} vertical>
-          {customer.contacts?.map((contact: Contact, index) => {
+          {customer.contacts?.map((contact: Contact) => {
             return (
               <CopyToClipboardInput
-                key={`customer-contacts-${index}`}
+                key={`customer-contacts-${""}`}
                 value={`${contact.name} - ${contact.phone}`}
                 prefixIcon={
                   <ContactsOutlined style={{ padding: "0px 5px 0px 0px" }} />

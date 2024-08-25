@@ -1,272 +1,267 @@
 "use client";
-import { Customer, CustomerDataType } from "@/app/lib/definitions";
-import { Button, Input, Space, Table, Badge, Avatar, theme } from "antd";
-import { useEffect, useRef, useState } from "react";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import { Customer, Pagination } from "@/app/lib/definitions";
 import {
-  SearchOutlined,
-  UserOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
-import Highlighter from "react-highlight-words";
+  Tag,
+  Table,
+  theme,
+  Modal,
+  message,
+  Menu,
+  Dropdown,
+  Button,
+} from "antd";
+import { useEffect, useState } from "react";
+import { TableColumnsType, Tooltip } from "antd";
 import Link from "next/link";
-import CustomerDetailModal from "@/app/components/Customers/CustomerDetailModal";
+import { MdDeleteOutline, MdVisibility } from "react-icons/md";
+import { Categories } from "./Categories";
+import SearchCustomers from "./Search";
+import { deleteCustomer, fetchCustomers } from "@/app/lib/actions";
+import Loading from "@/app/dashboard/loading";
+import { log } from "console";
+import router from "next/router";
+import { FiEdit3 } from "react-icons/fi";
+import { DownOutlined } from "@ant-design/icons";
 
-export default function CustomerTable({
-  customers,
-}: {
-  customers: Customer[];
-}) {
+export default function CustomerTable() {
+  //#region hook
+  const [data, setData] = useState<Pagination<Customer>>();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(5);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
   const {
     token: { colorPrimary },
   } = theme.useToken();
 
-  //#region hook
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [customer, setCustomer] = useState<CustomerDataType>({
-    key: "",
-    customerId: "",
-    fullName: "",
-    taxCode: "",
-    urn: "",
-    address: "",
-    status: "",
-    contacts: [],
-  });
-  const searchInput = useRef<InputRef>(null);
+  const getData = async (p?: string) => {
+    setIsLoading(true);
+    setData(
+      await fetchCustomers({
+        page: currentPage.toString(),
+        limit: pageSize.toString(),
+        q: p || "",
+      })
+    );
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    if (!customers) setIsLoading(true);
-  }, [customers]);
-  //#endregion
+    getData();
+    if (!data) setIsLoading(true);
+    else setIsLoading(false);
+  }, [currentPage]);
 
-  //#region customer filter
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: FilterDropdownProps["confirm"],
-    dataIndex: DataIndex
-  ) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+  const handleTableChange = (pagination: any) => {
+    setCurrentPage(pagination.current);
+    setData(undefined);
+    setIsLoading(true);
   };
 
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters();
-    setSearchText("");
+  const handleDelete = async (id: string) => {
+    message.info("Đang xóa ...");
+    try {
+      const results = await deleteCustomer(id);
+      if (results.id) {
+        message.success("Đã xóa khách hàng thành công");
+        if (currentPage !== 1) setCurrentPage(1);
+        else getData();
+      } else message.error("Vui lòng thử lại sau");
+    } catch (e) {}
   };
 
-  const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): TableColumnType<CustomerDataType> => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Tìm theo tên"
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            handleSearch(selectedKeys as string[], confirm, dataIndex)
-          }
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() =>
-              handleSearch(selectedKeys as string[], confirm, dataIndex)
-            }
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Tìm
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Xóa
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: (text) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{
-            backgroundColor: "!#ffc069",
-            padding: 0,
-            color: "orange !important",
-          }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
-  //#endregion
+  const showDeleteConfirm = (customer: Customer) => {
+    Modal.confirm({
+      title: "Bạn có chắc chắn muốn xóa khách hàng này?",
+      content: `${customer.code} - ${customer.fullName} - ${customer.status}`,
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: () => {
+        handleDelete(customer.id);
+      },
+    });
+  };
 
-  //#region column data
+  const menu = (customer: any) => (
+    <Menu>
+      <Menu.Item key="view" style={{ color: "blue" }} onClick={() => {}}>
+        <a href={`/dashboard/customers/${customer.id}`}>
+          <MdVisibility style={{ marginRight: 8 }} />
+          Chi tiết
+        </a>
+      </Menu.Item>
+      <Menu.Item key="edit" style={{ color: "green" }}>
+        <a href={`/dashboard/customers/${customer.id}/update`}>
+          <FiEdit3 style={{ marginRight: 8 }} />
+          Sửa
+        </a>
+      </Menu.Item>
+      <Menu.Item
+        key="delete"
+        style={{ color: "red" }}
+        onClick={() => showDeleteConfirm(customer)}
+      >
+        <MdDeleteOutline style={{ marginRight: 8 }} />
+        Xóa
+      </Menu.Item>
+    </Menu>
+  );
 
-  type DataIndex = keyof CustomerDataType;
-
-  const data: CustomerDataType[] = customers.map((customer: any) => ({
-    key: `customer-key-${customer.id}`,
-    customerId: customer.id,
-    fullName: customer.fullName,
-    taxCode: customer.taxCode,
-    address: customer.street
-      ? `${customer.street}, ${customer.ward.fullName}, ${customer.ward.district.fullName}, ${customer.ward.district.province.fullName}`
-      : `${customer.ward.fullName}, ${customer.ward.district.fullName}, ${customer.ward.district.province.fullName}`,
-    contacts: customer.contacts,
-    urn: customer.urn,
-    status: customer.status
-  }));
-
-  const arrayAddress = customers.map((customer: any) => ({
-    text: customer.ward.district.province.name,
-    value: customer.ward.district.province.name,
-  }));
-
-  const key = "value";
-  const addressFilter = [
-    ...new Map(arrayAddress.map((item) => [item[key], item])).values(),
-  ];
-
-  const arrayStatus = [{
-    text: 'Khách hàng mới',
-    value: 'NEW',
-  },{
-      text: 'Chưa nghe máy',
-      value: 'NOT_RECEIVE_CALL',
-  }]
-  const statusFilter = [
-    ...new Map(arrayStatus.map((item) => [item[key], item])).values(),
-  ];
-
-  const columns: TableColumnsType<CustomerDataType> = [
+  const columns: TableColumnsType<Customer> = [
     {
-      title: "Tên đầy đủ",
+      title: "Mã KH",
+      dataIndex: "code",
+    },
+    {
+      title: "Tên KH",
       dataIndex: "fullName",
-      ...getColumnSearchProps("fullName"),
-      render: (_: any, record: CustomerDataType) => (
-        <Link href={`/dashboard/customers/${record.customerId}`}>
+      render: (_: any, record: Customer) => (
+        <Link href={`/dashboard/customers/${record.id}`}>
           {record.fullName}
         </Link>
       ),
     },
     {
-      title: "Mã số thuế",
-      dataIndex: "taxCode",
-      ...getColumnSearchProps("taxCode"),
+      title: "Liên hệ",
+      dataIndex: "contacts",
+      render: (contacts: any[]) => {
+        try {
+          const parsedContacts = contacts.map((contact) => {
+            const correctedJson = contact.replace(/(\w+):/g, '"$1":');
+            return JSON.parse(correctedJson);
+          });
+
+          return parsedContacts.map(
+            (contact: { name: string; phone: string }, index: number) => (
+              <Tag color="blue" key={index} style={{ marginTop: "5px" }}>
+                {contact.name} - {contact.phone}
+              </Tag>
+            )
+          );
+        } catch (error) {
+          console.error("Error parsing contacts:", error);
+          return null;
+        }
+      },
+    },
+    {
+      title: "SL gọi",
+      dataIndex: "callCountNumber",
+    },
+    {
+      title: "SL đặt",
+      dataIndex: "totalOrder",
+    },
+    {
+      title: "Nam/Nữ",
+      dataIndex: "gender",
     },
     {
       title: "Địa chỉ",
-      dataIndex: "address",
-      filters: addressFilter,
-      onFilter: (value, record) =>
-        record.address.indexOf(value as string) !== -1,
+      render: (_: any, record: Customer) => {
+        const { street, ward } = record;
+        const wardName = ward ? ward.fullName : "";
+        const districtName =
+          ward && ward.district ? ward.district.fullName : "";
+        const provinceName =
+          ward && ward.district && ward.district.province
+            ? ward.district.province.fullName
+            : "";
+        const address = `${street}, ${wardName}, ${districtName}, ${provinceName}`;
+        return (
+          <Tooltip title={address}>
+            <span>{address.substring(0, 12) + "..."}</span>
+          </Tooltip>
+        );
+      },
     },
     {
-      title: "Trạng Thái",
+      title: "Trạng thái",
       dataIndex: "status",
-      filters: statusFilter,
-      onFilter: (value, record) =>
-          record.status.indexOf(value as string) !== -1
     },
     {
-      title: "Người liên hệ",
-      align: "center",
-      dataIndex: "contacts",
-      render: (_: any, record: CustomerDataType) => (
-        <Badge
-          count={record.contacts?.length ?? "0"}
-          showZero
-          color={record.contacts?.length > 0 ? "#52c41a" : "#faad14"}
-        >
-          <Avatar
-            shape="square"
-            style={{
-              color: record.contacts?.length > 0 ? "#52c41a" : "#faad14",
-              backgroundColor: "#f0f0f0",
-            }}
-            icon={<UserOutlined />}
-          />
-        </Badge>
-      ),
+      title: "Nhóm KH",
+      dataIndex: "group",
     },
     {
-      title: "Chi tiết",
-      align: "center",
-      render: (_: any, record: CustomerDataType) => (
-        <EyeOutlined
-          style={{ cursor: "pointer", color: colorPrimary, fontSize: "16px" }}
-          onClick={() => {
-            showCustomerDetail(record);
-          }}
-        />
+      title: "Nguồn KH",
+      dataIndex: "source",
+    },
+    {
+      title: "Người phụ trách",
+      dataIndex: "userInCharge",
+      render: (userInCharge) => userInCharge.name
+    },
+    {
+      title: "Ngày tạo",
+      dataIndex: "createdAt",
+      render: (d: string) => {
+        const date = new Date(d);
+        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+        return <div style={{ textAlign: "center" }}>{formattedDate}</div>;
+      },
+    },
+    {
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      render: (d: string) => {
+        const date = new Date(d);
+        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+        return <div style={{ textAlign: "center" }}>{formattedDate}</div>;
+      },
+    },
+    {
+      title: "",
+      width: "5%",
+      render: (customer) => (
+        <Dropdown overlay={menu(customer)} trigger={["click"]}>
+          <Button>
+            <DownOutlined />
+          </Button>
+        </Dropdown>
       ),
     },
   ];
 
-  //#endregion
-
-  //#region show customer's detail
-  const showCustomerDetail = (record: CustomerDataType) => {
-    setCustomer(record);
-    setIsDetailModalOpen(true);
-  };
-  //#endregion
-
   return (
     <>
-      <Table
-        loading={isLoading}
-        pagination={{ pageSize: 5 }}
-        locale={{
-          emptyText: "Không tìm thấy khách hàng",
-          filterReset: "Xóa",
-          filterConfirm: "Lọc",
-        }}
-        columns={columns}
-        dataSource={data}
-        showSorterTooltip={{ target: "sorter-icon" }}
+      <SearchCustomers
+        text={searchText}
+        onChange={(e: any) => setSearchText(e.target.value)}
+        handleSearch={() => getData(searchText)}
       />
-
-      <CustomerDetailModal
-        customer={customer}
-        setIsDetailModalOpen={setIsDetailModalOpen}
-        isDetailModalOpen={isDetailModalOpen}
-      />
+      <Categories />
+      {isLoading || !data ? (
+        <Loading />
+      ) : (
+        <Table
+          loading={isLoading}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: data?.meta?.totalItems || 0,
+            showSizeChanger: false,
+          }}
+          locale={{
+            emptyText: "Không tìm thấy khách hàng",
+          }}
+          columns={columns}
+          dataSource={data?.items || []}
+          onChange={handleTableChange}
+          showSorterTooltip={{ target: "sorter-icon" }}
+        />
+      )}
     </>
   );
 }

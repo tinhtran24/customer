@@ -1,7 +1,10 @@
 "use server";
 import {
   LoginPayload,
+  NewAppointment,
   NewCustomer,
+  NewCustomerProduct,
+  NewProduct,
   NewUser,
   UpdateCustomer,
   UpdateUser,
@@ -34,7 +37,7 @@ export async function createCustomer(customer: NewCustomer) {
   }
 }
 
-export async function updateCustomer(id: string, customer: UpdateCustomer) {
+export async function updateCustomer(id: string, customer: NewCustomer) {
   try {
     const accessToken = cookies().get("accessToken");
     const url = process.env.BACKEND_URL + `/customers/${id}`;
@@ -220,3 +223,285 @@ export async function deleteUser(id: string) {
     };
   }
 }
+
+export async function fetchCustomers(queryParams: Record<string, string>) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(`${process.env.BACKEND_URL}/customers`);
+
+    Object.keys(queryParams).forEach((key) => {
+      url.searchParams.append(key, queryParams[key]);
+    });
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+
+export async function fetchUsers() {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(`${process.env.BACKEND_URL}/users`);
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch users");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
+}
+
+//#region Product
+export async function fetchAllProducts() {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(`${process.env.BACKEND_URL}/Product`);
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    // Parse response và lấy items
+    const data = await res.json();
+    return data.items || []; // Trả về danh sách items hoặc mảng rỗng nếu không có dữ liệu
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+
+export async function createProduct(body: NewProduct) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/product";
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/products");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không tạo được sản phẩm mới",
+    };
+  }
+}
+//#endregion
+
+export async function updateProduct(id: string, body: NewProduct) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/product/${id}`;
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/products");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể cập nhật thông tin người dùng",
+    };
+  }
+}
+
+export async function deleteProduct(id: string) {
+  try {
+    const accessToken = await cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/product/${id}`;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/products");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể xóa sản phẩm",
+    };
+  }
+}
+
+//#region Customer product
+export async function createCustomerProduct(body: NewCustomerProduct) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/customer-product";
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/customers");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không tạo được người dùng mới",
+    };
+  }
+}
+
+//#endregion
+
+//#region Appointment
+export async function fetchAllAppointments(
+  queryParams: Record<string, string>
+) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(`${process.env.BACKEND_URL}/appoinment`);
+
+    Object.keys(queryParams).forEach((key) => {
+      url.searchParams.append(key, queryParams[key]);
+    });
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+
+export async function createAppointment(body: NewAppointment) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/appoinment";
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/appointments");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không tạo được sản phẩm mới",
+    };
+  }
+}
+
+export async function updateAppointment(id: string, body: NewAppointment) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/appoinment/${id}`;
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/appointments");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể cập nhật thông tin người dùng",
+    };
+  }
+}
+
+
+export async function deleteAppointment(id: string) {
+  try {
+    const accessToken = await cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/appoinment/${id}`;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/appointments");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể xóa sản phẩm",
+    };
+  }
+}
+
+//#endregion
