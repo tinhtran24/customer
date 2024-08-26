@@ -21,9 +21,6 @@ export class CreateCustomerProductDto {
 
     @IsString()
     @ApiProperty()
-    @Transform(({ value }) => {
-      return stringCleaner(value);
-    })
     street: string;
 
     @IsNumber()

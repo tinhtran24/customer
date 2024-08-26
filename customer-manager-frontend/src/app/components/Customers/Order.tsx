@@ -2,34 +2,43 @@
 import { createCustomerProduct } from "@/app/lib/actions";
 import { NewCustomerProduct, Product } from "@/app/lib/definitions";
 import { Form, Input, Select, Button, message, InputNumber } from "antd";
-import React, { useEffect, useState } from "react";
 import { useAuthContext } from "@/app/components/auth";
+import {  useState } from "react";
 const { Option } = Select;
 
 interface OrderProductProps {
   products: Product[];
   customerId: string;
+  provinces: any[];
 }
 export default function OrderProduct({
   products,
   customerId,
+  provinces,
 }: OrderProductProps) {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [quantity, setQuantity] = useState<number>(1);
+  const [quantity, setQuantity] = useState<number | undefined>(1);
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
-  const { currentUser } = useAuthContext()
-  const [price, setPrice] = useState<number>(1);
+  const { currentUser } = useAuthContext();
+  const [price, setPrice] = useState<number>();
+
+  const [districtOptions, setDistrictOptions] = useState([]);
+  const [wardOptions, setWardOptions] = useState([]);
 
   const [form] = Form.useForm();
+
   const handleFinish = async (values: any) => {
     setIsFormSubmitting(true);
     try {
       const body: NewCustomerProduct = {
         productId: values.product,
-        createdUserId: currentUser?.id || '',
+        createdUserId: (currentUser as any).sub || "",
         customerId: customerId,
-        quality: quantity,
-        price: price,
+        quality: quantity!,
+        price: (price || 1) * quantity!,
+        street: values.street,
+        PaymentMethod: values.PaymentMethod,
+        ShipMethod: values.ShipMethod,
+        shippingWardCode: values.ward,
       };
 
       const result = await createCustomerProduct(body);
@@ -43,16 +52,10 @@ export default function OrderProduct({
       } else {
         message.success("Tạo đơn thành công");
         form.resetFields();
-        setSelectedProduct(null);
+        setPrice(0);
         setQuantity(1);
       }
     } catch {}
-  };
-
-  const handleProductChange = (value: string) => {
-    // Tìm sản phẩm được chọn trong danh sách sản phẩm
-    const product = products.find((p) => p.id === value) || null;
-    setSelectedProduct(product);
   };
 
   const formatPrice = (price: number) => {
@@ -64,14 +67,51 @@ export default function OrderProduct({
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
-    setQuantity(value >= 1 ? value : 1); // Đảm bảo số lượng luôn >= 1
+    setQuantity(value || undefined);
+  };
+
+  const handlePriceChange = (value: number | null) => {
+    setPrice(value || undefined);
   };
 
   const getTotalPrice = () => {
-    if (selectedProduct) {
-      return formatPrice(selectedProduct.price * quantity);
+    if (price) {
+      return formatPrice(price * quantity!);
     }
     return formatPrice(0);
+  };
+
+  const filterOption = (
+    input: string,
+    option?: { label: string; value: string }
+  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
+  const provinceOptions = provinces.map((province: any) => ({
+    value: province.name,
+    label: province.name,
+    districts: province.districts,
+  }));
+
+  const onSelectProvince = (value: any, option: any) => {
+    form.resetFields(["district", "ward"]);
+    const districts = option.districts;
+    const _districtOptions = districts.map((district: any) => ({
+      value: district.name,
+      label: district.name,
+      wards: district.wards,
+    }));
+    setDistrictOptions(_districtOptions);
+  };
+
+  const onSelectDistrict = (value: any, option: any) => {
+    form.resetFields(["ward"]);
+    const wards = option.wards;
+    const _wardOptions = wards.map((ward: any) => ({
+      value: ward.code,
+      label: ward.name,
+      wardCode: ward.code,
+    }));
+    setWardOptions(_wardOptions);
   };
 
   return (
@@ -90,7 +130,6 @@ export default function OrderProduct({
           placeholder="Chọn sản phẩm"
           showSearch
           optionFilterProp="children"
-          onChange={handleProductChange}
           filterOption={(input: any, option: any) =>
             option?.children.toLowerCase().includes(input.toLowerCase())
           }
@@ -103,25 +142,26 @@ export default function OrderProduct({
         </Select>
       </Form.Item>
       <Form.Item
-          name="price"
-          label="Giá (VNĐ)"
-          rules={[
-            { required: true, message: "Vui lòng thêm giá" },
-            {
-              type: "number",
-              min: 0,
-              message: "Giá sản phẩm là kiểu dữ liệu số",
-            },
-          ]}
+        name="price"
+        label="Giá (VNĐ)"
+        rules={[
+          { required: true, message: "Vui lòng thêm giá" },
+          {
+            type: "number",
+            min: 0,
+            message: "Giá sản phẩm là kiểu dữ liệu số",
+          },
+        ]}
       >
         <InputNumber
-            min={0}
-            style={{ width: "100%" }}
-            placeholder="Giá sản phẩm ..."
-            formatter={(value) =>
-                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
-            parser={(value) => value?.replace(/\ VNĐ\s?|(,*)/g, "") as any}
+          min={0}
+          style={{ width: "100%" }}
+          placeholder="Giá sản phẩm ..."
+          formatter={(value) =>
+            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          }
+          parser={(value) => value?.replace(/\ VNĐ\s?|(,*)/g, "") as any}
+          onChange={handlePriceChange}
         />
       </Form.Item>
 
@@ -138,20 +178,98 @@ export default function OrderProduct({
           },
         ]}
       >
-        <Input type="number" min={1} onChange={handleQuantityChange} />
+        <Input
+          type="number"
+          min={1}
+          value={quantity}
+          onChange={handleQuantityChange}
+        />
       </Form.Item>
-      {selectedProduct && (
-          <div style={{ marginBottom: 16 }}>
-            <h4>Thông tin chi tiết sản phẩm:</h4>
-            <p>
-              <strong>- Tên:</strong> {selectedProduct.title}
-            </p>
-            <p>
-              <strong>- Mã sản phẩm:</strong> {selectedProduct.id}
-            </p>
-          </div>
-      )}
-      {selectedProduct && (
+
+      <Form.Item
+        name="ShipMethod"
+        label="Phương thức giao hàng"
+        rules={[
+          { required: true, message: "Vui lòng thêm phương thức giao hàng" },
+        ]}
+      >
+        <Input placeholder="Phương thức giao hàng ..." />
+      </Form.Item>
+
+      <Form.Item label="Số nhà/đường" required>
+        <Form.Item
+          name="street"
+          noStyle
+          rules={[{ required: true, message: "Vui lòng thêm địa chỉ cụ thể" }]}
+        >
+          <Input placeholder="Số nhà/đường ..." />
+        </Form.Item>
+      </Form.Item>
+
+      <Form.Item label="Tỉnh/TP" required>
+        <Form.Item
+          name="province"
+          noStyle
+          rules={[{ required: true, message: "Vui lòng thêm tỉnh thành" }]}
+        >
+          <Select
+            notFoundContent="Không tìm thấy"
+            showSearch
+            placeholder="- Chọn -"
+            optionFilterProp="children"
+            filterOption={filterOption}
+            onSelect={onSelectProvince}
+            options={provinceOptions}
+          />
+        </Form.Item>
+      </Form.Item>
+
+      <Form.Item label="Quận/Huyện" required>
+        <Form.Item
+          name="district"
+          noStyle
+          rules={[{ required: true, message: "Vui lòng thêm quận huyện" }]}
+        >
+          <Select
+            notFoundContent="Không tìm thấy"
+            showSearch
+            placeholder="- Chọn -"
+            optionFilterProp="children"
+            filterOption={filterOption}
+            onSelect={onSelectDistrict}
+            options={districtOptions}
+          />
+        </Form.Item>
+      </Form.Item>
+
+      <Form.Item label="Phường/Xã" required>
+        <Form.Item
+          name="ward"
+          noStyle
+          rules={[{ required: true, message: "Vui lòng thêm tphường xã" }]}
+        >
+          <Select
+            notFoundContent="Không tìm thấy"
+            showSearch
+            placeholder="- Chọn -"
+            optionFilterProp="children"
+            filterOption={filterOption}
+            options={wardOptions}
+          />
+        </Form.Item>
+      </Form.Item>
+
+      <Form.Item
+        name="PaymentMethod"
+        label="Phương thức thành toán"
+        rules={[
+          { required: true, message: "Vui lòng thêm phương thức thanh toán" },
+        ]}
+      >
+        <Input placeholder="Phương thức thanh toán ..." />
+      </Form.Item>
+
+      {quantity && (
         <div style={{ marginBottom: 16, color: "green" }}>
           <h4>Thành tiền: {getTotalPrice()}</h4>
         </div>
