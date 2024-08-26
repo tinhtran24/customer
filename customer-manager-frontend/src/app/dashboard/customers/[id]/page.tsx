@@ -1,6 +1,6 @@
 import { Breadcrumb, Divider, Spin } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
-import { fetchCustomerById } from "@/app/lib/data";
+import { fetchAllProvinces, fetchCustomerById } from "@/app/lib/data";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
@@ -15,9 +15,10 @@ export default async function DetailCustomerPage({
   params: { id: string };
 }) {
   const id = params.id;
-  const [customer, products] = await Promise.all([
+  const [customer, products, provinces] = await Promise.all([
     fetchCustomerById(id),
-    fetchAllProducts()
+    fetchAllProducts(),
+    fetchAllProvinces(),
   ]);
 
   if (!customer) {
@@ -25,7 +26,7 @@ export default async function DetailCustomerPage({
   }
 
   return (
-    <main style={{height: "100vh"}}>
+    <main style={{ height: "100%" }}>
       <AntdRegistry>
         <Breadcrumb
           items={[
@@ -70,7 +71,12 @@ export default async function DetailCustomerPage({
               <CustomersInfo customer={customer} />{" "}
             </div>
             <div style={{ width: "70%" }}>
-              <TabsCustomer customer={customer} products={products} customerId={id}/>
+              <TabsCustomer
+                customer={customer}
+                products={products}
+                customerId={id}
+                provinces={provinces}
+              />
             </div>
           </div>
         </Suspense>

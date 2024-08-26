@@ -94,7 +94,7 @@ export type User = {
   name: string;
   email: string;
   roleId: number;
-  role: string
+  role: string;
 };
 
 export type UserDataType = {
@@ -132,7 +132,11 @@ export type NewCustomerProduct = {
   createdUserId: string;
   productId: string;
   quality: number;
-  price: number
+  price: number;
+  street: string;
+  PaymentMethod: string;
+  ShipMethod: string;
+  shippingWardCode: string;
 };
 //#endregion
 
