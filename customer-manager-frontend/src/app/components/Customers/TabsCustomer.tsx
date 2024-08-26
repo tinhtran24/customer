@@ -1,15 +1,17 @@
 // components/CustomTabs.tsx
 import React from "react";
 import { Tabs, Button } from "antd";
-import { Customer, Product } from "@/app/lib/definitions";
+import { Customer, CustomerProduct, Product } from "@/app/lib/definitions";
 import type { TabsProps } from "antd/es/tabs";
 import OrderProduct from "./Order";
+import { History } from "./History";
 
 interface CustomTabsProps {
   customer: Customer;
   products: Product[];
   customerId: string;
   provinces: any[];
+  customerProducts: CustomerProduct[];
 }
 
 export function TabsCustomer({
@@ -17,6 +19,7 @@ export function TabsCustomer({
   products,
   customerId,
   provinces,
+  customerProducts
 }: CustomTabsProps) {
   const items: TabsProps["items"] = [
     {
@@ -31,8 +34,13 @@ export function TabsCustomer({
       ),
     },
     {
-      label: "Trao đổi",
+      label: "Lịch sử",
       key: "2",
+      children: <History customerProducts={customerProducts} />,
+    },
+    {
+      label: "Trao đổi",
+      key: "3",
       children: (
         <div>
           <textarea
@@ -67,7 +75,7 @@ export function TabsCustomer({
     },
     {
       label: "Lịch hẹn",
-      key: "3",
+      key: "4",
       children: `Content of Tab Pane2`,
     },
   ];

@@ -3,7 +3,7 @@ import { createCustomerProduct } from "@/app/lib/actions";
 import { NewCustomerProduct, Product } from "@/app/lib/definitions";
 import { Form, Input, Select, Button, message, InputNumber } from "antd";
 import { useAuthContext } from "@/app/components/auth";
-import {  useState } from "react";
+import { useState } from "react";
 const { Option } = Select;
 
 interface OrderProductProps {
@@ -166,7 +166,6 @@ export default function OrderProduct({
       </Form.Item>
 
       <Form.Item
-        name="quantity"
         label="Số lượng"
         rules={[
           { required: true, message: "Vui lòng nhập số lượng!" },
@@ -261,7 +260,7 @@ export default function OrderProduct({
 
       <Form.Item
         name="PaymentMethod"
-        label="Phương thức thành toán"
+        label="Phương thức thanh toán"
         rules={[
           { required: true, message: "Vui lòng thêm phương thức thanh toán" },
         ]}

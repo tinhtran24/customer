@@ -8,7 +8,7 @@ import { CreateAppointment } from "@/app/components/Appointments/CreateAppointme
 import { fetchAllAppointments } from "@/app/lib/actions";
 import { Appointment, Pagination } from "@/app/lib/definitions";
 
-export default async function AppointmentPage() {
+export default function AppointmentPage() {
   const [appointments, setAppointments] =
     useState<Pagination<Appointment> | null>(null);
   const [isLoading, setIsLoading] = useState(true);

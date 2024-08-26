@@ -126,6 +126,27 @@ export type Product = {
 };
 
 export type NewProduct = { title: string; description: string };
+//#endregion
+
+//#region Customer product
+export type CustomerProduct = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  customerId: string;
+  productId: string;
+  price: 10000;
+  PaymentMethod: string;
+  ShipMethod: string;
+  street: string;
+  shippingWardCode: string;
+  createdUserId: string;
+  updatedUserId: null;
+  customer: Customer;
+  product: Product;
+  createdUser: User;
+};
 
 export type NewCustomerProduct = {
   customerId: string;
