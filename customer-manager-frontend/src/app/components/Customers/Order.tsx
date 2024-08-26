@@ -1,8 +1,8 @@
 "use client";
 import { createCustomerProduct } from "@/app/lib/actions";
 import { NewCustomerProduct, Product } from "@/app/lib/definitions";
-import { Form, Input, Select, Button, message } from "antd";
-import { useEffect, useState } from "react";
+import { Form, Input, Select, Button, message, InputNumber } from "antd";
+import React, { useEffect, useState } from "react";
 import { useAuthContext } from "@/app/components/auth";
 const { Option } = Select;
 
@@ -18,6 +18,7 @@ export default function OrderProduct({
   const [quantity, setQuantity] = useState<number>(1);
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const { currentUser } = useAuthContext()
+  const [price, setPrice] = useState<number>(1);
 
   const [form] = Form.useForm();
   const handleFinish = async (values: any) => {
@@ -28,6 +29,7 @@ export default function OrderProduct({
         createdUserId: currentUser?.id || '',
         customerId: customerId,
         quality: quantity,
+        price: price,
       };
 
       const result = await createCustomerProduct(body);
@@ -100,21 +102,28 @@ export default function OrderProduct({
           ))}
         </Select>
       </Form.Item>
-
-      {selectedProduct && (
-        <div style={{ marginBottom: 16 }}>
-          <h4>Thông tin chi tiết sản phẩm:</h4>
-          <p>
-            <strong>- Tên:</strong> {selectedProduct.title}
-          </p>
-          <p>
-            <strong>- Mã sản phẩm:</strong> {selectedProduct.id}
-          </p>
-          <p>
-            <strong>- Giá:</strong> {formatPrice(selectedProduct.price)}
-          </p>
-        </div>
-      )}
+      <Form.Item
+          name="price"
+          label="Giá (VNĐ)"
+          rules={[
+            { required: true, message: "Vui lòng thêm giá" },
+            {
+              type: "number",
+              min: 0,
+              message: "Giá sản phẩm là kiểu dữ liệu số",
+            },
+          ]}
+      >
+        <InputNumber
+            min={0}
+            style={{ width: "100%" }}
+            placeholder="Giá sản phẩm ..."
+            formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            }
+            parser={(value) => value?.replace(/\ VNĐ\s?|(,*)/g, "") as any}
+        />
+      </Form.Item>
 
       <Form.Item
         name="quantity"
@@ -131,7 +140,17 @@ export default function OrderProduct({
       >
         <Input type="number" min={1} onChange={handleQuantityChange} />
       </Form.Item>
-
+      {selectedProduct && (
+          <div style={{ marginBottom: 16 }}>
+            <h4>Thông tin chi tiết sản phẩm:</h4>
+            <p>
+              <strong>- Tên:</strong> {selectedProduct.title}
+            </p>
+            <p>
+              <strong>- Mã sản phẩm:</strong> {selectedProduct.id}
+            </p>
+          </div>
+      )}
       {selectedProduct && (
         <div style={{ marginBottom: 16, color: "green" }}>
           <h4>Thành tiền: {getTotalPrice()}</h4>

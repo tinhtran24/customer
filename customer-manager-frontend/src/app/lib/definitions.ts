@@ -125,13 +125,14 @@ export type Product = {
   deletedAt: string;
 };
 
-export type NewProduct = { title: string; description: string; price: number };
+export type NewProduct = { title: string; description: string };
 
 export type NewCustomerProduct = {
   customerId: string;
   createdUserId: string;
   productId: string;
   quality: number;
+  price: number
 };
 //#endregion
 

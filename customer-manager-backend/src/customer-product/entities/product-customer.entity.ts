@@ -26,6 +26,9 @@ export class CustomerProduct extends BaseEntity {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
+  @Column({ name: 'price' })
+  price: number;
+
   @Index()
   @Column({ name: 'created_user' })
   createdUserId: string;
