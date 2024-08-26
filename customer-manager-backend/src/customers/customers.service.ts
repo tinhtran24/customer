@@ -5,6 +5,7 @@ import Customer from 'src/customers/entities/customer.entity';
 import { BaseService } from 'src/core/base/base.service';
 import { CustomerRepository } from './customer.repository';
 import { QueryHook } from 'src/core/type/query';
+import { QueryCustomertDto } from './dto/filter-customer.dto';
 
 @Injectable()
 export class CustomersService extends BaseService<Customer, CustomerRepository> {
@@ -14,6 +15,32 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
 
   protected enable_trash = true;
   
+  async findPaginate(
+    options: QueryCustomertDto,
+  ){
+    let where = {}
+    if (options.q !== '') {
+      where = [
+        {
+          fullName: `LIKE %${options.q}%`
+        },
+        {
+          email: `LIKE %${options.q}%`
+        },
+        {
+          code: `LIKE %${options.q}%`
+        }
+      ]
+    }
+    if (options.status) {
+      where = {
+        ...where,
+        status: options.status
+      }
+    }
+    return this.repository.findPaginate(options, where);
+  }
+
   async detail(customerId: string, trashed?: boolean, callback?: QueryHook<Customer>): Promise<Customer> {
     try {
       return await this.customersRepository.findOne({

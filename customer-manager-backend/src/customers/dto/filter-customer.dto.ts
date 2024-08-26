@@ -37,4 +37,8 @@ export class QueryCustomertDto implements PaginateDto, TrashedDto {
     @IsOptional()
     @ApiProperty()
     q?: string;
+
+    @IsOptional()
+    @ApiProperty()
+    status?: string;
 }
