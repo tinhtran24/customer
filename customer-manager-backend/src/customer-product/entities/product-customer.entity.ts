@@ -37,6 +37,9 @@ export class CustomerProduct extends BaseEntity {
   @Column({ name: 'ship_method' })
   ShipMethod: string;
 
+  @Column({ name: 'street' })
+  street: string;
+
   @Column({ name: 'shipping_ward_code' })
   shippingWardCode: string;
 
