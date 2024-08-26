@@ -94,6 +94,7 @@ export type User = {
   name: string;
   email: string;
   roleId: number;
+  role: string
 };
 
 export type UserDataType = {

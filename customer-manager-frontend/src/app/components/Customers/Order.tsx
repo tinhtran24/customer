@@ -3,6 +3,7 @@ import { createCustomerProduct } from "@/app/lib/actions";
 import { NewCustomerProduct, Product } from "@/app/lib/definitions";
 import { Form, Input, Select, Button, message } from "antd";
 import { useEffect, useState } from "react";
+import { useAuthContext } from "@/app/components/auth";
 const { Option } = Select;
 
 interface OrderProductProps {
@@ -16,15 +17,7 @@ export default function OrderProduct({
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState("");
-
-  useEffect(() => {
-    fetch("/api/getUser")
-      .then((res) => res.json())
-      .then((data) => {
-        setCurrentUserId(data.user.sub);
-      });
-  }, []);
+  const { currentUser } = useAuthContext()
 
   const [form] = Form.useForm();
   const handleFinish = async (values: any) => {
@@ -32,7 +25,7 @@ export default function OrderProduct({
     try {
       const body: NewCustomerProduct = {
         productId: values.product,
-        createdUserId: currentUserId,
+        createdUserId: currentUser?.id || '',
         customerId: customerId,
         quality: quantity,
       };

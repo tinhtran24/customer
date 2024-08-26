@@ -99,7 +99,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
       </div> */}
       <div style={styles.parent}>
         <Item title="Nguồn" value={customer.source} />
-        <Item title="Người phụ trách" value={customer.source} />
+        <Item title="Người phụ trách" value={customer.userInCharge.name} />
         <Item title="Ngày tạo" value={formatDate(customer.createdAt)} />
         <Item title="Lần sửa gần nhất" value={formatDate(customer.updatedAt)} />
         <Item title="Đã mua" value={customer.totalOrder.toString()} />

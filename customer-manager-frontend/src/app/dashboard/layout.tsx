@@ -6,6 +6,7 @@ import DashboardMenu from "@/app/components/Dashboard/Menu";
 import User from "@/app/components/Users/UserName";
 import Logout from "@/app/components/Users/Logout";
 import Link from "next/link";
+import { useAuthContext } from "@/app/components/auth";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -18,20 +19,7 @@ export default function DashboardLayout({
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const [user, setUser] = useState({});
-  const [isUserFetching, setIsUserFetching] = useState(true);
-
-  useEffect(() => {
-    setIsUserFetching(false);
-  }, [user]);
-
-  useEffect(() => {
-    fetch("/api/getUser")
-      .then((res) => res.json())
-      .then((data) => {
-        setUser(data?.user);
-      });
-  }, []);
+  const {  currentUser } = useAuthContext();
 
   return (
     <Layout>
@@ -73,7 +61,7 @@ export default function DashboardLayout({
         >
           <Space size={"large"}>
             <Logout />
-            {isUserFetching ? <Spin /> : <User user={user} />}
+            <User user={currentUser} />
           </Space>
         </Header>
 

@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   title: "Login",
 };
 
-export default function LoginPage() {
-  return (
+const LoginPage = () => {
+    return (
     <main>
       <AntdRegistry>
         <main>
@@ -43,3 +43,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+export default LoginPage;

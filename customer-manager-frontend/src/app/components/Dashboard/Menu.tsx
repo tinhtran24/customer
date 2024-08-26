@@ -9,6 +9,7 @@ import { Menu } from "antd";
 import type { GetProp, MenuProps } from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useLayoutEffect } from "react";
+import { useAuthContext } from "@/app/components/auth";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
 
@@ -20,6 +21,7 @@ export default function DashboardMenu() {
   const [current, setCurrent] = useState(
     pathname === "/" || pathname === "" ? "/dashboard" : pathname
   );
+  const { currentUser, setCurrentUser } = useAuthContext()
 
   useEffect(() => {
     if (pathname) {
@@ -27,13 +29,14 @@ export default function DashboardMenu() {
         setCurrent(pathname);
       }
     }
-  }, [pathname, current]);
+    if (currentUser) setUserRole(currentUser?.role)
+  }, [pathname, current, currentUser]);
 
   useLayoutEffect(() => {
     fetch("/api/getUser")
       .then((res) => res.json())
       .then((data) => {
-        setUserRole(data?.user?.role);
+        setCurrentUser(data?.user);
       });
   }, []);
 

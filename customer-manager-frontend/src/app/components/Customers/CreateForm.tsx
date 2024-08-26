@@ -18,6 +18,7 @@ import { CreateCustomerFormSchema } from "@/app/lib/validations";
 import { createCustomer, fetchUsers } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { useAuthContext } from "@/app/components/auth";
 const { Option } = Select;
 
 export default async function CreateCustomerForm({
@@ -33,13 +34,10 @@ export default async function CreateCustomerForm({
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const router = useRouter();
 
-  const getUsers = async () => {
-    var results = await fetchUsers();
-    setUSers(results);
-  };
+  const { currentUser } = useAuthContext();
+
 
   useEffect(() => {
-    getUsers();
     if (!provinces) setIsProvincesLoading(true);
   }, [provinces]);
 

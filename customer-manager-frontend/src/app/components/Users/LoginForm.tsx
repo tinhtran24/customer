@@ -6,8 +6,11 @@ import { Button, Checkbox, Form, Input, Flex, message } from "antd";
 import { LoginPayload } from "@/app/lib/definitions";
 import { login } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/app/components/auth";
 
 const LoginForm: React.FC = () => {
+  const { setCurrentUser, setIsSignedIn } = useAuthContext();
+
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const router = useRouter();
 
@@ -19,9 +22,7 @@ const LoginForm: React.FC = () => {
       password: values.password,
       remember: values.remember,
     };
-
     const result = await login(payload);
-
     setIsFormSubmitting(false);
 
     if (result.statusCode) {

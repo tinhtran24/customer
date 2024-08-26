@@ -141,12 +141,11 @@ export abstract class BaseService<
      */
     async update(id: string, data: any): Promise<E> {
         try {
-            const item = this.repository.findOneOrFail({
+            await this.repository.update(id, data);
+            return this.repository.findOneOrFail({
                 where: { id } as any,
                 withDeleted: this.enable_trash ? true : undefined,
             });
-            const updatedData = Object.assign(item, data);
-            return this.repository.save(updatedData, { reload: true })
         } catch {
             throw new ForbiddenException(`Can not to update ${this.repository.getQBName()}!`);
         }

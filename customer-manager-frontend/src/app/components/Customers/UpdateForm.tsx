@@ -48,12 +48,13 @@ export default async function UpdateCustomerForm({
   useEffect(() => {
     getUsers();
     if (!provinces) setIsProvincesLoading(true);
-  }, [provinces]);
+    if (!customer) setIsProvincesLoading(true);
+  }, [provinces, customer]);
 
   useEffect(() => {
     try {
-    const contacts = customer.contacts.map((contact:any) => JSON.parse(contact));
-    
+    const contacts = customer.contacts?.map((contact:any) => JSON.parse(contact)) || [];
+
     form.setFieldsValue({
       fullName: customer.fullName,
       code: customer.code,
@@ -61,9 +62,10 @@ export default async function UpdateCustomerForm({
       callCountNumber: customer.callCountNumber,
       totalOrder: customer.totalOrder,
       street: customer.street,
-      // province: customer.province,
-      // district: customer.district,
-      // ward: customer.ward,
+      wardCode: customer.wardCode,
+      province: customer.ward?.district?.province?.name,
+      district: customer.ward?.district?.name,
+      ward: customer.ward?.name,
       status: customer.status,
       group: customer.group,
       source: customer.source,
@@ -71,8 +73,8 @@ export default async function UpdateCustomerForm({
       contacts: contacts,
     });
     }
-    catch {
-      
+    catch (e){
+      throw e
     }
   }, [customer, form]);
 
@@ -222,7 +224,7 @@ export default async function UpdateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              {/* <Form.Item label="Tỉnh/TP" required>
+              <Form.Item label="Tỉnh/TP" required>
                 <Form.Item name="province" noStyle rules={[rule]}>
                   <Select
                     loading={isProvincesLoading}
@@ -262,7 +264,7 @@ export default async function UpdateCustomerForm({
                     options={wardOptions}
                   />
                 </Form.Item>
-              </Form.Item> */}
+              </Form.Item>
 
               <Form.Item
                 name="status"
