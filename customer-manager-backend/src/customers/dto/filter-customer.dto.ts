@@ -5,8 +5,7 @@ import { IsBoolean, IsEnum, IsNumber, IsOptional, Min } from "class-validator";
 import { PaginateDto } from "src/core/base/base.dto";
 import { DtoValidation } from "src/core/decorator/validation.decorator";
 import { QueryTrashMode, TrashedDto } from "src/core/type/query";
-import { FindManyOptions, FindOneOptions, FindOptions, ILike } from "typeorm";
-import Customer from "../entities/customer.entity";
+import { ENUM_STATUS_TYPE } from "../entities/customer.entity";
 
 @Injectable()
 @DtoValidation({ type: 'query' })
@@ -40,5 +39,5 @@ export class QueryCustomertDto implements PaginateDto, TrashedDto {
 
     @IsOptional()
     @ApiProperty()
-    status?: string;
+    status?: ENUM_STATUS_TYPE;
 }

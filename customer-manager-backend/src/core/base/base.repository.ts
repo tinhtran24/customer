@@ -1,11 +1,8 @@
 import { isNil } from 'lodash';
-import { FindManyOptions, FindOneOptions, FindOptionsWhere, ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
+import { FindOptionsWhere, ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { OrderQueryType, OrderType } from '../type/query';
 import { getOrderByQuery } from '../pagination/paginate';
 import { PaginateDto } from './base.dto';
-import { Pagination } from 'nestjs-typeorm-paginate';
-import { isThisSecond } from 'date-fns';
-import { BaseEntity } from './base.entity';
 import { ServiceUnavailableException } from '@nestjs/common';
 
 

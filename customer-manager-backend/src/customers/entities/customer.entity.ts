@@ -48,6 +48,7 @@ class Customer extends BaseEntity {
 
   @Column({
     name: 'status',
+    type: 'enum',
     enum: ENUM_STATUS_TYPE,
     default: ENUM_STATUS_TYPE.NEW_CUSTOMERS,
   })

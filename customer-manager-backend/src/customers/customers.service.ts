@@ -6,6 +6,7 @@ import { BaseService } from 'src/core/base/base.service';
 import { CustomerRepository } from './customer.repository';
 import { QueryHook } from 'src/core/type/query';
 import { QueryCustomertDto } from './dto/filter-customer.dto';
+import { ILike } from 'typeorm';
 
 @Injectable()
 export class CustomersService extends BaseService<Customer, CustomerRepository> {
@@ -18,25 +19,19 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
   async findPaginate(
     options: QueryCustomertDto,
   ){
-    let where = {}
+    let where;
     if (options.q !== '') {
       where = [
         {
-          fullName: `LIKE %${options.q}%`
+          fullName: ILike(`%${options.q}%`),
         },
         {
-          email: `LIKE %${options.q}%`
-        },
-        {
-          code: `LIKE %${options.q}%`
+          code: ILike(`%${options.q}%`)
         }
       ]
     }
     if (options.status) {
-      where = {
-        ...where,
-        status: options.status
-      }
+      where.status = options.status
     }
     return this.repository.findPaginate(options, where);
   }
