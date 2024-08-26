@@ -143,6 +143,8 @@ export type Appointment = {
   customerId: string; // update later
   userInChargeId: string;
   customerGroup: string;
+  userInCharge: User;
+  customer: Customer;
 };
 
 export type NewAppointment = {
