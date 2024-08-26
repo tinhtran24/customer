@@ -124,11 +124,13 @@ export default async function AppointmentTable({
     },
     {
       title: "Khách hàng",
-      dataIndex: "customerId",
+      dataIndex: "customer",
       width: "20%",
-      render: (value: string) => (
-        <Tooltip title={value}>
-          {value.length > 30 ? `${value.slice(0, 30)}...` : value}
+      render: (customer: Customer) => (
+        <Tooltip title={customer.fullName}>
+          {customer.fullName.length > 30
+            ? `${customer.fullName.slice(0, 30)}...`
+            : customer.fullName}
         </Tooltip>
       ),
     },
@@ -139,11 +141,13 @@ export default async function AppointmentTable({
     },
     {
       title: "Người phụ trách",
-      dataIndex: "userInChargeId",
+      dataIndex: "userInCharge",
       width: "20%",
-      render: (value: string) => (
-        <Tooltip title={value}>
-          {value.length > 30 ? `${value.slice(0, 30)}...` : value}
+      render: (userInCharge: User) => (
+        <Tooltip title={userInCharge.name}>
+          {userInCharge.name.length > 30
+            ? `${userInCharge.name.slice(0, 30)}...`
+            : userInCharge.name}
         </Tooltip>
       ),
     },
