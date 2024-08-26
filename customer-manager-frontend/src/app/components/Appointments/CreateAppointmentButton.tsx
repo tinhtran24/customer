@@ -9,7 +9,7 @@ import { Customer, Pagination, User } from "@/app/lib/definitions";
 interface CreateAppointmentProps {
   refresh: any;
 }
-export async function CreateAppointment({ refresh }: CreateAppointmentProps) {
+export function CreateAppointment({ refresh }: CreateAppointmentProps) {
   const [showCreate, setShowCreate] = useState(false);
   const [users, setUsers] = useState<User[] | null>(null);
   const [customersData, setCustomersData] =

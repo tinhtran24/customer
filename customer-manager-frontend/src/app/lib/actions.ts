@@ -282,7 +282,7 @@ export async function fetchUsers() {
 export async function fetchAllProducts() {
   try {
     const accessToken = cookies().get("accessToken");
-    const url = new URL(`${process.env.BACKEND_URL}/Product`);
+    const url = new URL(`${process.env.BACKEND_URL}/product?page=1&limit=9999999999`);
 
     const res = await fetch(url.toString(), {
       cache: "no-store",
@@ -376,6 +376,33 @@ export async function deleteProduct(id: string) {
 }
 
 //#region Customer product
+export async function fetchCustomerProducts(customerId: string) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/customer-product/customer/` + customerId
+    );
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    const data = await res.json();
+    return data.items || [];
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+
 export async function createCustomerProduct(body: NewCustomerProduct) {
   const accessToken = cookies().get("accessToken");
   try {

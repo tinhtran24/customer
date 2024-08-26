@@ -18,8 +18,6 @@ import { Categories } from "./Categories";
 import SearchCustomers from "./Search";
 import { deleteCustomer, fetchCustomers } from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
-import { log } from "console";
-import router from "next/router";
 import { FiEdit3 } from "react-icons/fi";
 import { DownOutlined } from "@ant-design/icons";
 
@@ -28,7 +26,7 @@ export default function CustomerTable() {
   const [data, setData] = useState<Pagination<Customer>>();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
 

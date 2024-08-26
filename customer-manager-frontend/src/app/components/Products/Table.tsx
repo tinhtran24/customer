@@ -172,7 +172,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
     <>
       <Table
         loading={isLoading}
-        pagination={{ pageSize: 15 }}
+        pagination={{ pageSize: 10 }}
         locale={{
           emptyText: "Không tìm thấy sản phẩm",
         }}

@@ -33,7 +33,7 @@ export async function fetchAllCustomers(queryParams: Record<string, string>) {
     }
 
     const data = await res.json();
-    return data.items || []; 
+    return data.items || [];
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];

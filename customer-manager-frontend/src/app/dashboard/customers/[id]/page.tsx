@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import { shantell } from "@/app/utils/fontSetting";
 import { CustomersInfo } from "@/app/components/Customers/CustomerInfo";
 import { TabsCustomer } from "@/app/components/Customers/TabsCustomer";
-import { fetchAllProducts } from "@/app/lib/actions";
+import { fetchAllProducts, fetchCustomerProducts } from "@/app/lib/actions";
 
 export default async function DetailCustomerPage({
   params,
@@ -15,10 +15,11 @@ export default async function DetailCustomerPage({
   params: { id: string };
 }) {
   const id = params.id;
-  const [customer, products, provinces] = await Promise.all([
+  const [customer, products, provinces, customerProducts] = await Promise.all([
     fetchCustomerById(id),
     fetchAllProducts(),
     fetchAllProvinces(),
+    fetchCustomerProducts(id),
   ]);
 
   if (!customer) {
@@ -76,6 +77,7 @@ export default async function DetailCustomerPage({
                 products={products}
                 customerId={id}
                 provinces={provinces}
+                customerProducts={customerProducts}
               />
             </div>
           </div>

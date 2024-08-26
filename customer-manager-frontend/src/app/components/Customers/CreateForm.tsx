@@ -21,7 +21,7 @@ import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAuthContext } from "@/app/components/auth";
 const { Option } = Select;
 
-export default async function CreateCustomerForm({
+export default function CreateCustomerForm({
   provinces,
 }: {
   provinces: any[];
@@ -36,8 +36,13 @@ export default async function CreateCustomerForm({
 
   const { currentUser } = useAuthContext();
 
+  const getUsers = async () => {
+    var results = await fetchUsers();
+    setUSers(results);
+  };
 
   useEffect(() => {
+    getUsers();
     if (!provinces) setIsProvincesLoading(true);
   }, [provinces]);
 
