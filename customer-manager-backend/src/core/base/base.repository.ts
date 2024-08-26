@@ -62,13 +62,15 @@ export abstract class BaseRepository<E extends ObjectLiteral> extends Repository
     }
 
     async findPaginate(
-        paginate: PaginateDto
+        paginate: PaginateDto,
+        where?: any
     ) {
         const page = Number(paginate?.page || 1) || 1;
         const perPage = Number(paginate?.limit || 10) || 10;
     
         const skip = page > 0 ? perPage * (page - 1) : 0;
         const [data, total] = await this.findAndCount({
+            where,
             relations: this.relations,
             take: perPage,
             skip

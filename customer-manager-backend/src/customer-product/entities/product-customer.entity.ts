@@ -4,11 +4,13 @@ import {
     JoinColumn,
     Index,
     ManyToOne,
+    OneToOne,
 } from 'typeorm';
 import { BaseEntity } from "../../core/base/base.entity";
 import Customer from 'src/customers/entities/customer.entity';
 import User from 'src/users/entities/user.entity';
 import { Product } from 'src/products/entities/product.entity';
+import Ward from 'src/addresses/entities/ward.entity';
 
 @Entity('customer_product')
 export class CustomerProduct extends BaseEntity {
@@ -28,6 +30,19 @@ export class CustomerProduct extends BaseEntity {
 
   @Column({ name: 'price' })
   price: number;
+
+  @Column({ name: 'payment_method' })
+  PaymentMethod: string;
+
+  @Column({ name: 'ship_method' })
+  ShipMethod: string;
+
+  @Column({ name: 'shipping_ward_code' })
+  shippingWardCode: string;
+
+  @OneToOne(() => Ward, { onDelete: "CASCADE" })
+  @JoinColumn({ name: 'shipping_ward_code' })
+  shippingWard: Ward;
 
   @Index()
   @Column({ name: 'created_user' })

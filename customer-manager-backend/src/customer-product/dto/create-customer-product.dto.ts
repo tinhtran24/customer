@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsUUID, IsString } from 'class-validator';
 
 export class CreateCustomerProductDto {
     @IsUUID()
@@ -16,6 +16,22 @@ export class CreateCustomerProductDto {
     @IsNumber()
     @IsNotEmpty()
     quality: number
+
+    @IsNumber()
+    @IsNotEmpty()
+    price: number
+
+    @IsString()
+    @IsNotEmpty()
+    PaymentMethod: string;
+  
+    @IsString()
+    @IsNotEmpty()
+    ShipMethod: string;
+  
+    @IsString()
+    @IsNotEmpty()
+    shippingWardCode: string;
 }
 
 export class UpdateCustomerProductDto {
@@ -29,7 +45,23 @@ export class UpdateCustomerProductDto {
 
     @IsNumber()
     @IsNotEmpty()
+    price: number
+
+    @IsNumber()
+    @IsNotEmpty()
     quality: number
+
+    @IsString()
+    @IsNotEmpty()
+    PaymentMethod: string;
+  
+    @IsString()
+    @IsNotEmpty()
+    ShipMethod: string;
+  
+    @IsString()
+    @IsNotEmpty()
+    shippingWardCode: string;
 
     @IsUUID()
     @IsNotEmpty()
