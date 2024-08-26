@@ -8,4 +8,7 @@ export class TaskRepository extends BaseRepository<Task> {
     protected qbName = 'Appoinment';
 
     protected orderBy = { name: 'updatedAt', order: OrderType.ASC };
+
+    protected relations = ['appoinment'];
+
 }

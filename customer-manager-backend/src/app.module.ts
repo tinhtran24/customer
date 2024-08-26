@@ -16,6 +16,7 @@ import { ProductModule } from "./products/product.module";
 import { AppoinmentModule } from './appointment/appoinment.module';
 import { TaskModule } from './task/task.module';
 import { CustomerProductModule } from './customer-product/customer-product.module';
+import { NoteModule } from './note/note.module';
 
 @Module({
   imports: [
@@ -58,7 +59,8 @@ import { CustomerProductModule } from './customer-product/customer-product.modul
     ProductModule,
     AppoinmentModule,
     TaskModule,
-    CustomerProductModule
+    CustomerProductModule,
+    NoteModule
   ],
 
   controllers: [AppController],

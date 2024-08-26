@@ -4,7 +4,6 @@ import {
     ReferenceObject,
     SchemaObject
 } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
-import { FilterQueries } from '../helper/filter-query.decorator.util';
 
 export function OkResponse($ref: any, isPagination = false, data?: SchemaObject | ReferenceObject) {
     const properties: Record<string, SchemaObject | ReferenceObject> = {
