@@ -2,10 +2,9 @@ import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/core/base/base.service';
 import { CustomerRepository } from './customer.repository';
+import { QueryHook } from 'src/core/type/query';
 
 @Injectable()
 export class CustomersService extends BaseService<Customer, CustomerRepository> {
@@ -15,13 +14,13 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
 
   protected enable_trash = true;
   
-  async getCustomerById(customerId: string) {
+  async detail(customerId: string, trashed?: boolean, callback?: QueryHook<Customer>): Promise<Customer> {
     try {
       return await this.customersRepository.findOne({
         where: {
           id: customerId,
         },
-        relations: ['ward.district.province'],
+        relations: ['ward.district.province', 'userInCharge'],
       });
     } catch (error) {
       throw new ServiceUnavailableException();

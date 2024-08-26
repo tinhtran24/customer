@@ -4,6 +4,7 @@ import {
     EntityManager,
     EntityTarget,
     FindOptionsUtils,
+    FindOptionsWhere,
     ObjectLiteral,
     QueryRunner,
     SelectQueryBuilder,
@@ -13,6 +14,7 @@ import {
 import { OrderQueryType, OrderType, TreeQueryParams } from '../type/query';
 import { getOrderByQuery } from '../pagination/paginate';
 import { PaginateDto } from './base.dto';
+import { ServiceUnavailableException } from '@nestjs/common';
 
 export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<E> {
     /**
@@ -189,6 +191,16 @@ export class BaseTreeRepository<E extends ObjectLiteral> extends TreeRepository<
             relationMaps,
         );
         return entity;
+    }
+
+    async findById(where: FindOptionsWhere<E> | FindOptionsWhere<E>[]) {
+        try {
+            return await this.findOne({
+              where,
+            });
+          } catch (error) {
+            throw new ServiceUnavailableException();
+          }
     }
 
     /**
