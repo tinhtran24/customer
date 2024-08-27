@@ -157,7 +157,6 @@ export type NewCustomerProduct = {
   street: string;
   PaymentMethod: string;
   ShipMethod: string;
-  shippingWardCode: string;
 };
 //#endregion
 
