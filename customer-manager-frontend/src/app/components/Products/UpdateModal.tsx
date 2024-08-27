@@ -77,29 +77,7 @@ export const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
         >
           <Input.TextArea rows={4} placeholder="Mô tả ..." />
         </Form.Item>
-
-        <Form.Item
-          name="price"
-          label="Giá (VNĐ)"
-          rules={[
-            { required: true, message: "Vui lòng thêm giá" },
-            {
-              type: "number",
-              min: 0,
-              message: "Giá sản phẩm là kiểu dữ liệu số",
-            },
-          ]}
-        >
-          <InputNumber
-            min={0}
-            style={{ width: "100%" }}
-            placeholder="Giá sản phẩm ..."
-            formatter={(value) =>
-              `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
-            parser={(value) => value?.replace(/\ VNĐ\s?|(,*)/g, "") as any}
-          />
-        </Form.Item>
+        
       </Form>
     </Modal>
   );

@@ -29,6 +29,7 @@ export default function CustomerTable() {
   const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [category, setCategory] = useState("");
 
   const {
     token: { colorPrimary },
@@ -40,7 +41,8 @@ export default function CustomerTable() {
       await fetchCustomers({
         page: currentPage.toString(),
         limit: pageSize.toString(),
-        q: p || "",
+        q: p ? p : "",
+        status: p ? "" : category,
       })
     );
     setIsLoading(false);
@@ -50,7 +52,7 @@ export default function CustomerTable() {
     getData();
     if (!data) setIsLoading(true);
     else setIsLoading(false);
-  }, [currentPage]);
+  }, [currentPage, category]);
 
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
@@ -191,7 +193,7 @@ export default function CustomerTable() {
     {
       title: "Người phụ trách",
       dataIndex: "userInCharge",
-      render: (userInCharge) => userInCharge.name
+      render: (userInCharge) => userInCharge.name,
     },
     {
       title: "Ngày tạo",
@@ -236,10 +238,19 @@ export default function CustomerTable() {
     <>
       <SearchCustomers
         text={searchText}
-        onChange={(e: any) => setSearchText(e.target.value)}
+        onChange={(e: any) => {
+          setSearchText(e.target.value);
+          setCategory("");
+        }}
         handleSearch={() => getData(searchText)}
       />
-      <Categories />
+      <Categories
+        setCategory={(e: string) => {
+          setCategory(e);
+          setSearchText("");
+          setData(undefined);
+        }}
+      />
       {isLoading || !data ? (
         <Loading />
       ) : (

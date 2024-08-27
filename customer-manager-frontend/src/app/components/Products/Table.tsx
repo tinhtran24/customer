@@ -87,7 +87,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
     {
       title: "Tên sản phẩm",
       dataIndex: "title",
-      width: "20%",
+      width: "25%",
       render: (value: string) => (
         <Tooltip title={value}>
           {value.length > 30 ? `${value.slice(0, 30)}...` : value}
@@ -97,18 +97,12 @@ export default function ProductTable({ products }: { products: Product[] }) {
     {
       title: "Mô tả",
       dataIndex: "description",
-      width: "25%",
+      width: "35%",
       render: (value: string) => (
         <Tooltip title={value}>
           {value.length > 30 ? `${value.slice(0, 30)}...` : value}
         </Tooltip>
       ),
-    },
-    {
-      title: "Giá",
-      dataIndex: "price",
-      width: "15%",
-      render: (price) => formatPrice(price),
     },
     {
       title: "Ngày tạo",
