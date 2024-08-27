@@ -29,7 +29,7 @@ const LoginPage = () => {
               <Card
                 bordered={false}
                 style={{
-                  minWidth: 300,
+                  minWidth: 450,
                   justifyContent: "center",
                   boxShadow: "5px 5px 5px #8E3E63",
                 }}
