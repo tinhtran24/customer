@@ -43,7 +43,7 @@ export class CustomerProduct extends BaseEntity {
   @Column({ name: 'shipping_ward_code' })
   shippingWardCode: string;
 
-  @OneToOne(() => Ward, { onDelete: "CASCADE" })
+  @ManyToOne(() => Ward)
   @JoinColumn({ name: 'shipping_ward_code' })
   shippingWard: Ward;
 
