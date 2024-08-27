@@ -6,7 +6,6 @@ import {
   NewCustomerProduct,
   NewProduct,
   NewUser,
-  UpdateCustomer,
   UpdateUser,
 } from "@/app/lib/definitions";
 import { revalidatePath } from "next/cache";

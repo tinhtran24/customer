@@ -125,6 +125,31 @@ export default function CustomerTable() {
       ),
     },
     {
+      title: "SL đặt",
+      dataIndex: "totalOrder",
+    },
+    {
+      title: "Nam/Nữ",
+      dataIndex: "gender",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+    },
+    {
+      title: "Nhóm KH",
+      dataIndex: "group",
+    },
+    {
+      title: "Nguồn KH",
+      dataIndex: "source",
+    },
+    {
+      title: "Người phụ trách",
+      dataIndex: "userInCharge",
+      render: (userInCharge) => userInCharge.name,
+    },
+    {
       title: "Liên hệ",
       dataIndex: "contacts",
       render: (contacts: any[]) => {
@@ -146,54 +171,6 @@ export default function CustomerTable() {
           return null;
         }
       },
-    },
-    {
-      title: "SL gọi",
-      dataIndex: "callCountNumber",
-    },
-    {
-      title: "SL đặt",
-      dataIndex: "totalOrder",
-    },
-    {
-      title: "Nam/Nữ",
-      dataIndex: "gender",
-    },
-    {
-      title: "Địa chỉ",
-      render: (_: any, record: Customer) => {
-        const { street, ward } = record;
-        const wardName = ward ? ward.fullName : "";
-        const districtName =
-          ward && ward.district ? ward.district.fullName : "";
-        const provinceName =
-          ward && ward.district && ward.district.province
-            ? ward.district.province.fullName
-            : "";
-        const address = `${street}, ${wardName}, ${districtName}, ${provinceName}`;
-        return (
-          <Tooltip title={address}>
-            <span>{address.substring(0, 12) + "..."}</span>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-    },
-    {
-      title: "Nhóm KH",
-      dataIndex: "group",
-    },
-    {
-      title: "Nguồn KH",
-      dataIndex: "source",
-    },
-    {
-      title: "Người phụ trách",
-      dataIndex: "userInCharge",
-      render: (userInCharge) => userInCharge.name,
     },
     {
       title: "Ngày tạo",

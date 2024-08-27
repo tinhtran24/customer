@@ -5,7 +5,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense } from "react";
 import { shantell } from "@/app/utils/fontSetting";
 
-export default async function CustomerPage() {
+export default function CustomerPage() {
 
   return (
     <main>
