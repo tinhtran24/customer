@@ -38,9 +38,9 @@ export default function RootLayout({
 
                 Menu: {
                   itemBg: "#f3f6fd",
-                  itemHoverBg: "#FFEFEF",
+                  itemHoverBg: "#e3ebf8",
                   itemSelectedBg: "#0d2f5f",
-                  itemActiveBg: "#CA8787",
+                  itemActiveBg: "#f3ffff",
                   itemSelectedColor: "white",
                   iconSize: 20,
                   fontSize: 16,
