@@ -10,7 +10,7 @@ export default function User({ user }: { user: any }) {
     >
       {user?.name}
       <Avatar
-        style={{ backgroundColor: "#8E3E63", margin: 8 }}
+        style={{ backgroundColor: "#0d2f5f", margin: 8 }}
         icon={<UserOutlined />}
       />
     </Link>

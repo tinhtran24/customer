@@ -82,21 +82,6 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
   return (
     <div>
       <h3>Thông tin khách hàng</h3>
-      {/* <div style={styles.parent}>
-        <div>{customer.fullName}</div>
-        <div style={{ color: "#8e3e63", fontWeight: "600" }}>
-          <PhoneFilled /> {"123"}
-        </div>
-        <div style={{ color: "#8e3e63" }}>
-          <MailOutlined /> {}
-        </div>
-        <div style={{ color: "#8e3e63" }}>
-          <FaBirthdayCake /> {}
-        </div>
-        <div style={{ color: "#8e3e63" }}>
-          <FaBookmark /> {}
-        </div>
-      </div> */}
       <div style={styles.parent}>
         <Item title="Nguồn" value={customer.source} />
         <Item title="Người phụ trách" value={customer.userInCharge.name} />

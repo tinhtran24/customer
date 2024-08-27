@@ -16,7 +16,7 @@ export default async function AdminPage() {
             <h2
               className={shantell.className}
               style={{
-                color: "#8E3E63",
+                color: "#0d2f5f",
                 alignItems: "end",
                 padding: 0,
                 margin: 0,

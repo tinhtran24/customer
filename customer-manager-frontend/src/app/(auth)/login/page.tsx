@@ -31,7 +31,7 @@ const LoginPage = () => {
                 style={{
                   minWidth: 450,
                   justifyContent: "center",
-                  boxShadow: "5px 5px 5px #8E3E63",
+                  boxShadow: "5px 5px 5px #0d2f5f",
                 }}
               >
                 <LoginForm />

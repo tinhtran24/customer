@@ -43,7 +43,7 @@ const LoginForm: React.FC = () => {
       <Flex justify="center">
         <h2
           style={{
-            color: "#8E3E63",
+            color: "#0d2f5f",
             margin: "20px 0px 50px 0px",
           }}
         >

@@ -27,19 +27,19 @@ export default function RootLayout({
             theme={{
               token: {
                 // Seed Token
-                colorPrimary: "#8E3E63",
+                colorPrimary: "#0d2f5f",
                 padding: 0,
                 margin: 0,
               },
               components: {
                 Layout: {
-                  siderBg: "#6e87b7",
+                  siderBg: "#f3f6fd",
                 },
 
                 Menu: {
-                  itemBg: "#6e87b7",
+                  itemBg: "#f3f6fd",
                   itemHoverBg: "#FFEFEF",
-                  itemSelectedBg: "#8e3e63",
+                  itemSelectedBg: "#0d2f5f",
                   itemActiveBg: "#CA8787",
                   itemSelectedColor: "white",
                   iconSize: 20,
