@@ -4,7 +4,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense, useEffect, useState } from "react";
 import { shantell } from "@/app/utils/fontSetting";
 import AppointmentTable from "@/app/components/Appointments/Table";
-import { CreateAppointment } from "@/app/components/Appointments/CreateAppointmentButton";
+// import { CreateAppointment } from "@/app/components/Appointments/CreateAppointmentButton";
 import { fetchAllAppointments } from "@/app/lib/actions";
 import { Appointment, Pagination } from "@/app/lib/definitions";
 
@@ -55,9 +55,9 @@ export default function AppointmentPage() {
             >
               QUẢN LÝ LỊCH HẸN
             </h2>
-            <Suspense fallback={<Spin size="large" />}>
+            {/* <Suspense fallback={<Spin size="large" />}>
               <CreateAppointment refresh={getData} />
-            </Suspense>
+            </Suspense> */}
           </Flex>
           <Divider style={{ margin: 0 }} />
 

@@ -70,13 +70,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
   }, [products]);
   //#endregion
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  };
-
   const columns: TableColumnsType<Product> = [
     {
       title: "#",

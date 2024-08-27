@@ -5,6 +5,8 @@ import { Customer, CustomerProduct, Product } from "@/app/lib/definitions";
 import type { TabsProps } from "antd/es/tabs";
 import OrderProduct from "./Order";
 import { History } from "./History";
+import { CreateCustomerAppointment } from "./CustomerAppointment";
+import DiscussForm from "./DiscussForm";
 
 interface CustomTabsProps {
   customer: Customer;
@@ -19,7 +21,7 @@ export function TabsCustomer({
   products,
   customerId,
   provinces,
-  customerProducts
+  customerProducts,
 }: CustomTabsProps) {
   const items: TabsProps["items"] = [
     {
@@ -34,50 +36,22 @@ export function TabsCustomer({
       ),
     },
     {
-      label: "Lịch sử",
+      label: "Lịch sử mua",
       key: "2",
       children: <History customerProducts={customerProducts} />,
     },
     {
       label: "Trao đổi",
       key: "3",
-      children: (
-        <div>
-          <textarea
-            style={{
-              width: "100%",
-              height: "200px",
-              padding: "1rem",
-              fontSize: "16px",
-              resize: "vertical",
-              borderRadius: "12px",
-            }}
-            placeholder="Nhập nội dung ..."
-          />
-          <Button
-            style={{
-              marginTop: "1rem",
-              display: "flex",
-              marginLeft: "auto",
-              fontSize: "17px",
-              height: "39px",
-              background: "lightgray",
-              width: "100px",
-              justifyContent: "center",
-              border: "1px solid gray",
-              fontWeight: "600",
-            }}
-          >
-            Gửi
-          </Button>
-        </div>
-      ),
+      children: <DiscussForm customerId={customerId} />,
     },
     {
       label: "Lịch hẹn",
       key: "4",
-      children: `Content of Tab Pane2`,
+      children: <CreateCustomerAppointment customerId={customerId} />,
     },
   ];
-  return <Tabs defaultActiveKey="1" items={items} />;
+  return (
+    <Tabs defaultActiveKey="1" items={items} style={{ height: "100vh" }} />
+  );
 }
