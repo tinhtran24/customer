@@ -56,6 +56,11 @@ export default function DashboardMenu() {
       label: "Lịch hẹn",
       icon:<LaptopOutlined />,
     },
+    {
+      key: "/dashboard/tasks",
+      label: "Công việc",
+      icon:<LaptopOutlined />,
+    },
     userRole === "admin"
       ? {
           key: "/dashboard/admin",

@@ -114,6 +114,22 @@ export type UpdateUser = {
   name: string;
 };
 
+export type CreateCustomerAppointmentBody = {
+  createScheduleDto: {
+    customerId: string;
+    customerGroup: string;
+  };
+  createTaskDto: [
+    {
+      code: string;
+      label: string;
+      userInChargeId: string;
+      description: string;
+      date: string;
+    }
+  ];
+};
+
 //#region product
 export type Product = {
   id: string;
@@ -178,6 +194,31 @@ export type NewAppointment = {
   userInChargeId: string;
   customerGroup: string;
 };
+//#endregion
+
+//#region Task
+export type Task = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  appoinmentId: string;
+  code: string;
+  label: string;
+  description: string;
+  date: string;
+  userInChargeId: string;
+  appoinment: Appointment;
+  userInCharge: User;
+};
+//#endregion
+
+//#region Note
+export type CreateNote = {
+  customerId: string;
+  description: string;
+};
+
 //#endregion
 
 export type PaginationMeta = {

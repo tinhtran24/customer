@@ -1,5 +1,7 @@
 "use server";
 import {
+  CreateCustomerAppointmentBody,
+  CreateNote,
   LoginPayload,
   NewAppointment,
   NewCustomer,
@@ -277,11 +279,39 @@ export async function fetchUsers() {
   }
 }
 
+export async function createAppointmentForCustomer(
+  body: CreateCustomerAppointmentBody
+) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/appoinment/task";
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/products");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không tạo được sản phẩm mới",
+    };
+  }
+}
+
 //#region Product
 export async function fetchAllProducts() {
   try {
     const accessToken = cookies().get("accessToken");
-    const url = new URL(`${process.env.BACKEND_URL}/product?page=1&limit=9999999999`);
+    const url = new URL(
+      `${process.env.BACKEND_URL}/product?page=1&limit=9999999999`
+    );
 
     const res = await fetch(url.toString(), {
       cache: "no-store",
@@ -507,7 +537,6 @@ export async function updateAppointment(id: string, body: NewAppointment) {
   }
 }
 
-
 export async function deleteAppointment(id: string) {
   try {
     const accessToken = await cookies().get("accessToken");
@@ -530,4 +559,61 @@ export async function deleteAppointment(id: string) {
   }
 }
 
+//#endregion
+
+//#region Task
+export async function fetchAllTask() {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/task?page=1&limit=9999999999`
+    );
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    // Parse response và lấy items
+    const data = await res.json();
+    return data.items || []; // Trả về danh sách items hoặc mảng rỗng nếu không có dữ liệu
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+//#endregion
+
+//#region 
+
+export async function createNote(body: CreateNote) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/note";
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/customers");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không tạo được ghi chus",
+    };
+  }
+}
 //#endregion
