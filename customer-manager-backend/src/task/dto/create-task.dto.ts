@@ -1,22 +1,34 @@
-import { IsNotEmpty, IsString, IsUUID, IsDate } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, IsDate, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTaskDto {
     @IsUUID()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     appoinmentId: string;
   
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    label: string;
-  
+    code: string;
+
     @IsString()
     @IsNotEmpty()
+    @ApiProperty()
+    label: string;
+  
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty()
+    userInChargeId: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
     description: string
   
     @IsDate()
     @IsNotEmpty()
+    @ApiProperty()
     date: Date
   }

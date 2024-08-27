@@ -12,14 +12,6 @@ export class Appoinment extends BaseEntity {
   @JoinColumn({ name: 'customer_id' })
   customer: Customer;
 
-  @Index()
-  @Column({ name: 'user_in_charge' })
-  userInChargeId: string;
-
-  @ManyToOne(() => User, { cascade: false })
-  @JoinColumn({ name: 'user_in_charge' })
-  userInCharge: User;
-
   @Column({name: 'customer_group'})
   customerGroup: string
 }

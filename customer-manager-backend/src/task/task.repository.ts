@@ -9,6 +9,6 @@ export class TaskRepository extends BaseRepository<Task> {
 
     protected orderBy = { name: 'updatedAt', order: OrderType.ASC };
 
-    protected relations = ['appoinment'];
+    protected relations = ['appoinment', 'userInCharge'];
 
 }

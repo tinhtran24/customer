@@ -10,11 +10,17 @@ export class UpdateTaskDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    label: string;
-  
+    code: string;
+
     @IsString()
     @IsNotEmpty()
-    description: string
+    @ApiProperty()
+    label: string;
+  
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty()
+    userInChargeId: string;
   
     @IsDate()
     @IsNotEmpty()
