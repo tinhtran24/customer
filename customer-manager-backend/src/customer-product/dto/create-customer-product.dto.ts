@@ -42,11 +42,6 @@ export class CreateCustomerProductDto {
     @IsNotEmpty()
     @ApiProperty()
     ShipMethod: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    shippingWardCode: string;
 }
 
 export class UpdateCustomerProductDto {
@@ -86,11 +81,6 @@ export class UpdateCustomerProductDto {
     @IsNotEmpty()
     @ApiProperty()
     ShipMethod: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    shippingWardCode: string;
 
     @IsUUID()
     @IsNotEmpty()

@@ -40,13 +40,6 @@ export class CustomerProduct extends BaseEntity {
   @Column({ name: 'street' })
   street: string;
 
-  @Column({ name: 'shipping_ward_code' })
-  shippingWardCode: string;
-
-  @ManyToOne(() => Ward)
-  @JoinColumn({ name: 'shipping_ward_code' })
-  shippingWard: Ward;
-
   @Index()
   @Column({ name: 'created_user' })
   createdUserId: string;
