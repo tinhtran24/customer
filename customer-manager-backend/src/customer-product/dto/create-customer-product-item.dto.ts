@@ -14,4 +14,9 @@ export class CreateCustomerProductItemDto {
 
     @IsUUID()
     customerProductId: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty()
+    unitPrice: number
 }

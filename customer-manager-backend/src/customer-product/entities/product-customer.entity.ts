@@ -73,4 +73,7 @@ export class CustomerProductItem extends BaseEntity {
 
   @Column({ name: 'quantity'})
   quantity: number;
+
+  @Column({ name: 'unit_price' })
+  unitPrice: number;
 }
