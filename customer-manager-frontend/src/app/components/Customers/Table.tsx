@@ -219,13 +219,19 @@ export default function CustomerTable() {
           setSearchText(e.target.value);
           setCategory("");
         }}
-        handleSearch={() => getData(searchText)}
+        handleSearch={() => {
+          if (searchText?.length > 0) {
+            getData(searchText);
+          }
+        }}
       />
       <Categories
         setCategory={(e: string) => {
-          setCategory(e);
-          setSearchText("");
-          setData(undefined);
+          if (e !== category) {
+            setCategory(e);
+            setSearchText("");
+            setData(undefined);
+          }
         }}
       />
       {isLoading || !data ? (
