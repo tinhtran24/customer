@@ -7,9 +7,7 @@ export async function GET(request: NextRequest) {
 
   try {
     if (accessToken) {
-      const accessTokenDecode = jwtDecode(accessToken) as JwtDecodedPayload;
-      const user = accessTokenDecode;
-
+      const user = jwtDecode(accessToken) as JwtDecodedPayload;
       return Response.json({ user });
     }
     return Response.json({});

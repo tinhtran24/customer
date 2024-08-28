@@ -1,113 +1,141 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FundFilled, GithubOutlined } from "@ant-design/icons";
-import { Layout, Divider, Space, theme, Spin, Button } from "antd";
-import DashboardMenu from "@/app/components/Dashboard/Menu";
-import User from "@/app/components/Users/UserName";
-import Logout from "@/app/components/Users/Logout";
-import Link from "next/link";
+import { BellOutlined } from "@ant-design/icons";
+import {
+    Layout,
+    theme,
+    ConfigProvider,
+    Badge,
+    Dropdown,
+    Avatar,
+    MenuProps
+} from "antd";
 import { useAuthContext } from "@/app/components/auth";
+import styles from './index.module.less';
+import { getThemeBg } from "@/app/utils/theme";
+import { DashboardMenu } from "@/app/components/Dashboard/Menu";
+import { logOut } from "@/app/lib/actions";
+import { useRouter } from "next/navigation";
 
 const { Header, Content, Footer, Sider } = Layout;
 
+interface IProps {
+    children: React.ReactNode,
+    curActive: string,
+    defaultOpen?: string[]
+}
+
 export default function DashboardLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                            children,
+                                        }: Readonly<{
+    children: React.ReactNode;
 }>) {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, borderRadiusLG, colorTextBase, colorWarningText  },
   } = theme.useToken();
+    const [curTheme, setCurTheme] = useState<boolean>(false);
+    const router = useRouter();
 
-  const {  currentUser } = useAuthContext();
+    const toggleTheme = () => {
+        const _curTheme = !curTheme;
+        setCurTheme(_curTheme);
+        localStorage.setItem('isDarkTheme', _curTheme ? 'true' : '');
+    }
+    const {  currentUser, setIsSignedIn } = useAuthContext();
+    const [isLoading, setIsLoading] = useState(false);
 
-  return (
-    <Layout>
-      <Sider
-        breakpoint="xxl"
-        collapsedWidth="0"
-        style={{
-          height: "100vh",
-          position: "sticky",
-          left: 0,
-          top: 0,
-          bottom: 0,
-        }}
-      >
-        <div style={{ textAlign: "center", margin: 7 }}>
-          <FundFilled
-            style={{
-              fontSize: "50px",
-              color: "white",
-              display: "inline-block",
-            }}
-          />
-        </div>
-        <Divider style={{ margin: 0, borderColor: "white", opacity: 0.1 }} />
-        <DashboardMenu />
-      </Sider>
+    const logOutHandle = async () => {
+        setIsLoading(true);
+        const result = await logOut();
+        setIsSignedIn(false);
+        setIsLoading(false);
+        router.push("/login");
+    };
 
-      <Layout>
-        <Header
-          style={{
-            background: colorBgContainer,
-            direction: "rtl",
-            position: "sticky",
-            zIndex: 100,
-            top: 0,
-            minWidth: 500,
-            boxShadow: "rgba(0, 0, 0, 0.2) 0px 15px 10px -15px",
-          }}
-        >
-          <Space size={"large"}>
-            <Logout />
-            <User user={currentUser} />
-          </Space>
-        </Header>
+    const items: MenuProps['items'] = [
+        {
+            key: '1',
+            label: (
+                <a target="_blank" rel="noopener noreferrer" href="#">
+                    Thông tin cá nhân
+                </a>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <a target="_blank" rel="noopener noreferrer" href="#">
+                    Cài đặt
+                </a>
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <a target="_blank" onClick={logOutHandle} rel="noopener noreferrer" href="/user/login">
+                    Đăng xuất
+                </a>
+            ),
+        },
+    ];
 
-        <Divider style={{ margin: 0 }} />
+    useEffect(() => {
+        const isDark = !!localStorage.getItem("isDarkTheme");
+        setCurTheme(isDark);
+    }, []);
 
-        <Content style={{ margin: 20 }}>
-          <div
-            style={{
-              padding: 20,
-              minHeight: 460,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
+      return (
+          <ConfigProvider
+              theme={{
+                  algorithm: curTheme ? theme.darkAlgorithm : theme.defaultAlgorithm,
+              }}
           >
-            {children}
-          </div>
-        </Content>
+            <Layout style={{minHeight: "100vh"}}>
+                <Sider
+                    theme={curTheme ? "dark" : "light" }
+                    breakpoint="lg"
+                    collapsedWidth="0"
+                    onBreakpoint={(broken) => {
+                    }}
+                    onCollapse={(collapsed, type) => {
+                    }}
+                >
+                    <span className={styles.logo} style={getThemeBg(curTheme)}>Customer</span>
+                    <DashboardMenu />
+                </Sider>
 
-        <Footer
-          style={{
-            textAlign: "center",
-          }}
-        >
-          <Divider
-            orientation="center"
-            style={{
-              borderColor: "#dfae04",
-              margin: 0,
-              padding: 5,
-            }}
-          />
-          <Link href="#" style={{ color: "black" }}>
-            <span style={{ margin: "0px 10px 0px 0px", fontSize: 18 }}>
-             OrientSoftware
-            </span>
-
-            <GithubOutlined
-              style={{ margin: "0px 10px 0px 0px", fontSize: 20 }}
-            />
-
-            <span style={{ margin: "0px 10px 0px 0px", fontSize: 18 }}>
-              2024
-            </span>
-          </Link>
-        </Footer>
-      </Layout>
-    </Layout>
-  );
+              <Layout>
+                  <Header style={{ padding: 0, ...getThemeBg(curTheme), display: 'flex' }}>
+                  <div className={styles.rightControl}>
+                      <span className={styles.msg}>
+                        <Badge dot>
+                            <BellOutlined />
+                        </Badge>
+                      </span>
+                      <div className={styles.avatar}>
+                          <Dropdown menu={{ items }} placement="bottomLeft" arrow>
+                              <Avatar style={{color: '#fff', backgroundColor: colorTextBase}}>{currentUser?.name}</Avatar>
+                          </Dropdown>
+                      </div>
+                  </div>
+                </Header>
+                <Content style={{ margin: '24px 16px 0' }}>
+                  <div
+                      style={{
+                          padding: 24,
+                          minHeight: 520,
+                          ...getThemeBg(curTheme),
+                          borderRadius: borderRadiusLG,
+                      }}
+                  >
+                    {children}
+                  </div>
+                </Content>
+                  <Footer style={{ textAlign: 'center' }}>
+                      Customer-Admin ©{new Date().getFullYear()}
+                  </Footer>
+              </Layout>
+            </Layout>
+          </ConfigProvider>
+      );
 }

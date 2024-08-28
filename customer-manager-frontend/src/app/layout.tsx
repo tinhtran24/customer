@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { ConfigProvider } from "antd";
 import { AuthProvider } from "@/app/components/auth";
 
-const inter = Inter({ subsets: ["vietnamese"] });
 
 export const metadata: Metadata = {
   title: {
@@ -22,34 +19,8 @@ export default function RootLayout({
   return (
       <AuthProvider>
         <html lang="en" style={{ margin: 0, padding: 0 }}>
-        <body className={inter.className} style={{ margin: 0, padding: 0 }}>
-        <ConfigProvider
-            theme={{
-              token: {
-                // Seed Token
-                colorPrimary: "#0d2f5f",
-                padding: 0,
-                margin: 0,
-              },
-              components: {
-                Layout: {
-                  siderBg: "#f3f6fd",
-                },
-
-                Menu: {
-                  itemBg: "#f3f6fd",
-                  itemHoverBg: "#e3ebf8",
-                  itemSelectedBg: "#0d2f5f",
-                  itemActiveBg: "#f3ffff",
-                  itemSelectedColor: "white",
-                  iconSize: 20,
-                  fontSize: 16,
-                },
-              },
-            }}
-        >
+        <body style={{ margin: 0, padding: 0 }}>
           <AntdRegistry>{children}</AntdRegistry>
-        </ConfigProvider>
         </body>
         </html>
       </AuthProvider>

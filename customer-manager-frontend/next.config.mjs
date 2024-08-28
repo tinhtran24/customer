@@ -1,4 +1,15 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+import withLess from 'next-plugin-antd-less';
 
-export default nextConfig;
+const nextConfig = {
+    reactStrictMode: false,
+    swcMinify: true,
+};
+
+export default withLess({
+    ...nextConfig,
+
+
+    webpack(config) {
+        return config;
+    },
+});
