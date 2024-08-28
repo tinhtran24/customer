@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Flex, Image } from "antd";
+import { Flex } from "antd";
 
 export const metadata: Metadata = {
   title: "Dashboard",

@@ -14,7 +14,7 @@ import { useAuthContext } from "@/app/components/auth";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
 
-export default function DashboardMenu() {
+export const  DashboardMenu = () => {
   const pathname = usePathname();
   const router = useRouter();
 

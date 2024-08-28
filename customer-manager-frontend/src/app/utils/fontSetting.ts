@@ -1,6 +1,6 @@
-import { Inter, Shantell_Sans } from "next/font/google";
+import { Roboto } from "next/font/google";
 
-export const shantell = Shantell_Sans({
+export const shantell = Roboto({
   subsets: ["vietnamese"],
-  weight: "600",
+  weight: "500",
 });
