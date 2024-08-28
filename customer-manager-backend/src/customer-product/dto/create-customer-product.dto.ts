@@ -4,6 +4,10 @@ import { IsNumber, IsNotEmpty, IsUUID, IsString } from 'class-validator';
 import { stringCleaner } from 'src/utils/stringCleaner';
 
 export class CreateCustomerProductDto {
+    @IsString()
+    @ApiProperty()
+    code: string;
+
     @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
@@ -35,6 +39,10 @@ export class CreateCustomerProductDto {
 }
 
 export class UpdateCustomerProductDto {
+    @IsString()
+    @ApiProperty()
+    code: string;
+
     @IsUUID()
     @IsNotEmpty()
     @ApiProperty()

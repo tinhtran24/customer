@@ -1,6 +1,5 @@
 import { Appoinment } from "src/appointment/entities/appointment.entity";
 import { BaseEntity } from "src/core/base/base.entity";
-import Customer from "src/customers/entities/customer.entity";
 import User from "src/users/entities/user.entity";
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 

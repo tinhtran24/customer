@@ -13,6 +13,9 @@ import { Product } from 'src/products/entities/product.entity';
 
 @Entity('customer_product')
 export class CustomerProduct extends BaseEntity {
+  @Column({ name: 'code' })
+  code: string;
+
   @Column({ name: 'customer_id' })
   customerId: string;
 

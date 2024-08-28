@@ -10,5 +10,8 @@ export class Product extends BaseEntity {
     title: string;
 
     @Column()
+    code: string;
+
+    @Column()
     description: string;
 }
