@@ -4,9 +4,18 @@ import { ValidationPipe } from '@nestjs/common';
 import { delay } from 'src/middleware/delay.middleware';
 import helmet from 'helmet';
 import { useSwagger } from "./app.swagger";
+import * as cors from 'cors';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+  });
+  app.use(
+      cors({
+        origin: true,
+        credentials: true,
+      }),
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
