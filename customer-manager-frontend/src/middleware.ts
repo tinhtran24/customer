@@ -89,6 +89,11 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Check if the user is on the home page and redirect to /login
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   return NextResponse.next();
 }
 
