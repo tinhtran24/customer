@@ -5,8 +5,8 @@ import { AuthProvider } from "@/app/components/auth";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Orient Customer Manager",
-    default: "Orient software",
+    template: "%s | Customer Manager",
+    default: "Customer Manager",
   },
   description: "Ứng dụng quản lý khách khàng",
 };

@@ -60,6 +60,7 @@ export default async function DetailCustomerPage({
               alignItems: "end",
               padding: 0,
               margin: 15,
+              fontSize: 27
             }}
           >
             {customer.fullName?.toUpperCase()}

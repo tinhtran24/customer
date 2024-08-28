@@ -165,14 +165,20 @@ export type CustomerProduct = {
 };
 
 export type NewCustomerProduct = {
-  customerId: string;
-  createdUserId: string;
-  productId: string;
-  quality: number;
-  price: number;
-  street: string;
-  PaymentMethod: string;
-  ShipMethod: string;
+  items: {
+    productId: string;
+    quality: number;
+    unitPrice: number;
+  }[];
+  createCustomerProduct: {
+    code: string;
+    customerId: string;
+    createdUserId: string;
+    street: string;
+    price: number;
+    PaymentMethod: string;
+    ShipMethod: string;
+  };
 };
 //#endregion
 
