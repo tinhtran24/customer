@@ -5,6 +5,7 @@ import {
   KeyOutlined,
   LaptopOutlined
 } from "@ant-design/icons";
+import { FaTasks } from "react-icons/fa";
 import { Menu } from "antd";
 import type { GetProp, MenuProps } from "antd";
 import { usePathname, useRouter } from "next/navigation";
@@ -59,7 +60,7 @@ export default function DashboardMenu() {
     {
       key: "/dashboard/tasks",
       label: "Công việc",
-      icon:<LaptopOutlined />,
+      icon:<FaTasks />,
     },
     userRole === "admin"
       ? {
