@@ -1,10 +1,11 @@
 import { BaseController } from "../core/base/base.controller";
-import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CustomerProductService } from "./customer-product.service";
 import { Crud } from "src/core/decorator/crud.decorator";
 import { CreateCustomerProductDto, UpdateCustomerProductDto } from "./dto/create-customer-product.dto";
 import { ListQueryDto, PaginateDto } from "src/core/base/base.dto";
+import { CreateCustomerOrderDto } from "./dto/create-customer-order.dto";
 
 @Crud({
     id: 'customer-product',
@@ -39,5 +40,19 @@ export class CustomerProductController extends BaseController<CustomerProductSer
         @Query() options: PaginateDto
     ) {
         return this.customerProductService.getByCustomerId(item, options);
+    }
+
+    @Post('order')
+    @ApiBody({ type: CreateCustomerOrderDto })
+    async createAppointTask(
+        @Body()
+        data: any,
+        ...args: any[]
+    ) {
+        try {
+            return await this.customerProductService.createOrder(data);
+        } catch (e) {
+            throw e
+        }
     }
 }
