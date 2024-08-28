@@ -45,28 +45,28 @@ export const  DashboardMenu = () => {
     {
       key: "/dashboard/customers",
       label: "Khách hàng",
-      icon: <IdcardOutlined />,
+      icon: <IdcardOutlined style={{fontSize: "18px"}} />,
     },
     {
       key: "/dashboard/products",
       label: "Sản phẩm",
-      icon: <FileTextOutlined />,
+      icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
     },
     {
       key: "/dashboard/appointments",
       label: "Lịch hẹn",
-      icon:<LaptopOutlined />,
+      icon:<LaptopOutlined  style={{fontSize: "18px"}} />,
     },
     {
       key: "/dashboard/tasks",
       label: "Công việc",
-      icon:<FaTasks />,
+      icon:<FaTasks  style={{fontSize: "18px"}} />,
     },
     userRole === "admin"
       ? {
           key: "/dashboard/admin",
           label: "Admin",
-          icon: <KeyOutlined />,
+          icon: <KeyOutlined  style={{fontSize: "18px"}} />,
         }
       : null,
   ];
@@ -81,6 +81,7 @@ export const  DashboardMenu = () => {
       items={items}
       selectedKeys={[current]}
       onClick={handleClick}
+      style={{fontSize: "17px", fontWeight: "500"}}
     />
   );
 }

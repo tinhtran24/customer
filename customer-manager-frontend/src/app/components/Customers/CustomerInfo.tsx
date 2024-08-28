@@ -61,7 +61,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
 
   const getPhoneNumber = (contacts: any) => {
     try {
-      const parsedContacts = contacts.map((contact:any) => {
+      const parsedContacts = contacts.map((contact: any) => {
         const correctedJson = contact.replace(/(\w+):/g, '"$1":');
         return JSON.parse(correctedJson);
       });
@@ -77,7 +77,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
       console.error("Error parsing contacts:", error);
       return null;
     }
-  }
+  };
 
   return (
     <div>
@@ -101,16 +101,18 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
             }
             key="1"
           >
-             <div>
-              <span style={{ fontWeight: "600" }}>Mã KH:</span>{" "}
-              {customer.code}
+            <div>
+              <span style={{ fontWeight: "600" }}>Mã KH:</span> {customer.code}
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Họ và tên:</span>{" "}
-              {customer.fullName}
+              <span style={{ fontWeight: "700", color: "purple" }}>
+                {customer.fullName}
+              </span>
             </div>
             <div>
-              <span style={{ fontWeight: "600" }}>Điện thoại:</span> {getPhoneNumber(customer.contacts)}
+              <span style={{ fontWeight: "600" }}>Điện thoại:</span>{" "}
+              {getPhoneNumber(customer.contacts)}
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Địa chỉ:</span> {getAddress()}
@@ -125,7 +127,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Trạng thái:</span>{" "}
-              {customer.status}
+              <span style={{ color: "green" }}>{customer.status}</span>
             </div>
           </Panel>
         </Collapse>
