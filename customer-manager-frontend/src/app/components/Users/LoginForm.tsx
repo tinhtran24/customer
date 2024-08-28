@@ -6,11 +6,8 @@ import { Button, Checkbox, Form, Input, Flex, message } from "antd";
 import { LoginPayload } from "@/app/lib/definitions";
 import { login } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/app/components/auth";
 
 const LoginForm: React.FC = () => {
-  const { setCurrentUser, setIsSignedIn } = useAuthContext();
-
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const router = useRouter();
 
@@ -24,14 +21,7 @@ const LoginForm: React.FC = () => {
     };
     const result = await login(payload);
     setIsFormSubmitting(false);
-
-    if (result.statusCode) {
-      message.error(
-        Array.isArray(result.message) ? result.message[0] : result.message
-      );
-    } else {
-      router.push("/dashboard");
-    }
+    router.push("/dashboard");
   };
 
   return (

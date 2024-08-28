@@ -8,13 +8,12 @@ import {
     BellOutlined,
     MoonOutlined,
     SunOutlined,
-    TransactionOutlined
 } from '@ant-design/icons';
-import { getThemeBg } from '@/utils';
-import { Link, pathnames, usePathname } from '../../navigation';
 import styles from './index.module.less';
 import { useAuthContext } from '../auth';
 import { logOut } from '@/app/lib/actions';
+import { Link, pathnames, usePathname } from '@/naviagation';
+import { getThemeBg } from '@/app/utils/background';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -53,8 +52,7 @@ const CommonLayout: React.FC<IProps> = ({ children, curActive, defaultOpen = ['/
 const logOutHandle = async () => {
     setIsLoading(true);
     await logOut();
-    setIsSignedIn(false);
-    setIsLoading(false);
+    localStorage.removeItem('token')
 };
 
 const items: MenuProps['items'] = [
@@ -122,16 +120,6 @@ const items: MenuProps['items'] = [
             <Layout>
                 <Header style={{ padding: 0, ...getThemeBg(curTheme), display: 'flex' }}>
                     <div className={styles.rightControl}>
-                        <span className={styles.group}>
-                            <Popover content={<div style={{width: '100%'}}><img src="/tech.png" /></div>} title="技术交流&分享">
-                                { t('technological exchanges') }
-                            </Popover>
-                        </span>
-                        <span className={styles.group}>
-                            <Popover content={<div style={{width: '100%'}}><img width={180} src="/pay.png" /></div>} title="开源不易，支持作者">
-                            <TransactionOutlined style={{color: 'red'}} /> 赞赏作者
-                            </Popover>
-                        </span>
                         <span className={styles.msg}>
                             <Badge dot>
                                 <BellOutlined />

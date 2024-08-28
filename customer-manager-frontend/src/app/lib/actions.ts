@@ -10,7 +10,7 @@ import {
 } from "@/app/lib/definitions";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { jwtDecode } from "jwt-decode";
+import { AuthApi, PublicApi } from "@/app/api/api";
 
 export async function createCustomer(customer: NewCustomer) {
   const accessToken = cookies().get("accessToken");
@@ -83,45 +83,11 @@ export async function deleteCustomer(id: string) {
 
 export async function login(payload: LoginPayload) {
   try {
-    const url = process.env.BACKEND_URL + "/auth/login";
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const parsedRes = await res.json();
-
-    if ("accessToken" in parsedRes) {
-      const { accessToken, refreshToken } = parsedRes;
-
-      const accessTokenDecode = jwtDecode(accessToken);
-
-      const refreshTokenDecode = jwtDecode(refreshToken);
-
-      cookies().set({
-        name: "accessToken",
-        value: accessToken,
-        secure: false,
-        httpOnly: true,
-        expires: payload.remember
-          ? new Date(accessTokenDecode.exp! * 1000)
-          : undefined,
-      });
-
-      cookies().set({
-        name: "refreshToken",
-        value: refreshToken,
-        secure: false,
-        httpOnly: true,
-        expires: payload.remember
-          ? new Date(refreshTokenDecode.exp! * 1000)
-          : undefined,
-      });
+    const res = await PublicApi.post("/auth/login", payload) ;
+    if (res.status === 200) {
+      localStorage.setItem('token', JSON.stringify(res));
     }
-    return parsedRes;
+    return res
   } catch {
     return {
       statusCode: 500,
@@ -132,20 +98,7 @@ export async function login(payload: LoginPayload) {
 
 export async function logOut() {
   try {
-    const accessToken = cookies().get("accessToken");
-    const url = process.env.BACKEND_URL + `/auth/logout`;
-    const res = await fetch(url, {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
-
-    cookies().delete("accessToken");
-    cookies().delete("refreshToken");
-
-    return await res.json();
+    return await AuthApi.get('/auth/logout');
   } catch {
     return {
       statusCode: 500,
@@ -225,27 +178,17 @@ export async function deleteUser(id: string) {
 
 export async function fetchCustomers(queryParams: Record<string, string>) {
   try {
-    const accessToken = cookies().get("accessToken");
-    const url = new URL(`${process.env.BACKEND_URL}/customers`);
-
+    const url = new URL('customers');
     Object.keys(queryParams).forEach((key) => {
       url.searchParams.append(key, queryParams[key]);
     });
 
-    const res = await fetch(url.toString(), {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
+    const res = await AuthApi.get(url.toString())
 
-    if (!res.ok) {
+    if (!res) {
       throw new Error("Failed to fetch customers");
     }
-
-    const data = await res.json();
-    return data;
+    return await res;
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
@@ -254,23 +197,12 @@ export async function fetchCustomers(queryParams: Record<string, string>) {
 
 export async function fetchUsers() {
   try {
-    const accessToken = cookies().get("accessToken");
-    const url = new URL(`${process.env.BACKEND_URL}/users`);
-
-    const res = await fetch(url.toString(), {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch users");
+    const url = new URL(`users`);
+    const res = await AuthApi.get(url.toString())
+    if (!res) {
+      throw new Error("Failed to fetch customers");
     }
-
-    const data = await res.json();
-    return data;
+    return await res;
   } catch (error) {
     console.error("Error fetching users:", error);
     return [];
@@ -280,24 +212,13 @@ export async function fetchUsers() {
 //#region Product
 export async function fetchAllProducts() {
   try {
-    const accessToken = cookies().get("accessToken");
-    const url = new URL(`${process.env.BACKEND_URL}/product?page=1&limit=9999999999`);
+    const url = new URL(`product?page=1&limit=10`);
 
-    const res = await fetch(url.toString(), {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
-
-    if (!res.ok) {
+    const res = await AuthApi.get(url.toString())
+    if (!res) {
       throw new Error("Failed to fetch customers");
     }
-
-    // Parse response và lấy items
-    const data = await res.json();
-    return data.items || []; // Trả về danh sách items hoặc mảng rỗng nếu không có dữ liệu
+    return res?.data.items || []; // Trả về danh sách items hoặc mảng rỗng nếu không có dữ liệu
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
@@ -305,21 +226,14 @@ export async function fetchAllProducts() {
 }
 
 export async function createProduct(body: NewProduct) {
-  const accessToken = cookies().get("accessToken");
   try {
-    const url = process.env.BACKEND_URL + "/product";
-    const res = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
-
+    const url = "/product";
+    const res = await AuthApi.post(url.toString(), body)
+    if (!res) {
+      throw new Error("Failed to fetch customers");
+    }
     revalidatePath("/dashboard/products");
-
-    return res.json();
+    return res;
   } catch {
     return {
       statusCode: 500,
@@ -331,19 +245,13 @@ export async function createProduct(body: NewProduct) {
 
 export async function updateProduct(id: string, body: NewProduct) {
   try {
-    const accessToken = cookies().get("accessToken");
-    const url = process.env.BACKEND_URL + `/product/${id}`;
-    const res = await fetch(url, {
-      method: "PATCH",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
-
+    const url = "/product";
+    const res = await AuthApi.patch(url.toString(), body)
+    if (!res) {
+      throw new Error("Failed to fetch customers");
+    }
     revalidatePath("/dashboard/products");
-    return res.json();
+    return res;
   } catch {
     return {
       statusCode: 500,
@@ -354,18 +262,13 @@ export async function updateProduct(id: string, body: NewProduct) {
 
 export async function deleteProduct(id: string) {
   try {
-    const accessToken = await cookies().get("accessToken");
-    const url = process.env.BACKEND_URL + `/product/${id}`;
-    const res = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
-
+    const url = `/product/${id}`;
+    const res = await AuthApi.delete(url.toString())
+    if (!res) {
+      throw new Error("Failed to fetch customers");
+    }
     revalidatePath("/dashboard/products");
-    return res.json();
+    return res;
   } catch {
     return {
       statusCode: 500,
@@ -377,24 +280,16 @@ export async function deleteProduct(id: string) {
 //#region Customer product
 export async function fetchCustomerProducts(customerId: string) {
   try {
-    const accessToken = cookies().get("accessToken");
     const url = new URL(
-      `${process.env.BACKEND_URL}/customer-product/customer/` + customerId
+      `customer-product/customer/` + customerId
     );
 
-    const res = await fetch(url.toString(), {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken?.value}`,
-      },
-    });
+    const res = await AuthApi.get(url.toString())
 
-    if (!res.ok) {
+    if (!res) {
       throw new Error("Failed to fetch customers");
     }
-
-    const data = await res.json();
+    const data = await res.data;
     return data.items || [];
   } catch (error) {
     console.error("Error fetching customers:", error);
