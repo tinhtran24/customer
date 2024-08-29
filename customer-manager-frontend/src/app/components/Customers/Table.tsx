@@ -11,9 +11,9 @@ import {
   Button,
 } from "antd";
 import { useEffect, useState } from "react";
-import { TableColumnsType, Tooltip } from "antd";
+import { TableColumnsType } from "antd";
 import Link from "next/link";
-import { MdDeleteOutline, MdVisibility } from "react-icons/md";
+import { MdDeleteOutline } from "react-icons/md";
 import { Categories } from "./Categories";
 import SearchCustomers from "./Search";
 import { deleteCustomer, fetchCustomers } from "@/app/lib/actions";
@@ -155,9 +155,28 @@ export default function CustomerTable() {
 
           return parsedContacts.map(
             (contact: { name: string; phone: string }, index: number) => (
-              <Tag color="blue" key={index} style={{ marginTop: "5px" }}>
-                {contact.name} - {contact.phone}
-              </Tag>
+              <div>
+                <Tag
+                  color="blue"
+                  key={index}
+                  style={{
+                    marginTop: "5px",
+                    width: "160px",
+                    textAlign: "center",
+                    WebkitLineClamp: 1,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    display: "-webkit-box",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {contact?.name?.length > 6
+                    ? contact.name.substring(0, 6) + "..."
+                    : contact.name}{" "}
+                  - {contact.phone}
+                </Tag>
+              </div>
             )
           );
         } catch (error) {

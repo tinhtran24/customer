@@ -1,7 +1,6 @@
-
-"use client"
+"use client";
 import { Task } from "@/app/lib/definitions";
-import { Table, Tag } from "antd";
+import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 const columns: ColumnsType<Task> = [
@@ -40,16 +39,14 @@ const columns: ColumnsType<Task> = [
     title: "Nhóm khách hàng",
     dataIndex: ["appoinment", "customerGroup"],
     key: "customerGroup",
-    render: (group: string) => (
-      <Tag color={"blue"}>{group}</Tag>
-    ),
+    render: (group: string) => group,
   },
 ];
 
 interface TaskTableProps {
-  tasks: Task[]
+  tasks: Task[];
 }
-export default function TaskTable({tasks}: TaskTableProps) {
+export default function TaskTable({ tasks }: TaskTableProps) {
   return (
     <Table
       dataSource={tasks}

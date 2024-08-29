@@ -1,12 +1,15 @@
 "use client";
 import { CustomerProduct, User } from "@/app/lib/definitions";
-import { Table, Spin, TableColumnsType } from "antd";
+import { Table, Spin, TableColumnsType, Button } from "antd";
+import { useState } from "react";
 
-export async function History({
+export function History({
   customerProducts,
 }: {
   customerProducts: CustomerProduct[];
 }) {
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -14,12 +17,15 @@ export async function History({
     }).format(price);
   };
 
+  const toggleExpand = (key: React.Key) => {
+    if (expandedRowKeys.includes(key)) {
+      setExpandedRowKeys(expandedRowKeys.filter((k) => k !== key));
+    } else {
+      setExpandedRowKeys([...expandedRowKeys, key]);
+    }
+  };
+
   const columns: TableColumnsType<CustomerProduct> = [
-    // {
-    //   title: "Tên sản phẩm",
-    //   key: "productName",
-    //   render: (_: any, s: CustomerProduct) => s.product.title,
-    // },
     {
       title: "Mã đơn hàng",
       dataIndex: "code",
@@ -33,12 +39,12 @@ export async function History({
     },
     {
       title: "PT thanh toán",
-      dataIndex: "paymentMethod",
+      dataIndex: "PaymentMethod",
       key: "paymentMethod",
     },
     {
       title: "PT giao hàng",
-      dataIndex: "shipMethod",
+      dataIndex: "ShipMethod",
       key: "shipMethod",
     },
     {
@@ -48,20 +54,44 @@ export async function History({
       render: (s: User) => s.name,
     },
     {
-      title: "Created By",
+      title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (updated_at: string) => {
         const date = new Date(updated_at);
-        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
-          date.getMonth() + 1
-        )
+        const formattedDate = `${date.getDate()
+          .toString()
+          .padStart(2, "0")}/${(date.getMonth() + 1)
           .toString()
           .padStart(2, "0")}/${date.getFullYear()}`;
         return <div style={{ textAlign: "left" }}>{formattedDate}</div>;
       },
     },
   ];
+
+  const expandedRowRender = (record: CustomerProduct) => {
+    const miniTableColumns: TableColumnsType<any> = [
+      {
+        title: "Product ID",
+        dataIndex: "productId",
+        key: "productId",
+      },
+      {
+        title: "Quantity",
+        dataIndex: "quantity",
+        key: "quantity",
+      },
+    ];
+
+    return (
+      <Table
+        columns={miniTableColumns}
+        dataSource={record.customerProductItems}
+        pagination={false}
+        rowKey="id"
+      />
+    );
+  };
 
   if (!customerProducts)
     return (
@@ -76,5 +106,16 @@ export async function History({
       </div>
     );
 
-  return <Table columns={columns} dataSource={customerProducts} rowKey="id" />;
+  return (
+    <Table
+      columns={columns}
+      dataSource={customerProducts}
+      rowKey="id"
+      expandedRowKeys={expandedRowKeys}
+      onExpand={(expanded, record) => toggleExpand(record.id)}
+      expandable={{
+        expandedRowRender,
+      }}
+    />
+  );
 }

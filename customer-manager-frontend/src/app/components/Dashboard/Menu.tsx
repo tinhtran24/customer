@@ -52,11 +52,11 @@ export const  DashboardMenu = () => {
       label: "Sản phẩm",
       icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
     },
-    {
-      key: "/dashboard/appointments",
-      label: "Lịch hẹn",
-      icon:<LaptopOutlined  style={{fontSize: "18px"}} />,
-    },
+    // {
+    //   key: "/dashboard/appointments",
+    //   label: "Lịch hẹn",
+    //   icon:<LaptopOutlined  style={{fontSize: "18px"}} />,
+    // },
     {
       key: "/dashboard/tasks",
       label: "Công việc",
