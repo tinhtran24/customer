@@ -47,16 +47,7 @@ export const  DashboardMenu = () => {
       label: "Khách hàng",
       icon: <IdcardOutlined style={{fontSize: "18px"}} />,
     },
-    {
-      key: "/dashboard/products",
-      label: "Sản phẩm",
-      icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
-    },
-    // {
-    //   key: "/dashboard/appointments",
-    //   label: "Lịch hẹn",
-    //   icon:<LaptopOutlined  style={{fontSize: "18px"}} />,
-    // },
+
     {
       key: "/dashboard/tasks",
       label: "Công việc",
@@ -64,10 +55,32 @@ export const  DashboardMenu = () => {
     },
     userRole === "admin"
       ? {
-          key: "/dashboard/admin",
-          label: "Admin",
-          icon: <KeyOutlined  style={{fontSize: "18px"}} />,
-        }
+        key: "/dashboard/setting",
+        label: "Cấu hình",
+        icon: <KeyOutlined  style={{fontSize: "18px"}} />,
+        children: [
+          {
+            key: "/dashboard/products",
+            label: "Sản phẩm",
+            icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
+          },
+          {
+            key: "/dashboard/customer-status",
+            label: "Trạng thái khách hàng",
+            icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
+          },
+          {
+            key: "/dashboard/delivery-method",
+            label: "Phương thức vận chuyển",
+            icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
+          },
+          {
+            key: "/dashboard/payment-method",
+            label: "Phương thức thanh toán",
+            icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
+          },
+        ]
+      }
       : null,
   ];
 
