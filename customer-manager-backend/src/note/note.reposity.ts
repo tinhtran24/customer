@@ -7,7 +7,7 @@ import { OrderType } from "src/core/type/query";
 export class NoteRepository extends BaseRepository<Note> {
     protected qbName = 'Note';
 
-    protected orderBy = { name: 'updatedAt', order: OrderType.ASC };
+    protected orderBy = { name: 'createdAt', order: OrderType.ASC };
 
     protected relations = ['customer'];
 

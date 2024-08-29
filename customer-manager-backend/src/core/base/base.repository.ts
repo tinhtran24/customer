@@ -4,6 +4,7 @@ import { OrderQueryType, OrderType } from '../type/query';
 import { getOrderByQuery } from '../pagination/paginate';
 import { PaginateDto } from './base.dto';
 import { ServiceUnavailableException } from '@nestjs/common';
+import { isObject } from 'class-validator';
 
 
 export abstract class BaseRepository<E extends ObjectLiteral> extends Repository<E> {
@@ -66,14 +67,22 @@ export abstract class BaseRepository<E extends ObjectLiteral> extends Repository
         const perPage = Number(paginate?.limit || 10) || 10;
     
         const skip = page > 0 ? perPage * (page - 1) : 0;
+        let orderby = {}
+        if (!isNil(this.orderBy)){
+          if (isObject(this.orderBy)) {
+            orderby = {
+              [this.orderBy.name]: this.orderBy.order
+            }
+          }
+        }
         const [data, total] = await this.findAndCount({
             where,
             relations: this.relations,
             take: perPage,
             skip,
+            order: orderby
         });
         const lastPage = Math.ceil(total / perPage);
-    
         return {
           items: data,
           meta: {
