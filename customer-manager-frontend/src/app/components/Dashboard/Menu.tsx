@@ -60,6 +60,11 @@ export const  DashboardMenu = () => {
         icon: <KeyOutlined  style={{fontSize: "18px"}} />,
         children: [
           {
+            key: "/dashboard/admin",
+            label: "User manager",
+            icon: <KeyOutlined  style={{fontSize: "18px"}} />,
+          },
+          {
             key: "/dashboard/products",
             label: "Sản phẩm",
             icon: <FileTextOutlined style={{fontSize: "18px"}}  />,
