@@ -43,7 +43,9 @@ export function TabsCustomer({
     {
       label: "Trao đổi",
       key: "3",
-      children: <DiscussForm customerId={customerId} />,
+      children: (
+          <DiscussForm customerId={customerId} />
+      ),
     },
     {
       label: "Lịch hẹn",
@@ -52,6 +54,10 @@ export function TabsCustomer({
     },
   ];
   return (
-    <Tabs defaultActiveKey="1" items={items} style={{ height: "100vh" }} />
+    <Tabs
+      defaultActiveKey="1"
+      items={items}
+      style={{ height: "100%", minHeight: "100vh" }}
+    />
   );
 }

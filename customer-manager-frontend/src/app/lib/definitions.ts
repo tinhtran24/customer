@@ -170,7 +170,7 @@ export type CustomerProductItem = {
   unitPrice: 10000;
   quantity: number;
   product: Product;
-}
+};
 
 export type NewCustomerProduct = {
   items: {
@@ -228,6 +228,16 @@ export type Task = {
 //#endregion
 
 //#region Note
+export type Note = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  customerId: string;
+  description: string;
+  customer: Customer;
+};
+
 export type CreateNote = {
   customerId: string;
   description: string;

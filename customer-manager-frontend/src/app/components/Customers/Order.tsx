@@ -116,7 +116,7 @@ export default function OrderProduct({
     },
     {
       key: "5",
-      title: "Actions",
+      title: "",
       render: (record) => {
         return (
             <>

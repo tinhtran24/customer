@@ -592,7 +592,34 @@ export async function fetchAllTask() {
 }
 //#endregion
 
-//#region 
+//#region Note
+export async function getNoteByCutomerId(id: string) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(`${process.env.BACKEND_URL}/note/customer/${id}`);
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    const data = await res.json();
+    return data.items || [];
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra",
+    };
+  }
+}
 
 export async function createNote(body: CreateNote) {
   const accessToken = cookies().get("accessToken");
@@ -613,7 +640,7 @@ export async function createNote(body: CreateNote) {
   } catch {
     return {
       statusCode: 500,
-      message: "Có lỗi xảy ra. Không tạo được ghi chus",
+      message: "Có lỗi xảy ra. Không tạo được ghi chú",
     };
   }
 }
