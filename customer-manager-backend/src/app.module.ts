@@ -17,6 +17,7 @@ import { AppoinmentModule } from './appointment/appoinment.module';
 import { TaskModule } from './task/task.module';
 import { CustomerProductModule } from './customer-product/customer-product.module';
 import { NoteModule } from './note/note.module';
+import { SettingModule } from './setting/setting.module';
 
 @Module({
   imports: [
@@ -60,7 +61,8 @@ import { NoteModule } from './note/note.module';
     AppoinmentModule,
     TaskModule,
     CustomerProductModule,
-    NoteModule
+    NoteModule,
+    SettingModule
   ],
 
   controllers: [AppController],
