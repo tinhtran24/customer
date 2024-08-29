@@ -9,5 +9,5 @@ export class CustomerProductRepository extends BaseRepository<CustomerProduct> {
 
     protected orderBy = { name: 'createdAt', order: OrderType.ASC };
 
-    protected relations = ['customer', 'customerProductItems', 'createdUser', 'updatedUser'];
+    protected relations = ['customer', 'customerProductItems.product', 'createdUser', 'updatedUser'];
 }
