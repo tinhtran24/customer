@@ -2,7 +2,6 @@ import CustomerTable from "@/app/components/Customers/Table";
 import { Flex, Divider, Spin } from "antd";
 import { CreateCustomer } from "@/app/components/Customers/Button";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Suspense } from "react";
 import { shantell } from "@/app/utils/fontSetting";
 
 export default function CustomerPage() {
@@ -27,10 +26,7 @@ export default function CustomerPage() {
           </Flex>
 
           <Divider style={{ margin: 0 }} />
-
-          <Suspense fallback={<Spin size="large" />}>
-            <CustomerTable/>
-          </Suspense>
+          <CustomerTable/>
         </Flex>
       </AntdRegistry>
     </main>
