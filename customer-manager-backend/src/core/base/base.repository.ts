@@ -70,7 +70,7 @@ export abstract class BaseRepository<E extends ObjectLiteral> extends Repository
             where,
             relations: this.relations,
             take: perPage,
-            skip
+            skip,
         });
         const lastPage = Math.ceil(total / perPage);
     

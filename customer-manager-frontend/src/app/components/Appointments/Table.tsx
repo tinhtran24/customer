@@ -35,57 +35,6 @@ export default async function AppointmentTable({
     token: { colorPrimary },
   } = theme.useToken();
 
-  //#region hook
-  // const [selected, setSelected] = useState<Appointment | null>(null);
-  // const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
-
-  // const [users, setUsers] = useState<User[] | null>(null);
-  // const [customersData, setCustomersData] =
-  //   useState<Pagination<Customer> | null>(null);
-
-  // const getData = async () => {
-  //   const [users, customers] = await Promise.all([
-  //     fetchUsers(),
-  //     fetchCustomers({
-  //       page: "1",
-  //       limit: "9999999999",
-  //       q: "",
-  //     }),
-  //   ]);
-
-  //   setUsers(users);
-  //   setCustomersData(customers);
-  // };
-
-  // useEffect(() => {
-  //   if (!users || !customersData) getData();
-  // }, []);
-
-  // const handleOpenUpdateModal = (product: Appointment) => {
-  //   setSelected(product);
-  //   setIsUpdateModalVisible(true);
-  // };
-
-  // const handleCloseUpdateModal = () => {
-  //   setIsUpdateModalVisible(false);
-  //   setSelected(null);
-  // };
-
-  // const handleUpdateAppointment = async (updatedProduct: Appointment) => {
-  //   try {
-  //     const results = await updateAppointment(
-  //       selected?.id || "",
-  //       updatedProduct
-  //     );
-  //     if (results.id) {
-  //       message.success("Đã sửa lịch hẹn thành công");
-  //       router.push("/dashboard/appointments");
-  //       //set curent page = 1
-  //     } else message.error("Vui lòng thử lại sau");
-  //   } catch (e) {}
-  //   handleCloseUpdateModal();
-  // };
-
   const handleDeleteAppointment = async (id: string) => {
     message.info("Đang xóa ...");
     try {
@@ -133,11 +82,6 @@ export default async function AppointmentTable({
             : customer.fullName}
         </Tooltip>
       ),
-    },
-    {
-      title: "Nhóm khách hàng",
-      dataIndex: "customerGroup",
-      width: "20%",
     },
     // {
     //   title: "Người phụ trách",

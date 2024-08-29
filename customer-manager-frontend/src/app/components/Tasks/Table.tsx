@@ -15,7 +15,7 @@ const columns: ColumnsType<Task> = [
     key: "label",
   },
   {
-    title: "Mô tả",
+    title: "Chi tiết",
     dataIndex: "description",
     key: "description",
   },
@@ -34,13 +34,7 @@ const columns: ColumnsType<Task> = [
     title: "Email người phụ trách",
     dataIndex: ["userInCharge", "email"],
     key: "email",
-  },
-  {
-    title: "Nhóm khách hàng",
-    dataIndex: ["appoinment", "customerGroup"],
-    key: "customerGroup",
-    render: (group: string) => group,
-  },
+  }
 ];
 
 interface TaskTableProps {

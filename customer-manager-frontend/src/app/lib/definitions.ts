@@ -119,7 +119,6 @@ export type UpdateUser = {
 export type CreateCustomerAppointmentBody = {
   createScheduleDto: {
     customerId: string;
-    customerGroup: string;
   };
   createTaskDto: [
     {

@@ -1,5 +1,5 @@
 "use client";
-import { CustomerProduct, User } from "@/app/lib/definitions";
+import { CustomerProduct, CustomerProductItem, User } from "@/app/lib/definitions";
 import { Table, Spin, TableColumnsType, Button } from "antd";
 import { useState } from "react";
 
@@ -17,6 +17,7 @@ export function History({
     }).format(price);
   };
 
+  console.log(customerProducts)
   const toggleExpand = (key: React.Key) => {
     if (expandedRowKeys.includes(key)) {
       setExpandedRowKeys(expandedRowKeys.filter((k) => k !== key));
@@ -72,12 +73,18 @@ export function History({
   const expandedRowRender = (record: CustomerProduct) => {
     const miniTableColumns: TableColumnsType<any> = [
       {
-        title: "Product ID",
-        dataIndex: "productId",
-        key: "productId",
+        title: "Tên sản phẩm",
+        key: "productName",
+        render: (_: any, s: CustomerProductItem) => s.product.title,
       },
       {
-        title: "Quantity",
+        title: "Đơn giá",
+        dataIndex: "unitPrice",
+        key: "unitPrice",
+        render: (s: number) => formatPrice(s),
+      },
+      {
+        title: "Số lượng",
         dataIndex: "quantity",
         key: "quantity",
       },

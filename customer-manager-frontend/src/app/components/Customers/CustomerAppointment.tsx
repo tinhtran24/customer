@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
+import { generateCode } from "@/app/utils/generateString";
 
 const { Option } = Select;
 
@@ -45,11 +46,10 @@ export function CreateCustomerAppointment({
     try {
       const body: CreateCustomerAppointmentBody = {
         createScheduleDto: {
-          customerId: customerId,
-          customerGroup: values.customerGroup,
+          customerId: customerId
         },
         createTaskDto: values.tasks.map((task: any) => ({
-          code: values.code,
+          code: generateCode("DH", new Date(), Date.now().valueOf()),
           description: task.description,
           date: task.date.format("YYYY-MM-DD"),
           label: task.label,
@@ -106,22 +106,6 @@ export function CreateCustomerAppointment({
         </Select>
       </Form.Item>
 
-      <Form.Item
-        name="customerGroup"
-        label="Nhóm khách hàng"
-        rules={[{ required: true, message: "Vui lòng thêm nhóm khách hàng" }]}
-      >
-        <Input placeholder="Nhóm khách hàng ..." />
-      </Form.Item>
-
-      <Form.Item
-        name="code"
-        label="Mã số"
-        rules={[{ required: true, message: "Vui lòng thêm mã số" }]}
-      >
-        <Input placeholder="Mã số ..." />
-      </Form.Item>
-
       <Form.List name="tasks">
         {(fields, { add, remove }) => (
           <>
@@ -143,7 +127,7 @@ export function CreateCustomerAppointment({
                 <Form.Item
                   {...restField}
                   name={[name, "description"]}
-                  label="Mô tả"
+                  label="Chi tiết"
                   rules={[{ required: true, message: "Vui lòng thêm mô tả" }]}
                 >
                   <Input placeholder="Mô tả ..." />

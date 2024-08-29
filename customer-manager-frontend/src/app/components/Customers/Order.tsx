@@ -13,11 +13,10 @@ import {
   Divider,
 } from "antd";
 import { useAuthContext } from "@/app/components/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { generateCode } from "@/app/utils/generateString";
 const { Option } = Select;
-import { EditOutlined } from "@ant-design/icons";
 import { createCustomerProduct } from "@/app/lib/actions";
 
 interface OrderData {
@@ -44,9 +43,13 @@ export default function OrderProduct({
   const [selectedProduct, setSelectedProduct] = useState<Product>();
   const [data, setData] = useState<OrderData[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [code, setcode] = useState('');
 
   const [form] = Form.useForm();
   const [formModal] = Form.useForm();
+  useEffect(() => {
+    setcode(generateCode("DH", new Date(), Date.now().valueOf()))
+  }, [])
 
   const handleFinish = async (values: any) => {
     setIsFormSubmitting(true);
@@ -58,7 +61,7 @@ export default function OrderProduct({
           unitPrice: item.price,
         })),
         createCustomerProduct: {
-          code: generateCode("DH", new Date(), Date.now().valueOf()),
+          code: code,
           customerId: customerId,
           createdUserId: (currentUser as any).sub,
           street: values.street,
@@ -122,7 +125,7 @@ export default function OrderProduct({
           <>
             <DeleteOutlined
               onClick={() => {
-                onDeleteStudent(record);
+                onDeleteItem(record);
               }}
               style={{ color: "red", marginLeft: 12 }}
             />
@@ -138,7 +141,7 @@ export default function OrderProduct({
       .then((values) => {
         const newData: OrderData = {
           no: data.length + 1,
-          code: Date.now().toString(),
+          code: code,
           price: values.price,
           quantity: values.quantity,
           totalPrice: values.price * values.quantity,
@@ -163,7 +166,7 @@ export default function OrderProduct({
     setSelectedProduct(product);
   };
 
-  const onDeleteStudent = (record: OrderData) => {
+  const onDeleteItem = (record: OrderData) => {
     setData((pre) => {
       return pre.filter((order) => order.no !== record.no);
     });
@@ -204,7 +207,7 @@ export default function OrderProduct({
             htmlType="submit"
             form="productForm"
           >
-            Tạo
+            Thêm sản phẩm
           </Button>,
         ]}
       >
@@ -364,7 +367,7 @@ export default function OrderProduct({
             loading={isFormSubmitting}
             disabled={data.length === 0}
           >
-            Gửi
+            Tạo đơn hàng
           </Button>
         </Form.Item>
       </Form>

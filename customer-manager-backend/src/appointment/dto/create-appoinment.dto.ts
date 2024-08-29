@@ -6,9 +6,4 @@ export class CreateScheduleDto {
   @IsNotEmpty()
   @ApiProperty()
   customerId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  customerGroup: string
 }

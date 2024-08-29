@@ -11,8 +11,4 @@ export class UpdateScheduleDto {
   @IsNotEmpty()
   @ApiProperty()
   userInChargeId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  customerGroup: string
 }
