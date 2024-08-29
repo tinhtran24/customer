@@ -155,8 +155,8 @@ export type CustomerProduct = {
   customerId: string;
   productId: string;
   price: 10000;
-  PaymentMethod: string;
-  ShipMethod: string;
+  paymentMethod: string;
+  shipMethod: string;
   street: string;
   shippingWardCode: string;
   createdUserId: string;
