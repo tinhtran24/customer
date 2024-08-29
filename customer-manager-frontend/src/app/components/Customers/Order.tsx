@@ -58,7 +58,7 @@ export default function OrderProduct({
           unitPrice: item.price,
         })),
         createCustomerProduct: {
-          code: generateCode('DH', new Date(), Date.now().valueOf()),
+          code: generateCode("DH", new Date(), Date.now().valueOf()),
           customerId: customerId,
           createdUserId: (currentUser as any).sub,
           street: values.street,
@@ -119,14 +119,14 @@ export default function OrderProduct({
       title: "",
       render: (record) => {
         return (
-            <>
-              <DeleteOutlined
-                  onClick={() => {
-                    onDeleteStudent(record);
-                  }}
-                  style={{ color: "red", marginLeft: 12 }}
-              />
-            </>
+          <>
+            <DeleteOutlined
+              onClick={() => {
+                onDeleteStudent(record);
+              }}
+              style={{ color: "red", marginLeft: 12 }}
+            />
+          </>
         );
       },
     },
@@ -300,7 +300,18 @@ export default function OrderProduct({
         pagination={{ pageSize: 10 }}
         style={{ marginTop: 20 }}
       />
-
+      <h3
+        style={{
+          textAlign: "right",
+          fontSize: "18px",
+          fontWeight: "bold",
+          marginTop: "20px",
+          color: "green",
+        }}
+      >
+        Thành tiền:{" "}
+        {formatPrice(data.reduce((sum, order) => sum + order.totalPrice, 0))}
+      </h3>
       <Divider dashed style={{ margin: "2rem 0", borderColor: "blue" }} />
 
       <h3>Phương thức giao hàng</h3>
