@@ -4,6 +4,7 @@ import { BaseController } from "src/core/base/base.controller";
 import { Crud } from "src/core/decorator/crud.decorator";
 import { SettingService } from "./setting.service";
 import { CreateOrUpdateSettingDto } from "./dto/create-setting.dto";
+import { PaginateDto } from "src/core/base/base.dto";
 
 @Crud({
     id: 'setting',
@@ -28,5 +29,15 @@ import { CreateOrUpdateSettingDto } from "./dto/create-setting.dto";
 export class SettingController  extends BaseController<SettingService> {
     constructor(protected settingService:SettingService) {
         super(settingService);
+    }
+
+    
+    @Get(':type')
+    async getByCustomerId(
+        @Param('type')
+        item: string,
+        @Query() options: PaginateDto
+    ) {
+        return this.settingService.getByType(item, options);
     }
 }
