@@ -420,6 +420,7 @@ export async function fetchCustomerProducts(customerId: string) {
       },
     });
 
+    console.log(res);
     if (!res.ok) {
       throw new Error("Failed to fetch customers");
     }
@@ -435,7 +436,7 @@ export async function fetchCustomerProducts(customerId: string) {
 export async function createCustomerProduct(body: NewCustomerProduct) {
   const accessToken = cookies().get("accessToken");
   try {
-    const url = process.env.BACKEND_URL + "/customer-product";
+    const url = process.env.BACKEND_URL + "/customer-product/order";
     const res = await fetch(url, {
       method: "POST",
       body: JSON.stringify(body),

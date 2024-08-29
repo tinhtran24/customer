@@ -87,12 +87,6 @@ export default function CustomerTable() {
 
   const menu = (customer: any) => (
     <Menu>
-      <Menu.Item key="view" style={{ color: "blue" }} onClick={() => {}}>
-        <a href={`/dashboard/customers/${customer.id}`}>
-          <MdVisibility style={{ marginRight: 8 }} />
-          Chi tiết
-        </a>
-      </Menu.Item>
       <Menu.Item key="edit" style={{ color: "green" }}>
         <a href={`/dashboard/customers/${customer.id}/update`}>
           <FiEdit3 style={{ marginRight: 8 }} />
@@ -125,12 +119,12 @@ export default function CustomerTable() {
       ),
     },
     {
-      title: "SL đặt",
-      dataIndex: "totalOrder",
+      title: "Giới tính",
+      dataIndex: "gender",
     },
     {
-      title: "Nam/Nữ",
-      dataIndex: "gender",
+      title: "Điện thoại",
+      dataIndex: "phoneNumber",
     },
     {
       title: "Trạng thái",

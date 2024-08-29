@@ -44,12 +44,13 @@ export class CustomerProductController extends BaseController<CustomerProductSer
 
     @Post('order')
     @ApiBody({ type: CreateCustomerOrderDto })
-    async createAppointTask(
+    async createOrder(
         @Body()
         data: any,
         ...args: any[]
     ) {
         try {
+            console.log(data)
             return await this.customerProductService.createOrder(data);
         } catch (e) {
             throw e

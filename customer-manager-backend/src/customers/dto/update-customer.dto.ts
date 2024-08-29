@@ -2,7 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreateCustomerDto } from './create-customer.dto';
 import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID } from 'class-validator';
 import {
-  FULLNAME_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
+  FULLNAME_MUST_NOT_EMPTY, PHONE_NUMBER_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
   WARDCODE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
 import { Exclude, Transform } from 'class-transformer';
@@ -17,6 +17,13 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
     return stringCleaner(value);
   })
   fullName: string;
+
+  @IsNotEmpty({ message: PHONE_NUMBER_MUST_NOT_EMPTY })
+  @Transform(({ value }) => {
+    return stringCleaner(value);
+  })
+  @ApiProperty()
+  phoneNumber: string;
 
   @IsString()
   @ApiProperty()

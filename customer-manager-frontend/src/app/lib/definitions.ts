@@ -32,6 +32,7 @@ export type Customer = {
   totalOrder: number;
   ward: any;
   userInChargeId: string;
+  phoneNumber: string;
 };
 
 export type Category = {
@@ -53,6 +54,7 @@ export type NewCustomer = {
   street: string;
   contacts: any;
   wardCode: string;
+  phoneNumber: string;
 };
 
 export type UpdateCustomer = {
@@ -160,14 +162,20 @@ export type CustomerProduct = {
   createdUserId: string;
   updatedUserId: null;
   customer: Customer;
-  product: Product;
+  customerProductItems: CustomerProductItem[];
   createdUser: User;
 };
+
+export type CustomerProductItem = {
+  unitPrice: 10000;
+  quantity: number;
+  product: Product;
+}
 
 export type NewCustomerProduct = {
   items: {
     productId: string;
-    quality: number;
+    quantity: number;
     unitPrice: number;
   }[];
   createCustomerProduct: {
@@ -176,8 +184,8 @@ export type NewCustomerProduct = {
     createdUserId: string;
     street: string;
     price: number;
-    PaymentMethod: string;
-    ShipMethod: string;
+    paymentMethod: string;
+    shipMethod: string;
   };
 };
 //#endregion

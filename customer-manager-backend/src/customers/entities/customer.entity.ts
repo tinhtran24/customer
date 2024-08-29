@@ -28,6 +28,9 @@ class Customer extends BaseEntity {
   @Column({ name: 'code' })
   code: string;
 
+  @Column({ name: 'phone_number', nullable: true })
+  phoneNumber: string;
+
   @Column({ name: 'full_name' })
   fullName: string;
 

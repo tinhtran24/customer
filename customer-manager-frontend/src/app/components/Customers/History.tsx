@@ -15,16 +15,16 @@ export async function History({
   };
 
   const columns: TableColumnsType<CustomerProduct> = [
-    {
-      title: "Tên sản phẩm",
-      key: "productName",
-      render: (_: any, s: CustomerProduct) => s.product.title,
-    },
     // {
-    //   title: "Số lượng",
-    //   dataIndex: "PaymentMethod",
-    //   key: "quality",
+    //   title: "Tên sản phẩm",
+    //   key: "productName",
+    //   render: (_: any, s: CustomerProduct) => s.product.title,
     // },
+    {
+      title: "Mã đơn hàng",
+      dataIndex: "code",
+      key: "code",
+    },
     {
       title: "Giá",
       dataIndex: "price",
@@ -33,13 +33,13 @@ export async function History({
     },
     {
       title: "PT thanh toán",
-      dataIndex: "PaymentMethod",
-      key: "PaymentMethod",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
     },
     {
       title: "PT giao hàng",
-      dataIndex: "ShipMethod",
-      key: "ShipMethod",
+      dataIndex: "shipMethod",
+      key: "shipMethod",
     },
     {
       title: "Người tạo",

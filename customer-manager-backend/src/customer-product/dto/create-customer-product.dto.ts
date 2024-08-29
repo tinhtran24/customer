@@ -30,12 +30,12 @@ export class CreateCustomerProductDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    PaymentMethod: string;
+    paymentMethod: string;
   
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    ShipMethod: string;
+    shipMethod: string;
 }
 
 export class UpdateCustomerProductDto {
@@ -68,12 +68,12 @@ export class UpdateCustomerProductDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    PaymentMethod: string;
+    paymentMethod: string;
   
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    ShipMethod: string;
+    shipMethod: string;
 
     @IsUUID()
     @IsNotEmpty()

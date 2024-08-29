@@ -3,7 +3,7 @@ import { Transform, Type } from 'class-transformer';
 import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate } from 'class-validator';
 import { Contact, ENUM_STATUS_TYPE } from 'src/customers/entities/customer.entity';
 import {
-  FULLNAME_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
+  FULLNAME_MUST_NOT_EMPTY, PHONE_NUMBER_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
   WARDCODE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
 import { stringCleaner } from 'src/utils/stringCleaner';
@@ -15,6 +15,13 @@ export class CreateCustomerDto {
   })
   @ApiProperty()
   fullName: string;
+
+  @IsNotEmpty({ message: PHONE_NUMBER_MUST_NOT_EMPTY })
+  @Transform(({ value }) => {
+    return stringCleaner(value);
+  })
+  @ApiProperty()
+  phoneNumber: string;
 
   @IsString()
   @ApiProperty()

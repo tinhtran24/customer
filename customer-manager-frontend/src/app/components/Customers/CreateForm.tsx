@@ -85,6 +85,7 @@ export default function CreateCustomerForm({
       userInChargeId: values.userInChargeId,
       street: values.street,
       wardCode: values.ward,
+      phoneNumber: values.phoneNumber
     };
 
     const result = await createCustomer(body);;
@@ -150,6 +151,12 @@ export default function CreateCustomerForm({
 
               <Form.Item label="Mã khách hàng" required>
                 <Form.Item name="code" noStyle rules={[rule]}>
+                  <Input />
+                </Form.Item>
+              </Form.Item>
+
+              <Form.Item label="Điện thoại" required>
+                <Form.Item name="phoneNumber" noStyle rules={[rule]}>
                   <Input />
                 </Form.Item>
               </Form.Item>

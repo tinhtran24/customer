@@ -16,5 +16,5 @@ export class AppoinmentService extends BaseService<Appoinment, AppoinmentReposit
         return this.repository.findPaginate(options, {
             customerId
         });
-    }
+        }
 }

@@ -71,6 +71,7 @@ export default async function UpdateCustomerForm({
       source: customer.source,
       userInChargeId: customer.userInChargeId,
       contacts: contacts,
+      phoneNumber: customer.phoneNumber
     });
     }
     catch (e){
@@ -116,7 +117,8 @@ export default async function UpdateCustomerForm({
       status: values.status,
       userInChargeId: values.userInChargeId,
       street: values.street,
-      wardCode: customer.wardCode
+      wardCode: customer.wardCode,
+      phoneNumber: values.phoneNumber
     };
 
     const result = await updateCustomer(customer.id, body);
@@ -183,6 +185,12 @@ export default async function UpdateCustomerForm({
 
               <Form.Item label="Mã khách hàng" required>
                 <Form.Item name="code" noStyle rules={[rule]}>
+                  <Input />
+                </Form.Item>
+              </Form.Item>
+
+              <Form.Item label="Điện thoại" required>
+                <Form.Item name="phoneNumber" noStyle rules={[rule]}>
                   <Input />
                 </Form.Item>
               </Form.Item>

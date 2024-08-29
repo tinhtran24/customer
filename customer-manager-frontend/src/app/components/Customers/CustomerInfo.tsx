@@ -82,24 +82,13 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
   return (
     <div>
       <h3>Thông tin khách hàng</h3>
-      <div style={styles.parent}>
-        <Item title="Nguồn" value={customer.source} />
-        <Item title="Người phụ trách" value={customer.userInCharge.name} />
-        <Item title="Ngày tạo" value={formatDate(customer.createdAt)} />
-        <Item title="Lần sửa gần nhất" value={formatDate(customer.updatedAt)} />
-        <Item title="Đã mua" value={customer.totalOrder.toString()} />
-        <Item
-          title="Số lần đã gọi"
-          value={customer.callCountNumber.toString()}
-        />
-      </div>
       <div style={{ marginTop: "1rem" }}>
         <Collapse defaultActiveKey={["1"]} style={{ fontSize: "16px" }}>
           <Panel
-            header={
-              <h4 style={{ margin: "0", fontSize: "15px" }}>Thông tin chính</h4>
-            }
-            key="1"
+              header={
+                <h4 style={{ margin: "0", fontSize: "15px" }}>Thông tin chính</h4>
+              }
+              key="1"
           >
             <div>
               <span style={{ fontWeight: "600" }}>Mã KH:</span> {customer.code}
@@ -112,6 +101,10 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Điện thoại:</span>{" "}
+              {customer.phoneNumber}
+            </div>
+            <div>
+              <span style={{ fontWeight: "600" }}>Điện thoại Người liên hệ:</span>{" "}
               {getPhoneNumber(customer.contacts)}
             </div>
             <div>
@@ -131,6 +124,17 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
             </div>
           </Panel>
         </Collapse>
+      </div>
+      <div style={styles.parent}>
+        <Item title="Nguồn" value={customer.source} />
+        <Item title="Người phụ trách" value={customer.userInCharge.name} />
+        <Item title="Ngày tạo" value={formatDate(customer.createdAt)} />
+        <Item title="Lần sửa gần nhất" value={formatDate(customer.updatedAt)} />
+        <Item title="Đã mua" value={customer.totalOrder.toString()} />
+        <Item
+          title="Số lần đã gọi"
+          value={customer.callCountNumber.toString()}
+        />
       </div>
     </div>
   );

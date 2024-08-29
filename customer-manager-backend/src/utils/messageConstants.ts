@@ -36,9 +36,9 @@ export const USER_NOT_FOUND: string = 'Người dùng không tồn tại';
 /**************
  * @CUSTOMER  *
  **************/
-export const TAXCODE_MUST_NOT_EMPTY: string = 'Mã số thuế không được bỏ trống';
+export const PHONE_NUMBER_MUST_NOT_EMPTY: string = 'Số điện thoại không được bỏ trống';
 export const FULLNAME_MUST_NOT_EMPTY: string =
-  'Tên Công ty không được bỏ trống';
+  'Tên khách hàng không được bỏ trống';
 export const WARDCODE_MUST_NOT_EMPTY: string = 'Địa chỉ không được bỏ trống';
 export const USER_INCHARGE_MUST_NOT_EMPTY: string = 'Người phụ trách không được bỏ trống';
 export const CUSTOMER_NOT_FOUND: string = 'Khách hàng không tồn tại';

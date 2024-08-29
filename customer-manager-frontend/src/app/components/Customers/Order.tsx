@@ -14,9 +14,11 @@ import {
 } from "antd";
 import { useAuthContext } from "@/app/components/auth";
 import { useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { createCustomerProduct } from "@/app/lib/actions";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { generateCode } from "@/app/utils/generateString";
 const { Option } = Select;
+import { EditOutlined } from "@ant-design/icons";
+import { createCustomerProduct } from "@/app/lib/actions";
 
 interface OrderData {
   no: number;
@@ -52,17 +54,17 @@ export default function OrderProduct({
       const body: NewCustomerProduct = {
         items: data.map((item) => ({
           productId: item.product.id,
-          quality: item.quantity,
+          quantity: Number(item.quantity),
           unitPrice: item.price,
         })),
         createCustomerProduct: {
-          code: Date.now().toString(),
+          code: generateCode('DH', new Date(), Date.now().valueOf()),
           customerId: customerId,
           createdUserId: (currentUser as any).sub,
           street: values.street,
           price: data.reduce((acc, item) => acc + item.totalPrice, 0),
-          PaymentMethod: values.PaymentMethod,
-          ShipMethod: values.ShipMethod,
+          paymentMethod: values.PaymentMethod,
+          shipMethod: values.ShipMethod,
         },
       };
 
@@ -112,6 +114,22 @@ export default function OrderProduct({
       key: "totalPrice",
       render: (e: number) => formatPrice(e),
     },
+    {
+      key: "5",
+      title: "Actions",
+      render: (record) => {
+        return (
+            <>
+              <DeleteOutlined
+                  onClick={() => {
+                    onDeleteStudent(record);
+                  }}
+                  style={{ color: "red", marginLeft: 12 }}
+              />
+            </>
+        );
+      },
+    },
   ];
 
   const handleOk = () => {
@@ -143,6 +161,13 @@ export default function OrderProduct({
   const handleSelectChange = (value: string) => {
     const product = products.find((p) => p.id === value);
     setSelectedProduct(product);
+  };
+
+  const onDeleteStudent = (record: OrderData) => {
+    setData((pre) => {
+      return pre.filter((order) => order.no !== record.no);
+    });
+    message.success("Đã xóa đơn hàng thành công");
   };
 
   //mock data

@@ -30,10 +30,10 @@ export class CustomerProduct extends BaseEntity {
   price: number;
 
   @Column({ name: 'payment_method' })
-  PaymentMethod: string;
+  paymentMethod: string;
 
   @Column({ name: 'ship_method' })
-  ShipMethod: string;
+  shipMethod: string;
 
   @Column({ name: 'street' })
   street: string;
