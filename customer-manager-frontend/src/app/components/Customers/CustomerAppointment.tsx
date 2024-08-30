@@ -83,7 +83,7 @@ export function CreateCustomerAppointment({
       }}
     >
       {
-         currentUser?.role != 'admin' && (
+         currentUser?.role === 'admin' && (
           <>
             <Form.Item
               name="userInChargeId"
