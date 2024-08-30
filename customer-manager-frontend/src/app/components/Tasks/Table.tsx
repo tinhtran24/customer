@@ -10,7 +10,7 @@ const columns: ColumnsType<Task> = [
     key: "code",
   },
   {
-    title: "Tiêu đề",
+    title: "Mã công việc",
     dataIndex: "label",
     key: "label",
   },
@@ -29,11 +29,6 @@ const columns: ColumnsType<Task> = [
     title: "Người phụ trách",
     dataIndex: ["userInCharge", "name"],
     key: "userInCharge",
-  },
-  {
-    title: "Email người phụ trách",
-    dataIndex: ["userInCharge", "email"],
-    key: "email",
   }
 ];
 

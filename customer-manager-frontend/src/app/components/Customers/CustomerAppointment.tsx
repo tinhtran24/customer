@@ -11,6 +11,7 @@ import {
   Col,
   Space,
   DatePicker,
+  TextArea,
 } from "antd";
 import { useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -123,19 +124,10 @@ export function CreateCustomerAppointment({
                 <Form.Item
                   {...restField}
                   name={[name, "label"]}
-                  label="Tiêu đề"
-                  rules={[{ required: true, message: "Vui lòng thêm tiêu đề" }]}
+                  label="Mã công việc"
+                  rules={[{ required: true, message: "Vui lòng thêm mã công việc" }]}
                 >
-                  <Input placeholder="Tiêu đề ..." />
-                </Form.Item>
-
-                <Form.Item
-                  {...restField}
-                  name={[name, "description"]}
-                  label="Chi tiết"
-                  rules={[{ required: true, message: "Vui lòng thêm mô tả" }]}
-                >
-                  <Input placeholder="Mô tả ..." />
+                  <Input placeholder="Mã công việc ..." />
                 </Form.Item>
 
                 <Form.Item
@@ -152,7 +144,6 @@ export function CreateCustomerAppointment({
                     format="YYYY-MM-DD HH:mm"
                   />
                 </Form.Item>
-
                 <div
                   style={{
                     display: "flex",
@@ -171,9 +162,17 @@ export function CreateCustomerAppointment({
                     />
                   )}
                 </div>
+                <Form.Item
+                  {...restField}
+                  name={[name, "description"]}
+                  label="Chi tiết"
+                  rules={[{ required: true, message: "Vui lòng thêm chi tiết" }]}
+                >
+                  <TextArea placeholder="Chi tiết..." />
+                </Form.Item>
               </Space>
             ))}
-
+          
             <Form.Item>
               <Button
                 type="dashed"
@@ -181,7 +180,7 @@ export function CreateCustomerAppointment({
                 block
                 icon={<PlusOutlined />}
               >
-                Thêm tiêu đề, mô tả, và ngày
+                Thêm công việc
               </Button>
             </Form.Item>
           </>
