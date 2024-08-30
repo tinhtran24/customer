@@ -10,7 +10,8 @@ import { useAuthContext } from "@/app/components/auth";
 import "./DashboardMenu.css";
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import { AiOutlineProduct } from "react-icons/ai";
-import { MdPayment } from "react-icons/md";
+import { MdOutlineSource, MdPayment, MdProductionQuantityLimits } from "react-icons/md";
+import { RiCustomerServiceLine } from "react-icons/ri";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
 
@@ -62,32 +63,83 @@ export const DashboardMenu = () => {
             {
               key: "/dashboard/admin",
               label: "Người dùng",
-              icon: <span style={{marginLeft: "10px"}}><FaRegUser style={{ fontSize: "16px" }} /></span>,
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <FaRegUser style={{ fontSize: "16px" }} />
+                </span>
+              ),
             },
             {
               key: "/dashboard/products",
               label: "Sản phẩm",
-              icon: <span style={{marginLeft: "10px"}}><AiOutlineProduct style={{ fontSize: "16px" }} /></span>,
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <AiOutlineProduct style={{ fontSize: "16px" }} />
+                </span>
+              ),
             },
             {
               key: "/dashboard/customer-status",
               label: "Trạng thái KH",
-              icon: <span style={{marginLeft: "10px"}}><HiOutlineStatusOnline style={{ fontSize: "16px" }} /></span>,
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <HiOutlineStatusOnline style={{ fontSize: "16px" }} />
+                </span>
+              ),
+            },
+            {
+              key: "/dashboard/customer-group",
+              label: "Nhóm KH",
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <RiCustomerServiceLine style={{ fontSize: "16px" }} />
+                </span>
+              ),
+            },
+            {
+              key: "/dashboard/customer-source",
+              label: "Nguồn KH",
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <MdOutlineSource  style={{ fontSize: "16px" }} />
+                </span>
+              ),
             },
             {
               key: "/dashboard/delivery-method",
               label: "PT vận chuyển",
-              icon: <span style={{marginLeft: "10px"}}><FaShippingFast style={{ fontSize: "16px" }} /></span>,
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <FaShippingFast style={{ fontSize: "16px" }} />
+                </span>
+              ),
             },
             {
               key: "/dashboard/payment-method",
               label: "PT thanh toán",
-              icon: <span style={{marginLeft: "10px"}}><MdPayment style={{ fontSize: "16px" }} /></span>,
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <MdPayment style={{ fontSize: "16px" }} />
+                </span>
+              ),
             },
             {
               key: "/dashboard/task-setting",
               label: "Mã công việc",
-              icon: <span style={{marginLeft: "10px"}}><DownSquareOutlined style={{ fontSize: "16px" }} /></span>,
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <DownSquareOutlined style={{ fontSize: "16px" }} />
+                </span>
+              ),
+            },
+            {
+              key: "/dashboard/source-of-goods",
+              label: "Nguồn hàng",
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <MdProductionQuantityLimits style={{ fontSize: "16px" }} />
+                </span>
+              ),
             },
           ],
         }

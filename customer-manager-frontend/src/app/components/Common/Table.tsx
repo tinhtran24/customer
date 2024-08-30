@@ -89,12 +89,30 @@ export default function CommonTable({ data, type }: CommonTableProps) {
       width: "20%",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (d: string) => {
+        const date = new Date(d);
+        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+        return <div style={{ textAlign: "center" }}>{formattedDate}</div>;
+      },
     },
     {
       title: "Ngày cập nhật",
       width: "20%",
       dataIndex: "updatedAt",
       key: "updatedAt",
+      render: (d: string) => {
+        const date = new Date(d);
+        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+        return <div style={{ textAlign: "center" }}>{formattedDate}</div>;
+      },
     },
     {
       title: "",

@@ -12,13 +12,19 @@ import {
   Row,
   Divider,
 } from "antd";
-import { ENUM_STATUS_TYPE, NewCustomer, User } from "@/app/lib/definitions";
+import {
+  ENUM_STATUS_TYPE,
+  NewCustomer,
+  SETTINGS_TYPE,
+  User,
+} from "@/app/lib/definitions";
 import { createSchemaFieldRule } from "antd-zod";
 import { CreateCustomerFormSchema } from "@/app/lib/validations";
 import { createCustomer, fetchUsers } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAuthContext } from "@/app/components/auth";
+import { SettingSelect } from "../Common/Select";
 const { Option } = Select;
 
 export default function CreateCustomerForm({
@@ -72,7 +78,7 @@ export default function CreateCustomerForm({
     setIsFormSubmitting(true);
     const body: NewCustomer = {
       fullName: values.fullName,
-      contacts: values.contacts?.map((s:any) => JSON.stringify(s)),
+      contacts: values.contacts?.map((s: any) => JSON.stringify(s)),
       gender: values.gender,
       group: values.group,
       source: values.source,
@@ -80,10 +86,10 @@ export default function CreateCustomerForm({
       userInChargeId: values.userInChargeId,
       street: values.street,
       wardCode: values.ward,
-      phoneNumber: values.phoneNumber
+      phoneNumber: values.phoneNumber,
     };
 
-    const result = await createCustomer(body);;
+    const result = await createCustomer(body);
 
     setIsFormSubmitting(false);
 
@@ -168,13 +174,13 @@ export default function CreateCustomerForm({
 
               <Form.Item label="Nhóm khách hàng" required>
                 <Form.Item name="group" noStyle rules={[rule]}>
-                  <Input />
+                  <SettingSelect type={SETTINGS_TYPE.CUSTOMER_GROUP} />
                 </Form.Item>
               </Form.Item>
 
               <Form.Item label="Nguồn khách hàng" required>
                 <Form.Item name="source" noStyle rules={[rule]}>
-                  <Input />
+                  <SettingSelect type={SETTINGS_TYPE.CUSTOMER_SOURCE} />
                 </Form.Item>
               </Form.Item>
 
@@ -212,12 +218,6 @@ export default function CreateCustomerForm({
                     filterOption={filterOption}
                     options={genderOptions}
                   />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Số nhà/đường" required>
-                <Form.Item name="street" noStyle rules={[rule]}>
-                  <Input />
                 </Form.Item>
               </Form.Item>
 
@@ -262,8 +262,22 @@ export default function CreateCustomerForm({
                   />
                 </Form.Item>
               </Form.Item>
-              
-              <div style={{ alignContent: "center" }}>
+
+              <Form.Item label="Số nhà/đường" required>
+                <Form.Item name="street" noStyle rules={[rule]}>
+                  <Input />
+                </Form.Item>
+              </Form.Item>
+
+              <div
+                style={{
+                  alignContent: "center",
+                  alignItems: "end",
+                  display: "flex",
+                  flexDirection: "column",
+                  paddingRight: "2.5rem",
+                }}
+              >
                 <Form.List name="contacts">
                   {(fields, { add, remove }) => (
                     <>
@@ -312,27 +326,27 @@ export default function CreateCustomerForm({
 
           <Row>
             <Divider />
-            <Col span={24} lg={{ span: 12 }}>
-              <Form.Item
-                label=" "
-                labelCol={{ xs: { span: 0 }, lg: { span: 7 } }}
-                colon={false}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                position: "relative",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isFormSubmitting}
               >
-                <Space size={"middle"}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={isFormSubmitting}
-                  >
-                    Tạo
-                  </Button>
-
-                  <Button type="primary" style={{ background: "gray" }}>
-                    <Link href="/dashboard/customers/">Hủy</Link>
-                  </Button>
-                </Space>
-              </Form.Item>
-            </Col>
+                Tạo
+              </Button>
+              <div style={{ position: "absolute", top: 0, right: "3rem" }}>
+                <Button type="primary" style={{ background: "gray" }}>
+                  <Link href="/dashboard/customers/">Hủy</Link>
+                </Button>
+              </div>
+            </div>
           </Row>
         </Form>
       </Col>
