@@ -14,7 +14,9 @@ export class TaskService extends BaseService<Task, TaskRepository> {
 
       async getByCustomerId(customerId: string, options: PaginateDto) {
         return this.repository.findPaginate(options, {
+          appoinment: {
             customerId
+          }
         });
       }
 }
