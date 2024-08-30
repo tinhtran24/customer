@@ -53,7 +53,7 @@ export function CreateCustomerAppointment({
           description: task.description,
           date: task.date.format("YYYY-MM-DD"),
           label: task.label,
-          userInChargeId: (currentUser as any).sub,
+          userInChargeId: currentUser?.role != 'admin' ? (currentUser as any).sub : values.userInChargeId,
         })),
       };
 
@@ -82,30 +82,35 @@ export function CreateCustomerAppointment({
         tasks: [{ label: "", description: "", date: null }],
       }}
     >
-      <Form.Item
-        name="userInChargeId"
-        label="Người phụ trách"
-        rules={[{ required: true, message: "Chọn người phụ trách" }]}
-      >
-        <Select
-          placeholder="- Chọn -"
-          style={{ width: "100%" }}
-          showSearch
-          optionFilterProp="children"
-          filterOption={(input: any, option: any) =>
-            (option?.children as string)
-              .toLowerCase()
-              .includes(input.toLowerCase())
-          }
-        >
-          {users?.map((user) => (
-            <Option key={user.id} value={user.id}>
-              {`${user.name} - ${user.email}`}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
-
+      {
+         currentUser?.role != 'admin' && (
+          <>
+            <Form.Item
+              name="userInChargeId"
+              label="Người phụ trách"
+              rules={[{ required: true, message: "Chọn người phụ trách" }]}
+            >
+              <Select
+                placeholder="- Chọn -"
+                style={{ width: "100%" }}
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input: any, option: any) =>
+                  (option?.children as string)
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              >
+                {users?.map((user) => (
+                  <Option key={user.id} value={user.id}>
+                    {`${user.name} - ${user.email}`}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </>
+         )
+      }
       <Form.List name="tasks">
         {(fields, { add, remove }) => (
           <>
