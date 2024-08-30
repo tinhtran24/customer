@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query } from "@nestjs/common";
+import { Controller, Get, Param, ParseUUIDPipe, Query, Request} from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { BaseController } from "src/core/base/base.controller";
 import { TaskService } from "./task.service";
@@ -39,5 +39,17 @@ export class TaskController  extends BaseController<TaskService> {
         @Query() options: PaginateDto
     ) {
         return this.taskService.getByCustomerId(item, options);
+    }
+
+    @Get('')
+    async list(
+        @Query() options: PaginateDto,
+        @Request() req
+    ) {
+        let where = {}
+        if (req.user['role'] !== 'admin') {
+            where['userInChargeId'] = req.user['userId']
+        }
+        return this.taskService.findPaginate(options, where);
     }
 }

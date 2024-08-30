@@ -78,8 +78,9 @@ export abstract class BaseService<
     
     async findPaginate(
         options: PaginateDto<M> & P,
+        where?: any
     ){
-        return this.repository.findPaginate(options);
+        return this.repository.findPaginate(options, where);
     }
     
     /**
