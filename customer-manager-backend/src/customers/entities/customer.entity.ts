@@ -13,16 +13,7 @@ export type Contact = {
   phone: string;
 };
 
-export enum ENUM_STATUS_TYPE {
-  NEW_CUSTOMERS = 'KH mới',
-  NOT_RECEIVE_CALL = 'KH Chưa nghe máy',
-  POTENTIAL_CUSTOMERS = 'KH tiềm năng',
-  NON_EXIGENCY_CUSTOMERS = 'KH không có nhu cầu',
-  OLD_PATIENT = 'BN Cũ',
-  NEW_PATIENT = 'BN Mới',
-  CANCEL_PATIENT = 'BN Bỏ',
-  RE_TREATMENT_PATIENT = 'BN Điều trị lại'
-}
+
 @Entity()
 class Customer extends BaseEntity {
   @Column({ name: 'code' })
@@ -51,11 +42,8 @@ class Customer extends BaseEntity {
 
   @Column({
     name: 'status',
-    type: 'enum',
-    enum: ENUM_STATUS_TYPE,
-    default: ENUM_STATUS_TYPE.NEW_CUSTOMERS,
   })
-  status: ENUM_STATUS_TYPE;
+  status: string;
 
   @Column({ name: 'call_count_number' , nullable: true })
   callCountNumber: number;

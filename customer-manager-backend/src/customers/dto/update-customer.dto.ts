@@ -5,8 +5,8 @@ import {
   FULLNAME_MUST_NOT_EMPTY, PHONE_NUMBER_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
   WARDCODE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
-import { Exclude, Transform } from 'class-transformer';
-import { Contact, ENUM_STATUS_TYPE } from 'src/customers/entities/customer.entity';
+import { Transform } from 'class-transformer';
+import { Contact } from 'src/customers/entities/customer.entity';
 import { stringCleaner } from 'src/utils/stringCleaner';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -31,7 +31,7 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
 
   @IsString()
   @ApiProperty()
-  status: ENUM_STATUS_TYPE;
+  status: string;
 
   @IsNumber()
   @ApiProperty()

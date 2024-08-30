@@ -6,7 +6,7 @@ import { BaseService } from 'src/core/base/base.service';
 import { CustomerRepository } from './customer.repository';
 import { QueryHook } from 'src/core/type/query';
 import { QueryCustomertDto } from './dto/filter-customer.dto';
-import { ILike } from 'typeorm';
+import { Equal, Raw } from 'typeorm';
 
 @Injectable()
 export class CustomersService extends BaseService<Customer, CustomerRepository> {
@@ -19,19 +19,13 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
   async findPaginate(
     options: QueryCustomertDto,
   ){
-    let where;
+    let where= {};
+
     if (options.q !== '') {
-      where = [
-        {
-          fullName: ILike(`%${options.q}%`),
-        },
-        {
-          code: ILike(`%${options.q}%`)
-        }
-      ]
+      where['fullName'] = Raw(fullName => `${fullName} ILIKE '%${options.q}%' OR "Customer"."code" ILIKE '%${options.q}%' OR "Customer"."phone_number" ILIKE '%${options.q}%'`)
     }
     if (options.status) {
-      where.status = options.status
+      where['status'] = Equal(options.status)
     }
     return this.repository.findPaginate(options, where);
   }
