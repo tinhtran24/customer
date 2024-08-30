@@ -11,7 +11,6 @@ import {
   Col,
   Space,
   DatePicker,
-  TextArea,
 } from "antd";
 import { useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -168,7 +167,7 @@ export function CreateCustomerAppointment({
                   label="Chi tiết"
                   rules={[{ required: true, message: "Vui lòng thêm chi tiết" }]}
                 >
-                  <TextArea placeholder="Chi tiết..." />
+                  <Input.TextArea placeholder="Chi tiết..." />
                 </Form.Item>
               </Space>
             ))}

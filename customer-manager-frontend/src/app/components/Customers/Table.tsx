@@ -14,12 +14,12 @@ import { useEffect, useState } from "react";
 import { TableColumnsType } from "antd";
 import Link from "next/link";
 import { MdDeleteOutline } from "react-icons/md";
-import { Categories } from "./Categories";
 import SearchCustomers from "./Search";
 import { deleteCustomer, fetchCustomers } from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
 import { FiEdit3 } from "react-icons/fi";
 import { DownOutlined } from "@ant-design/icons";
+import { boolean } from "zod";
 
 export default function CustomerTable() {
   //#region hook
@@ -29,20 +29,20 @@ export default function CustomerTable() {
   const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState("");
 
   const {
     token: { colorPrimary },
   } = theme.useToken();
 
-  const getData = async (p?: string) => {
+  const getData = async (isReset?: boolean) => {
     setIsLoading(true);
     setData(
       await fetchCustomers({
         page: currentPage.toString(),
         limit: pageSize.toString(),
-        q: p ? p : "",
-        status: p ? "" : category,
+        q: isReset ? "" : searchText?.trim(),
+        status: isReset ? "" : status,
       })
     );
     setIsLoading(false);
@@ -52,7 +52,14 @@ export default function CustomerTable() {
     getData();
     if (!data) setIsLoading(true);
     else setIsLoading(false);
-  }, [currentPage, category]);
+  }, [currentPage]);
+
+  const handleResetFilters = () => {
+    setSearchText("");
+    setStatus("");
+    setCurrentPage(1);
+    getData(true);
+  };
 
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
@@ -228,24 +235,14 @@ export default function CustomerTable() {
     <>
       <SearchCustomers
         text={searchText}
-        onChange={(e: any) => {
-          setSearchText(e.target.value);
-          setCategory("");
+        onChangeText={setSearchText}
+        onChangeStatus={setStatus}
+        handleFilter={() => {
+          setCurrentPage(1);
+          getData();
         }}
-        handleSearch={() => {
-          if (searchText?.length > 0) {
-            getData(searchText);
-          }
-        }}
-      />
-      <Categories
-        setCategory={(e: string) => {
-          if (e !== category) {
-            setCategory(e);
-            setSearchText("");
-            setData(undefined);
-          }
-        }}
+        status={status}
+        handleResetFilters={handleResetFilters}
       />
       {isLoading || !data ? (
         <Loading />

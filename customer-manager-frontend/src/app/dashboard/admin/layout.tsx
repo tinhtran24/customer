@@ -16,7 +16,7 @@ export default function UserListLayout({
         token: {
           padding: 15,
           margin: 15,
-          fontSize: 16
+          fontSize: 14
         },
       }}
     >

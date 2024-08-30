@@ -40,12 +40,12 @@ export function History({
     },
     {
       title: "PT thanh toán",
-      dataIndex: "PaymentMethod",
+      dataIndex: "paymentMethod",
       key: "paymentMethod",
     },
     {
       title: "PT giao hàng",
-      dataIndex: "ShipMethod",
+      dataIndex: "shipMethod",
       key: "shipMethod",
     },
     {

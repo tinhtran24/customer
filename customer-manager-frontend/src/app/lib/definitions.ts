@@ -244,6 +244,34 @@ export type CreateNote = {
 
 //#endregion
 
+//#region  Setting
+export enum SETTINGS_TYPE {
+  STATUS = "STATUS",
+  DELIVERY_METHOD = "DELIVERY_METHOD",
+  PAYMENT_METHOD = "PAYMENT_METHOD",
+}
+
+export type Setting = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  label: string;
+  key: string;
+  type: SETTINGS_TYPE;
+};
+
+export type CreateSetting = {
+  key: string;
+  label: string;
+  type: SETTINGS_TYPE;
+};
+
+export type UpdateSetting = {
+  label: string;
+};
+//#endregion
+
 export type PaginationMeta = {
   totalItems: number;
   itemCount: number;

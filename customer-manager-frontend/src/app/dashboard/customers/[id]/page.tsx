@@ -52,21 +52,6 @@ export default async function DetailCustomerPage({
 
         <Divider style={{ margin: "24px 0px 10px 0px" }} />
 
-        <div style={{ textAlign: "center" }}>
-          <h2
-            className={shantell.className}
-            style={{
-              color: "#0d2f5f",
-              alignItems: "end",
-              padding: 0,
-              margin: 15,
-              fontSize: 27
-            }}
-          >
-            {customer.fullName?.toUpperCase()}
-          </h2>
-        </div>
-
         <Suspense fallback={<Spin size="large" />}>
           <div style={{ display: "flex", gap: "2rem" }}>
             <div style={{ width: "30%" }}>

@@ -2,12 +2,14 @@
 import {
   CreateCustomerAppointmentBody,
   CreateNote,
+  CreateSetting,
   LoginPayload,
   NewAppointment,
   NewCustomer,
   NewCustomerProduct,
   NewProduct,
   NewUser,
+  UpdateSetting,
   UpdateUser,
 } from "@/app/lib/definitions";
 import { revalidatePath } from "next/cache";
@@ -327,7 +329,7 @@ export async function fetchAllProducts() {
 
     // Parse response và lấy items
     const data = await res.json();
-    return data.items || []; // Trả về danh sách items hoặc mảng rỗng nếu không có dữ liệu
+    return data.items || []; 
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
@@ -584,7 +586,7 @@ export async function fetchAllTask() {
 
     // Parse response và lấy items
     const data = await res.json();
-    return data.items || []; // Trả về danh sách items hoặc mảng rỗng nếu không có dữ liệu
+    return data.items || []; 
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
@@ -641,6 +643,107 @@ export async function createNote(body: CreateNote) {
     return {
       statusCode: 500,
       message: "Có lỗi xảy ra. Không tạo được ghi chú",
+    };
+  }
+}
+//#endregion
+
+//#region Settings
+export async function fetchSettings(type: string) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/setting/${type}`
+    );
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    // Parse response và lấy items
+    const data = await res.json();
+    return data.items || []; 
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+
+
+export async function createSettings(body: CreateSetting) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/setting";
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/customers");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không tạo được sản phẩm mới",
+    };
+  }
+}
+
+
+export async function updateSettings(id: string, body: CreateSetting) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/setting/${id}`;
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/customers");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể cập nhật thông tin",
+    };
+  }
+}
+
+export async function deleteSetting(id: string) {
+  try {
+    const accessToken = await cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/setting/${id}`;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/appointments");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể xóa thông tin",
     };
   }
 }
