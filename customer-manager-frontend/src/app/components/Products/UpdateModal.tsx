@@ -1,7 +1,7 @@
 // components/UpdateProductModal.tsx
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, InputNumber, Button } from "antd";
-import { Product } from "@/app/lib/definitions";
+import { NewProduct, Product } from "@/app/lib/definitions";
 
 interface UpdateProductModalProps {
   visible: boolean;
@@ -30,7 +30,13 @@ export const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
       .validateFields()
       .then(async (values) => {
         setIsLoading(true);
-        await onUpdateProduct(values);
+        const body: NewProduct = {
+          code: initialValues.code,
+          description: values.description,
+          title: values.title,
+        };
+        console.log("🚀 ~ .then ~ body:", body)
+        await onUpdateProduct(body);
         form.resetFields(); // Reset form fields after submission
         onClose(); // Close the modal
         setIsLoading(false);
@@ -77,7 +83,6 @@ export const UpdateProductModal: React.FC<UpdateProductModalProps> = ({
         >
           <Input.TextArea rows={4} placeholder="Mô tả ..." />
         </Form.Item>
-        
       </Form>
     </Modal>
   );

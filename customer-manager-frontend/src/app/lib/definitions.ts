@@ -136,9 +136,10 @@ export type Product = {
   createdAt: string;
   updatedAt: string;
   deletedAt: string;
+  code: string;
 };
 
-export type NewProduct = { title: string; description: string };
+export type NewProduct = { title: string; description: string, code: string };
 //#endregion
 
 //#region Customer product

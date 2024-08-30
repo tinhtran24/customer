@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, Form, Input, InputNumber, Button, message } from "antd";
 import { NewProduct } from "@/app/lib/definitions";
 import { createProduct } from "@/app/lib/actions";
+import { generateCode } from "@/app/utils/generateString";
 interface AddProductModalProps {
   visible: boolean;
   onClose: () => void;
@@ -22,6 +23,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
         const body: NewProduct = {
           title: values.title,
           description: values.description,
+          code: generateCode("SP", new Date(), Date.now().valueOf()),
         };
         const result = await createProduct(body);
 
