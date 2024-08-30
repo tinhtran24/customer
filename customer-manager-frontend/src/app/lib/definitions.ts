@@ -26,10 +26,10 @@ export type Customer = {
   wardCode: string;
   userInCharge: UserInCharger;
   status: string;
-  callCountNumber: number;
+  callCountNumber?: number;
   group: string;
   source: string;
-  totalOrder: number;
+  totalOrder?: number;
   ward: any;
   userInChargeId: string;
   phoneNumber: string;

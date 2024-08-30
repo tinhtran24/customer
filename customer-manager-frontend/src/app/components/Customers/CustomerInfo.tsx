@@ -105,7 +105,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Điện thoại Người liên hệ:</span>{" "}
-              {getPhoneNumber(customer.contacts as [])}
+              {getPhoneNumber(customer.contacts)}
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Địa chỉ:</span> {getAddress()}
@@ -130,10 +130,10 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
         <Item title="Người phụ trách" value={customer.userInCharge.name} />
         <Item title="Ngày tạo" value={formatDate(customer.createdAt)} />
         <Item title="Lần sửa gần nhất" value={formatDate(customer.updatedAt)} />
-        <Item title="Đã mua" value={customer.totalOrder.toString()} />
+        <Item title="Đã mua" value={customer.totalOrder?.toString() || '0'} />
         <Item
           title="Số lần đã gọi"
-          value={customer.callCountNumber.toString()}
+          value={customer.callCountNumber?.toString() || '0'}
         />
       </div>
     </div>
