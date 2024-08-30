@@ -1,6 +1,10 @@
 "use client";
 import { createAppointmentForCustomer, fetchUsers } from "@/app/lib/actions";
-import { CreateCustomerAppointmentBody, User } from "@/app/lib/definitions";
+import {
+  CreateCustomerAppointmentBody,
+  SETTINGS_TYPE,
+  User,
+} from "@/app/lib/definitions";
 import {
   Form,
   Input,
@@ -11,13 +15,24 @@ import {
   Col,
   Space,
   DatePicker,
+  TableColumnsType,
+  Table,
+  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
 import { generateCode } from "@/app/utils/generateString";
+import { SettingSelect } from "../Common/Select";
 
 const { Option } = Select;
+
+interface AppointmentData {
+  code: string;
+  date: string;
+  content: string;
+  label: string;
+}
 
 interface CreateCustomerAppointmentProps {
   customerId: string;
@@ -27,9 +42,14 @@ export function CreateCustomerAppointment({
   customerId,
 }: CreateCustomerAppointmentProps) {
   const [form] = Form.useForm();
+  const [formModal] = Form.useForm();
   const [users, setUsers] = useState<User[] | null>(null);
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+
   const { currentUser } = useAuthContext();
+
+  const [data, setData] = useState<AppointmentData[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const getData = async () => {
     const users = await fetchUsers();
@@ -46,14 +66,17 @@ export function CreateCustomerAppointment({
     try {
       const body: CreateCustomerAppointmentBody = {
         createScheduleDto: {
-          customerId: customerId
+          customerId: customerId,
         },
-        createTaskDto: values.tasks.map((task: any) => ({
+        createTaskDto: data.map((s) => ({
           code: generateCode("LH", new Date(), Date.now().valueOf()),
-          description: task.description,
-          date: task.date.format("YYYY-MM-DD"),
-          label: task.label,
-          userInChargeId: currentUser?.role != 'admin' ? (currentUser as any).sub : values.userInChargeId,
+          description: s.content,
+          date: s.date,
+          label: s.label,
+          userInChargeId:
+            currentUser?.role != "admin"
+              ? (currentUser as any).sub
+              : values.userInChargeId,
         })),
       };
 
@@ -65,6 +88,7 @@ export function CreateCustomerAppointment({
       } else {
         message.success("Tạo lịch hẹn thành công");
         form.resetFields();
+        setData([]);
       }
     } catch (error) {
       message.error("Đã có lỗi xảy ra khi gửi dữ liệu.");
@@ -72,6 +96,80 @@ export function CreateCustomerAppointment({
       setIsFormSubmitting(false);
     }
   };
+
+  const onDeleteItem = (record: AppointmentData) => {
+    setData((pre) => {
+      return pre.filter((order) => order.code !== record.code);
+    });
+    message.success("Đã xóa lịch hẹn thành công");
+  };
+
+  const handleOk = () => {
+    formModal
+      .validateFields()
+      .then((values) => {
+        const newData: AppointmentData = {
+          code: generateCode("LH", new Date(), Date.now().valueOf()),
+          date: values.date,
+          content: values.content,
+          label: values.label,
+        };
+        setData([...data, newData]);
+        formModal.resetFields();
+        setIsModalVisible(false);
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const columns: TableColumnsType<AppointmentData> = [
+    {
+      title: "Mã công việc",
+      dataIndex: "label",
+      key: "label",
+    },
+    {
+      title: "Ngày hẹn",
+      dataIndex: "date",
+      key: "date",
+      render: (d) => {
+        const date = new Date(d);
+        const formattedDate = date.toLocaleDateString("en-GB");
+        const formattedTime = date.toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        return `${formattedDate} ${formattedTime}`;
+      },
+    },
+    {
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
+    },
+    {
+      key: "4",
+      title: "",
+      render: (record) => {
+        return (
+          <>
+            <DeleteOutlined
+              onClick={() => {
+                onDeleteItem(record);
+              }}
+              style={{ color: "red", marginLeft: 12 }}
+            />
+          </>
+        );
+      },
+    },
+  ];
 
   return (
     <Form
@@ -82,109 +180,102 @@ export function CreateCustomerAppointment({
         tasks: [{ label: "", description: "", date: null }],
       }}
     >
-      {
-         currentUser?.role === 'admin' && (
-          <>
-            <Form.Item
-              name="userInChargeId"
-              label="Người phụ trách"
-              rules={[{ required: true, message: "Chọn người phụ trách" }]}
+      {currentUser?.role === "admin" && (
+        <>
+          <Form.Item
+            name="userInChargeId"
+            label="Người phụ trách"
+            rules={[{ required: true, message: "Chọn người phụ trách" }]}
+          >
+            <Select
+              placeholder="- Chọn -"
+              style={{ width: "100%" }}
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input: any, option: any) =>
+                (option?.children as string)
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
             >
-              <Select
-                placeholder="- Chọn -"
-                style={{ width: "100%" }}
-                showSearch
-                optionFilterProp="children"
-                filterOption={(input: any, option: any) =>
-                  (option?.children as string)
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-              >
-                {users?.map((user) => (
-                  <Option key={user.id} value={user.id}>
-                    {`${user.name} - ${user.email}`}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </>
-         )
-      }
-      <Form.List name="tasks">
-        {(fields, { add, remove }) => (
-          <>
-            {fields.map(({ key, name, ...restField }, index) => (
-              <Space
-                key={key}
-                style={{ display: "flex", marginBottom: 8 }}
-                align="baseline"
-              >
-                <Form.Item
-                  {...restField}
-                  name={[name, "label"]}
-                  label="Mã công việc"
-                  rules={[{ required: true, message: "Vui lòng thêm mã công việc" }]}
-                >
-                  <Input placeholder="Mã công việc ..." />
-                </Form.Item>
+              {users?.map((user) => (
+                <Option key={user.id} value={user.id}>
+                  {`${user.name} - ${user.email}`}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </>
+      )}
 
-                <Form.Item
-                  {...restField}
-                  name={[name, "date"]}
-                  label="Ngày hẹn"
-                  rules={[
-                    { required: true, message: "Vui lòng chọn ngày hẹn" },
-                  ]}
-                >
-                  <DatePicker
-                    placeholder="Chọn ngày và giờ ..."
-                    showTime={{ format: "HH:mm" }}
-                    format="YYYY-MM-DD HH:mm"
-                  />
-                </Form.Item>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  {fields.length > 1 && (
-                    <MinusCircleOutlined
-                      onClick={() => remove(name)}
-                      style={{
-                        cursor: "pointer",
-                        color: "red",
-                        fontSize: "20px",
-                      }}
-                    />
-                  )}
-                </div>
-                <Form.Item
-                  {...restField}
-                  name={[name, "description"]}
-                  label="Chi tiết"
-                  rules={[{ required: true, message: "Vui lòng thêm chi tiết" }]}
-                >
-                  <Input.TextArea placeholder="Chi tiết..." />
-                </Form.Item>
-              </Space>
-            ))}
-          
-            <Form.Item>
-              <Button
-                type="dashed"
-                onClick={() => add()}
-                block
-                icon={<PlusOutlined />}
-              >
-                Thêm công việc
-              </Button>
-            </Form.Item>
-          </>
-        )}
-      </Form.List>
+      <Modal
+        title="Thêm lịch hẹn"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Thoát
+          </Button>,
+          <Button key="submit" type="primary" htmlType="submit" form="LHForm">
+            Thêm
+          </Button>,
+        ]}
+      >
+        <Form
+          form={formModal}
+          id="LHForm"
+          layout="vertical"
+          onFinish={handleOk}
+        >
+          <Form.Item
+            name="date"
+            label="Ngày hẹn"
+            rules={[{ required: true, message: "Vui lòng chọn ngày hẹn" }]}
+          >
+            <DatePicker
+              placeholder="Chọn ngày và giờ ..."
+              showTime={{ format: "HH:mm" }}
+              format="YYYY-MM-DD HH:mm"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="label"
+            label="Mã công việc"
+            rules={[{ required: true, message: "Vui lòng chọn mã công việc" }]}
+          >
+            <SettingSelect
+              type={SETTINGS_TYPE.TASK_CODE}
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="content"
+            label="Chi tiết"
+            rules={[{ required: true, message: "Vui lòng thêm chi tiết" }]}
+          >
+            <Input.TextArea placeholder="Chi tiết..." />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={() => setIsModalVisible(true)}
+        style={{ float: "right", marginBottom: "1rem" }}
+      >
+        Thêm lịch hẹn
+      </Button>
+
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={{ pageSize: 10 }}
+        style={{ marginTop: 20 }}
+      />
 
       <Row>
         <Col span={24} lg={{ span: 12 }}>

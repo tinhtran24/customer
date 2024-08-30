@@ -120,15 +120,13 @@ export type CreateCustomerAppointmentBody = {
   createScheduleDto: {
     customerId: string;
   };
-  createTaskDto: [
-    {
-      code: string;
-      label: string;
-      userInChargeId: string;
-      description: string;
-      date: string;
-    }
-  ];
+  createTaskDto: {
+    code: string;
+    label: string;
+    userInChargeId: string;
+    description: string;
+    date: string;
+  }[];
 };
 
 //#region product
