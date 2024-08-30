@@ -17,22 +17,24 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
   protected enable_trash = true;
   
   async generateCustomerCode(incrementBy: number = 1) {
-    const lastCustomer = await this.repository.findOne({
-      order: { code: "desc" },
+    const lastCustomer = await this.customersRepository.find({
+      take:1,
+      order: { createdAt: 'DESC' }
     });
-  
+    console.log(parseInt(lastCustomer[0].code.slice(-6), 10))
     let newCustomerCode = 1;
-    if (lastCustomer && lastCustomer.code) {
+    if (lastCustomer && lastCustomer[0].code) {
       newCustomerCode =
-        parseInt(lastCustomer.code.slice(1), 10) + incrementBy;
+        parseInt(lastCustomer[0].code.slice(-6), 10) + incrementBy;
     }
     const now= new Date();
     const year = now.getFullYear();
     return `KH_${year}${newCustomerCode.toString().padStart(6, "0")}`;
   }
 
-  async create(data: any): Promise<Customer> {
+  async create(data: CreateCustomerDto): Promise<Customer> {
     try {
+        
         const customerCode = await this.generateCustomerCode();
         const dataReq = {
           ...data,
