@@ -105,7 +105,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Điện thoại Người liên hệ:</span>{" "}
-              {getPhoneNumber(customer.contacts)}
+              {getPhoneNumber(customer.contacts as [])}
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Địa chỉ:</span> {getAddress()}
