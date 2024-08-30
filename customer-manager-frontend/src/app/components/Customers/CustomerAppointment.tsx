@@ -1,5 +1,9 @@
 "use client";
-import { createAppointmentForCustomer, fetchUsers } from "@/app/lib/actions";
+import {
+  createAppointmentForCustomer,
+  fetchTaskByCustomerId,
+  fetchUsers,
+} from "@/app/lib/actions";
 import {
   CreateCustomerAppointmentBody,
   SETTINGS_TYPE,
@@ -18,9 +22,10 @@ import {
   TableColumnsType,
   Table,
   Modal,
+  Spin,
 } from "antd";
 import { useEffect, useState } from "react";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
 import { generateCode } from "@/app/utils/generateString";
 import { SettingSelect } from "../Common/Select";
@@ -44,16 +49,28 @@ export function CreateCustomerAppointment({
   const [formModal] = Form.useForm();
   const { currentUser } = useAuthContext();
 
-  const [data, setData] = useState<AppointmentData[]>([]); //  awating for api - update later
+  const [data, setData] = useState<AppointmentData[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const getData = async () => {
+    setIsLoading(true);
+    const tasks = await fetchTaskByCustomerId(customerId);
+    setData(tasks);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleOk = () => {
     formModal
       .validateFields()
       .then(async (values) => {
         try {
-          setIsLoading(true);
+          setIsLoadingForm(true);
           const body: CreateCustomerAppointmentBody = {
             createScheduleDto: {
               customerId: customerId,
@@ -78,11 +95,12 @@ export function CreateCustomerAppointment({
             message.success("Tạo lịch hẹn thành công");
             formModal.resetFields();
             setIsModalVisible(false);
+            getData();
           }
         } catch (error) {
           message.error("Đã có lỗi xảy ra khi gửi dữ liệu.");
         } finally {
-          setIsLoading(false);
+          setIsLoadingForm(false);
         }
       })
       .catch((info) => {
@@ -117,10 +135,23 @@ export function CreateCustomerAppointment({
     },
     {
       title: "Nội dung",
-      dataIndex: "content",
-      key: "content",
+      dataIndex: "description",
+      key: "description",
     },
   ];
+
+  if (isLoading)
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          margin: "5rem 0",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <>
@@ -138,7 +169,7 @@ export function CreateCustomerAppointment({
             type="primary"
             htmlType="submit"
             form="LHForm"
-            loading={isLoading}
+            loading={isLoadingForm}
           >
             Thêm
           </Button>,

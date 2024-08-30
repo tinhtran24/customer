@@ -329,7 +329,7 @@ export async function fetchAllProducts() {
 
     // Parse response và lấy items
     const data = await res.json();
-    return data.items || []; 
+    return data.items || [];
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
@@ -586,7 +586,35 @@ export async function fetchAllTask() {
 
     // Parse response và lấy items
     const data = await res.json();
-    return data.items || []; 
+    return data.items || [];
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+
+export async function fetchTaskByCustomerId(id: string) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/task/customer/${id}?page=1&limit=9999999999`
+    );
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    // Parse response và lấy items
+    const data = await res.json();
+    return data.items || [];
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
@@ -670,13 +698,12 @@ export async function fetchSettings(type: string) {
 
     // Parse response và lấy items
     const data = await res.json();
-    return data.items || []; 
+    return data.items || [];
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
   }
 }
-
 
 export async function createSettings(body: CreateSetting) {
   const accessToken = cookies().get("accessToken");
@@ -701,7 +728,6 @@ export async function createSettings(body: CreateSetting) {
     };
   }
 }
-
 
 export async function updateSettings(id: string, body: CreateSetting) {
   try {
