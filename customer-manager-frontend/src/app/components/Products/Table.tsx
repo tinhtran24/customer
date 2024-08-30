@@ -35,7 +35,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
       if (results.id) {
         message.success("Đã sửa sản phẩm thành công");
         router.push("/dashboard/products");
-        //set curent page = 1
       } else message.error("Vui lòng thử lại sau");
     } catch (e) {}
     handleCloseUpdateModal();
@@ -131,7 +130,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
       render: (product) => (
         <FiEdit3
           onClick={() => handleOpenUpdateModal(product)}
-          size={25}
+          size={20}
           style={{
             color: "green",
             cursor: "pointer",
@@ -145,7 +144,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
       render: (product) => (
         <MdDeleteOutline
           onClick={() => showDeleteConfirm(product)}
-          size={25}
+          size={20}
           style={{
             color: "red",
             cursor: "pointer",

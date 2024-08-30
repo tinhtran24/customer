@@ -1,0 +1,9 @@
+.custom-dashboard-menu .ant-menu-submenu-title {
+  padding-left: 20px !important;
+  user-select: none;
+}
+
+.custom-dashboard-menu .ant-menu-item {
+  padding-left: 20px !important;
+  user-select: none;
+}
