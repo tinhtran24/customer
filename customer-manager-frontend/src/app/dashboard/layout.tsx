@@ -41,12 +41,12 @@ export default function DashboardLayout({
         setCurTheme(_curTheme);
         localStorage.setItem('isDarkTheme', _curTheme ? 'true' : '');
     }
-    const {  currentUser, setIsSignedIn } = useAuthContext();
+    const { currentUser, setIsSignedIn } = useAuthContext();
     const [isLoading, setIsLoading] = useState(false);
 
     const logOutHandle = async () => {
         setIsLoading(true);
-        const result = await logOut();
+        await logOut();
         setIsSignedIn(false);
         setIsLoading(false);
         router.push("/login");
@@ -72,7 +72,7 @@ export default function DashboardLayout({
         {
             key: '3',
             label: (
-                <a target="_blank" onClick={logOutHandle} rel="noopener noreferrer" href="/user/login">
+                <a target="_blank" onClick={logOutHandle} rel="noopener noreferrer" href="/login">
                     Đăng xuất
                 </a>
             ),
