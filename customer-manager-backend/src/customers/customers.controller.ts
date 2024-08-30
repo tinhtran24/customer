@@ -1,5 +1,8 @@
 import {
   Controller,
+  Get,
+  Query,
+  Request,
 } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -33,5 +36,17 @@ import { Crud } from 'src/core/decorator/crud.decorator';
 export class CustomersController extends BaseController<CustomersService> {
   constructor(protected customersService: CustomersService) {
       super(customersService);
+  }
+
+  @Get('')
+  async list(
+      @Query() options: QueryCustomertDto,
+      @Request() req
+  ) {
+      let where = {}
+      if (req.user['role'] !== 'admin') {
+          where['userInChargeId'] = req.user['userId']
+      }
+      return this.customersService.findPaginate(options, where);
   }
 }

@@ -48,9 +48,8 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
 
   async findPaginate(
     options: QueryCustomertDto,
+    where?: any,
   ){
-    let where= {};
-
     if (options.q !== '') {
       where['fullName'] = Raw(fullName => `${fullName} ILIKE '%${options.q}%' OR "Customer"."code" ILIKE '%${options.q}%' OR "Customer"."phone_number" ILIKE '%${options.q}%'`)
     }
