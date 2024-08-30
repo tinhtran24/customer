@@ -7,6 +7,6 @@ import { BaseRepository } from "src/core/base/base.repository";
 export class SettingRepository extends BaseRepository<Setting> {
     protected qbName = 'task';
 
-    protected orderBy = { name: 'createdAt', order: OrderType.ASC };
+    protected orderBy = { name: 'updatedAt', order: OrderType.DESC };
 
 }
