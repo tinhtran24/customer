@@ -1,5 +1,9 @@
 "use client";
-import { NewCustomerProduct, Product, SETTINGS_TYPE } from "@/app/lib/definitions";
+import {
+  NewCustomerProduct,
+  Product,
+  SETTINGS_TYPE,
+} from "@/app/lib/definitions";
 import {
   Form,
   Input,
@@ -44,13 +48,13 @@ export default function OrderProduct({
   const [selectedProduct, setSelectedProduct] = useState<Product>();
   const [data, setData] = useState<OrderData[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [code, setcode] = useState('');
+  const [code, setcode] = useState("");
 
   const [form] = Form.useForm();
   const [formModal] = Form.useForm();
   useEffect(() => {
-    setcode(generateCode("DH", new Date(), Date.now().valueOf()))
-  }, [])
+    setcode(generateCode("DH", new Date(), Date.now().valueOf()));
+  }, []);
 
   const handleFinish = async (values: any) => {
     setIsFormSubmitting(true);
@@ -327,12 +331,13 @@ export default function OrderProduct({
             { required: true, message: "Vui lòng thêm phương thức giao hàng" },
           ]}
         >
-         <SettingSelect
+          <SettingSelect
             notFoundContent="Không tìm thấy"
             showSearch
             placeholder="- Chọn -"
             optionFilterProp="children"
             type={SETTINGS_TYPE.DELIVERY_METHOD}
+            disabled={data.length === 0}
           />
         </Form.Item>
 
@@ -364,6 +369,7 @@ export default function OrderProduct({
             placeholder="- Chọn -"
             optionFilterProp="children"
             type={SETTINGS_TYPE.PAYMENT_METHOD}
+            disabled={data.length === 0}  
           />
         </Form.Item>
 
