@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
@@ -16,6 +16,34 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
 
   protected enable_trash = true;
   
+  async generateCustomerCode(incrementBy: number = 1) {
+    const lastCustomer = await this.repository.findOne({
+      order: { code: "desc" },
+    });
+  
+    let newCustomerCode = 1;
+    if (lastCustomer && lastCustomer.code) {
+      newCustomerCode =
+        parseInt(lastCustomer.code.slice(1), 10) + incrementBy;
+    }
+    const now= new Date();
+    const year = now.getFullYear();
+    return `KH_${year}${newCustomerCode.toString().padStart(6, "0")}`;
+  }
+
+  async create(data: any): Promise<Customer> {
+    try {
+        const customerCode = await this.generateCustomerCode();
+        const dataReq = {
+          ...data,
+          code: customerCode
+        }
+        return this.repository.save(dataReq, { reload: true }) 
+    } catch {
+        throw new ForbiddenException(`Can not to create ${this.repository.getQBName()}!`);
+    }
+  }
+
   async findPaginate(
     options: QueryCustomertDto,
   ){

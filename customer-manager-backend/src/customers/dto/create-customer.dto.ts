@@ -25,11 +25,6 @@ export class CreateCustomerDto {
 
   @IsString()
   @ApiProperty()
-  code: string;
-
-
-  @IsString()
-  @ApiProperty()
   gender: string;
 
   @IsString()
@@ -41,6 +36,7 @@ export class CreateCustomerDto {
   @ApiProperty()
   callCountNumber: number;
 
+  @IsOptional()
   @IsNumber()
   @ApiProperty()
   totalOrder: number;

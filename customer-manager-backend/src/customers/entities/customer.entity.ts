@@ -54,7 +54,7 @@ class Customer extends BaseEntity {
   @Column({ name: 'source' , nullable: true })
   source: string;
 
-  @Column({ name: 'total_order' })
+  @Column({ name: 'total_order' , nullable: true })
   totalOrder: number;
 
   @Column({ name: 'last_connected', nullable: true })

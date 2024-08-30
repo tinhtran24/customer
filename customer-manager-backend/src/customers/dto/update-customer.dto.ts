@@ -37,6 +37,7 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
   @ApiProperty()
   callCountNumber: number;
 
+  @IsOptional()
   @IsNumber()
   @ApiProperty()
   totalOrder: number;
