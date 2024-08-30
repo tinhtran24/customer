@@ -9,7 +9,7 @@ import { CreateButton } from "@/app/components/Common/CreateProductButton";
 
 const type = SETTINGS_TYPE.STATUS;
 
-export default async function ProductPage() {
+export default async function CustomerStatusPage() {
   const settings = await fetchSettings(type);
 
   return (

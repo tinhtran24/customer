@@ -1,5 +1,5 @@
 "use client";
-import { NewCustomerProduct, Product } from "@/app/lib/definitions";
+import { NewCustomerProduct, Product, SETTINGS_TYPE } from "@/app/lib/definitions";
 import {
   Form,
   Input,
@@ -18,6 +18,7 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { generateCode } from "@/app/utils/generateString";
 const { Option } = Select;
 import { createCustomerProduct } from "@/app/lib/actions";
+import { SettingSelect } from "../Common/Select";
 
 interface OrderData {
   no: number;
@@ -326,9 +327,12 @@ export default function OrderProduct({
             { required: true, message: "Vui lòng thêm phương thức giao hàng" },
           ]}
         >
-          <Input
-            placeholder="Phương thức giao hàng ..."
-            disabled={data.length === 0}
+         <SettingSelect
+            notFoundContent="Không tìm thấy"
+            showSearch
+            placeholder="- Chọn -"
+            optionFilterProp="children"
+            type={SETTINGS_TYPE.DELIVERY_METHOD}
           />
         </Form.Item>
 
@@ -354,9 +358,12 @@ export default function OrderProduct({
             { required: true, message: "Vui lòng thêm phương thức thanh toán" },
           ]}
         >
-          <Input
-            placeholder="Phương thức thanh toán ..."
-            disabled={data.length === 0}
+          <SettingSelect
+            notFoundContent="Không tìm thấy"
+            showSearch
+            placeholder="- Chọn -"
+            optionFilterProp="children"
+            type={SETTINGS_TYPE.PAYMENT_METHOD}
           />
         </Form.Item>
 

@@ -249,6 +249,7 @@ export enum SETTINGS_TYPE {
   STATUS = "STATUS",
   DELIVERY_METHOD = "DELIVERY_METHOD",
   PAYMENT_METHOD = "PAYMENT_METHOD",
+  TASK_CODE = "TASK_CODE",
 }
 
 export type Setting = {

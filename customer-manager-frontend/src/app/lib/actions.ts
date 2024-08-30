@@ -653,7 +653,7 @@ export async function fetchSettings(type: string) {
   try {
     const accessToken = cookies().get("accessToken");
     const url = new URL(
-      `${process.env.BACKEND_URL}/setting/${type}`
+      `${process.env.BACKEND_URL}/setting/${type}?limit=9999&page=1`
     );
 
     const res = await fetch(url.toString(), {

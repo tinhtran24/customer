@@ -1,5 +1,5 @@
 "use client";
-import { IdcardOutlined, KeyOutlined } from "@ant-design/icons";
+import { IdcardOutlined, DownSquareOutlined } from "@ant-design/icons";
 import { FaRegUser, FaShippingFast, FaTasks } from "react-icons/fa";
 import { GrDocumentConfig } from "react-icons/gr";
 import { Menu } from "antd";
@@ -83,6 +83,11 @@ export const DashboardMenu = () => {
               key: "/dashboard/payment-method",
               label: "PT thanh toán",
               icon: <span style={{marginLeft: "10px"}}><MdPayment style={{ fontSize: "16px" }} /></span>,
+            },
+            {
+              key: "/dashboard/task-setting",
+              label: "Mã công việc",
+              icon: <span style={{marginLeft: "10px"}}><DownSquareOutlined style={{ fontSize: "16px" }} /></span>,
             },
           ],
         }

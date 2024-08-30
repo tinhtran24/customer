@@ -16,6 +16,7 @@ import {
   Customer,
   ENUM_STATUS_TYPE,
   NewCustomer,
+  SETTINGS_TYPE,
   User,
 } from "@/app/lib/definitions";
 import { createSchemaFieldRule } from "antd-zod";
@@ -23,6 +24,7 @@ import { CreateCustomerFormSchema } from "@/app/lib/validations";
 import {  fetchUsers, updateCustomer } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { SettingSelect } from "../Common/Select";
 const { Option } = Select;
 
 export default async function UpdateCustomerForm({
@@ -281,16 +283,13 @@ export default async function UpdateCustomerForm({
                   { required: true, message: "Vui lòng chọn trạng thái" },
                 ]} // Validation rule
               >
-                <Select
+                <SettingSelect
+                  notFoundContent="Không tìm thấy"
+                  showSearch
                   placeholder="- Chọn -"
-                  style={{ width: "100%" }}
-                >
-                  {Object.entries(ENUM_STATUS_TYPE).map(([key, value]) => (
-                    <Select.Option key={key} value={value}>
-                      {value}
-                    </Select.Option>
-                  ))}
-                </Select>
+                  optionFilterProp="children"
+                  type={SETTINGS_TYPE.STATUS}
+                />
               </Form.Item>
 
               <Form.Item label="Nhóm khách hàng" required>

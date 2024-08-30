@@ -17,6 +17,7 @@ interface CommonTableProps {
   data: Setting[];
   type: SETTINGS_TYPE;
 }
+
 export default function CommonTable({ data, type }: CommonTableProps) {
   const [visibleUpdate, setVisibleUpdate] = useState(false);
   const [selectedSetting, setSelectedSetting] = useState<Setting | null>(null);

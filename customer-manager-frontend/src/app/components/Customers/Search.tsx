@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 import { Input, Button, Select } from "antd";
+import { SettingSelect } from "../Common/Select";
+import { SETTINGS_TYPE } from "@/app/lib/definitions";
 
 interface SearchProps {
   text: string;
@@ -32,16 +34,14 @@ const SearchCustomers = ({
           onChange={(e) => onChangeText(e.target.value)}
           style={{ width: "400px", height: "35px" }}
         />
-        <Select
+        <SettingSelect
           value={status}
           placeholder="Chọn trạng thái"
           onChange={(e: string) => onChangeStatus(e)}
           style={{ width: "300px", height: "35px" }}
+          type={SETTINGS_TYPE.STATUS}
         >
-          <Option value="all">Tất cả</Option>
-          <Option value="active">Kích hoạt</Option>
-          <Option value="inactive">Không kích hoạt</Option>
-        </Select>
+        </SettingSelect>
         <Button
           type="primary"
           onClick={handleFilter}

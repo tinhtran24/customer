@@ -2,10 +2,10 @@ import { Metadata } from "next";
 import { ConfigProvider } from "antd";
 
 export const metadata: Metadata = {
-  title: "Trạng thái",
+  title: "Phương thức vận chuyển",
 };
 
-export default function CustomerListLayout({
+export default function  DeliverySettingListLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

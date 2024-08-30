@@ -7,9 +7,9 @@ import CommonTable from "@/app/components/Common/Table";
 import { SETTINGS_TYPE } from "@/app/lib/definitions";
 import { CreateButton } from "@/app/components/Common/CreateProductButton";
 
-const type = SETTINGS_TYPE.DELIVERY_METHOD;
+const type = SETTINGS_TYPE.TASK_CODE;
 
-export default async function DeliverySettingPage() {
+export default async function TaskPage() {
   const settings = await fetchSettings(type);
 
   return (
@@ -26,7 +26,7 @@ export default async function DeliverySettingPage() {
                 margin: 0,
               }}
             >
-              QUẢN LÝ PHƯƠNG THỨC VẬN CHUYỂN
+              QUẢN LÝ MÃ CÔNG VIỆC
             </h2>
             <CreateButton type={type} />
           </Flex>
