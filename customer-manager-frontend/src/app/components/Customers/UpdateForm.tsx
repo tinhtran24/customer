@@ -21,7 +21,7 @@ import {
 } from "@/app/lib/definitions";
 import { createSchemaFieldRule } from "antd-zod";
 import { CreateCustomerFormSchema } from "@/app/lib/validations";
-import {  fetchUsers, updateCustomer } from "@/app/lib/actions";
+import { fetchUsers, updateCustomer } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { SettingSelect } from "../Common/Select";
@@ -55,27 +55,27 @@ export default async function UpdateCustomerForm({
 
   useEffect(() => {
     try {
-    const contacts = customer.contacts?.map((contact:any) => JSON.parse(contact)) || [];
+      const contacts =
+        customer.contacts?.map((contact: any) => JSON.parse(contact)) || [];
 
-    form.setFieldsValue({
-      fullName: customer.fullName,
-      code: customer.code,
-      gender: customer.gender,
-      street: customer.street,
-      wardCode: customer.wardCode,
-      province: customer.ward?.district?.province?.name,
-      district: customer.ward?.district?.name,
-      ward: customer.ward?.name,
-      status: customer.status,
-      group: customer.group,
-      source: customer.source,
-      userInChargeId: customer.userInChargeId,
-      contacts: contacts,
-      phoneNumber: customer.phoneNumber
-    });
-    }
-    catch (e){
-      throw e
+      form.setFieldsValue({
+        fullName: customer.fullName,
+        code: customer.code,
+        gender: customer.gender,
+        street: customer.street,
+        wardCode: customer.wardCode,
+        province: customer.ward?.district?.province?.name,
+        district: customer.ward?.district?.name,
+        ward: customer.ward?.name,
+        status: customer.status,
+        group: customer.group,
+        source: customer.source,
+        userInChargeId: customer.userInChargeId,
+        contacts: contacts,
+        phoneNumber: customer.phoneNumber,
+      });
+    } catch (e) {
+      throw e;
     }
   }, [customer, form]);
 
@@ -114,7 +114,7 @@ export default async function UpdateCustomerForm({
       userInChargeId: values.userInChargeId,
       street: values.street,
       wardCode: customer.wardCode,
-      phoneNumber: values.phoneNumber
+      phoneNumber: values.phoneNumber,
     };
 
     const result = await updateCustomer(customer.id, body);
@@ -208,13 +208,13 @@ export default async function UpdateCustomerForm({
 
               <Form.Item label="Nhóm khách hàng" required>
                 <Form.Item name="group" noStyle rules={[rule]}>
-                  <Input/>
+                  <SettingSelect type={SETTINGS_TYPE.CUSTOMER_GROUP} />
                 </Form.Item>
               </Form.Item>
 
               <Form.Item label="Nguồn khách hàng" required>
                 <Form.Item name="source" noStyle rules={[rule]}>
-                  <Input />
+                  <SettingSelect type={SETTINGS_TYPE.CUSTOMER_SOURCE} />
                 </Form.Item>
               </Form.Item>
 
@@ -223,10 +223,7 @@ export default async function UpdateCustomerForm({
                 label="Người phụ trách"
                 rules={[{ required: true, message: "Chọn người phụ trách" }]} // Validation rule
               >
-                <Select
-                  placeholder="- Chọn -"
-                  style={{ width: "100%" }}
-                >
+                <Select placeholder="- Chọn -" style={{ width: "100%" }}>
                   {users?.map((user) => (
                     <Option key={user.id} value={user.id}>
                       {`${user.name} - ${user.email}`}
@@ -254,12 +251,6 @@ export default async function UpdateCustomerForm({
                     filterOption={filterOption}
                     options={genderOptions}
                   />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Số nhà/đường" required>
-                <Form.Item name="street" noStyle rules={[rule]}>
-                  <Input />
                 </Form.Item>
               </Form.Item>
 
@@ -305,7 +296,21 @@ export default async function UpdateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <div style={{ alignContent: "center" }}>
+              <Form.Item label="Số nhà/đường" required>
+                <Form.Item name="street" noStyle rules={[rule]}>
+                  <Input />
+                </Form.Item>
+              </Form.Item>
+
+              <div
+                style={{
+                  alignContent: "center",
+                  alignItems: "end",
+                  display: "flex",
+                  flexDirection: "column",
+                  paddingRight: "2.5rem",
+                }}
+              >
                 <Form.List name="contacts">
                   {(fields, { add, remove }) => (
                     <>
@@ -354,27 +359,31 @@ export default async function UpdateCustomerForm({
 
           <Row>
             <Divider />
-            <Col span={24} lg={{ span: 12 }}>
-              <Form.Item
-                label=" "
-                labelCol={{ xs: { span: 0 }, lg: { span: 7 } }}
-                colon={false}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                position: "relative",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isFormSubmitting}
+                style={{ padding: "4px 2rem" }}
               >
-                <Space size={"middle"}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={isFormSubmitting}
-                  >
-                    Sửa
-                  </Button>
-
-                  <Button type="primary" style={{ background: "gray" }}>
-                    <Link href="/dashboard/customers/">Hủy</Link>
-                  </Button>
-                </Space>
-              </Form.Item>
-            </Col>
+                Sửa
+              </Button>
+              <div style={{ position: "absolute", top: 0, right: "3rem" }}>
+                <Button
+                  type="primary"
+                  style={{ background: "gray", padding: "4px 2rem" }}
+                >
+                  <Link href="/dashboard/customers/">Hủy</Link>
+                </Button>
+              </div>
+            </div>
           </Row>
         </Form>
       </Col>

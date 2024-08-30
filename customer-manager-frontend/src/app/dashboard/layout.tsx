@@ -8,7 +8,8 @@ import {
     Badge,
     Dropdown,
     Avatar,
-    MenuProps
+    MenuProps,
+    message
 } from "antd";
 import { useAuthContext } from "@/app/components/auth";
 import styles from './index.module.less';
@@ -45,6 +46,7 @@ export default function DashboardLayout({
     const [isLoading, setIsLoading] = useState(false);
 
     const logOutHandle = async () => {
+        message.info("Đang đăng xuất...")
         setIsLoading(true);
         await logOut();
         setIsSignedIn(false);
@@ -72,7 +74,7 @@ export default function DashboardLayout({
         {
             key: '3',
             label: (
-                <a target="_blank" onClick={logOutHandle} rel="noopener noreferrer" href="/login">
+                <a onClick={logOutHandle} rel="noopener noreferrer">
                     Đăng xuất
                 </a>
             ),

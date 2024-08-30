@@ -139,7 +139,7 @@ export type Product = {
   code: string;
 };
 
-export type NewProduct = { title: string; description: string, code: string };
+export type NewProduct = { title: string; description: string; code: string };
 //#endregion
 
 //#region Customer product
@@ -247,6 +247,9 @@ export enum SETTINGS_TYPE {
   DELIVERY_METHOD = "DELIVERY_METHOD",
   PAYMENT_METHOD = "PAYMENT_METHOD",
   TASK_CODE = "TASK_CODE",
+  CUSTOMER_SOURCE = "CUSTOMER_SOURCE",
+  CUSTOMER_GROUP = "CUSTOMER_GROUP",
+  SOURCE_OF_GOODS = "SOURCE_OF_GOODS",
 }
 
 export type Setting = {

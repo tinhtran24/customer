@@ -41,82 +41,49 @@ interface CreateCustomerAppointmentProps {
 export function CreateCustomerAppointment({
   customerId,
 }: CreateCustomerAppointmentProps) {
-  const [form] = Form.useForm();
   const [formModal] = Form.useForm();
-  const [users, setUsers] = useState<User[] | null>(null);
-  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
-
   const { currentUser } = useAuthContext();
 
-  const [data, setData] = useState<AppointmentData[]>([]);
+  const [data, setData] = useState<AppointmentData[]>([]); //  awating for api - update later
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const getData = async () => {
-    const users = await fetchUsers();
-    setUsers(users);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const onFinish = async (values: any) => {
-    setIsFormSubmitting(true);
-
-    try {
-      const body: CreateCustomerAppointmentBody = {
-        createScheduleDto: {
-          customerId: customerId,
-        },
-        createTaskDto: data.map((s) => ({
-          code: generateCode("LH", new Date(), Date.now().valueOf()),
-          description: s.content,
-          date: s.date,
-          label: s.label,
-          userInChargeId:
-            currentUser?.role != "admin"
-              ? (currentUser as any).sub
-              : values.userInChargeId,
-        })),
-      };
-
-      const result = await createAppointmentForCustomer(body);
-      if (result.statusCode) {
-        message.error(
-          Array.isArray(result.message) ? result.message[0] : result.message
-        );
-      } else {
-        message.success("Tạo lịch hẹn thành công");
-        form.resetFields();
-        setData([]);
-      }
-    } catch (error) {
-      message.error("Đã có lỗi xảy ra khi gửi dữ liệu.");
-    } finally {
-      setIsFormSubmitting(false);
-    }
-  };
-
-  const onDeleteItem = (record: AppointmentData) => {
-    setData((pre) => {
-      return pre.filter((order) => order.code !== record.code);
-    });
-    message.success("Đã xóa lịch hẹn thành công");
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOk = () => {
     formModal
       .validateFields()
-      .then((values) => {
-        const newData: AppointmentData = {
-          code: generateCode("LH", new Date(), Date.now().valueOf()),
-          date: values.date,
-          content: values.content,
-          label: values.label,
-        };
-        setData([...data, newData]);
-        formModal.resetFields();
-        setIsModalVisible(false);
+      .then(async (values) => {
+        try {
+          setIsLoading(true);
+          const body: CreateCustomerAppointmentBody = {
+            createScheduleDto: {
+              customerId: customerId,
+            },
+            createTaskDto: [
+              {
+                code: generateCode("LH", new Date(), Date.now().valueOf()),
+                description: values.content,
+                date: values.date,
+                label: values.label,
+                userInChargeId: (currentUser as any).sub,
+              },
+            ],
+          };
+
+          const result = await createAppointmentForCustomer(body);
+          if (result.statusCode) {
+            message.error(
+              Array.isArray(result.message) ? result.message[0] : result.message
+            );
+          } else {
+            message.success("Tạo lịch hẹn thành công");
+            formModal.resetFields();
+            setIsModalVisible(false);
+          }
+        } catch (error) {
+          message.error("Đã có lỗi xảy ra khi gửi dữ liệu.");
+        } finally {
+          setIsLoading(false);
+        }
       })
       .catch((info) => {
         console.log("Validate Failed:", info);
@@ -153,61 +120,10 @@ export function CreateCustomerAppointment({
       dataIndex: "content",
       key: "content",
     },
-    {
-      key: "4",
-      title: "",
-      render: (record) => {
-        return (
-          <>
-            <DeleteOutlined
-              onClick={() => {
-                onDeleteItem(record);
-              }}
-              style={{ color: "red", marginLeft: 12 }}
-            />
-          </>
-        );
-      },
-    },
   ];
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={onFinish}
-      initialValues={{
-        tasks: [{ label: "", description: "", date: null }],
-      }}
-    >
-      {currentUser?.role === "admin" && (
-        <>
-          <Form.Item
-            name="userInChargeId"
-            label="Người phụ trách"
-            rules={[{ required: true, message: "Chọn người phụ trách" }]}
-          >
-            <Select
-              placeholder="- Chọn -"
-              style={{ width: "100%" }}
-              showSearch
-              optionFilterProp="children"
-              filterOption={(input: any, option: any) =>
-                (option?.children as string)
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            >
-              {users?.map((user) => (
-                <Option key={user.id} value={user.id}>
-                  {`${user.name} - ${user.email}`}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </>
-      )}
-
+    <>
       <Modal
         title="Thêm lịch hẹn"
         visible={isModalVisible}
@@ -217,7 +133,13 @@ export function CreateCustomerAppointment({
           <Button key="back" onClick={handleCancel}>
             Thoát
           </Button>,
-          <Button key="submit" type="primary" htmlType="submit" form="LHForm">
+          <Button
+            key="submit"
+            type="primary"
+            htmlType="submit"
+            form="LHForm"
+            loading={isLoading}
+          >
             Thêm
           </Button>,
         ]}
@@ -276,26 +198,6 @@ export function CreateCustomerAppointment({
         pagination={{ pageSize: 10 }}
         style={{ marginTop: 20 }}
       />
-
-      <Row>
-        <Col span={24} lg={{ span: 12 }}>
-          <Form.Item
-            label=" "
-            labelCol={{ xs: { span: 0 }, lg: { span: 7 } }}
-            colon={false}
-          >
-            <Space size={"middle"}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={isFormSubmitting}
-              >
-                Tạo
-              </Button>
-            </Space>
-          </Form.Item>
-        </Col>
-      </Row>
-    </Form>
+    </>
   );
 }
