@@ -43,10 +43,8 @@ export type Category = {
 
 export type NewCustomer = {
   fullName: string;
-  code: string;
+  code?: string;
   gender: string;
-  callCountNumber: number;
-  totalOrder: number;
   group: string;
   source: string;
   status: string;

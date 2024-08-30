@@ -72,13 +72,8 @@ export default function CreateCustomerForm({
     setIsFormSubmitting(true);
     const body: NewCustomer = {
       fullName: values.fullName,
-      code: values.code,
       contacts: values.contacts?.map((s:any) => JSON.stringify(s)),
       gender: values.gender,
-      callCountNumber: values.callCountNumber
-        ? Number(values.callCountNumber)
-        : 0,
-      totalOrder: values.callCountNumber ? Number(values.callCountNumber) : 0,
       group: values.group,
       source: values.source,
       status: values.status,
@@ -149,88 +144,9 @@ export default function CreateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Mã khách hàng" required>
-                <Form.Item name="code" noStyle rules={[rule]}>
-                  <Input />
-                </Form.Item>
-              </Form.Item>
-
               <Form.Item label="Điện thoại" required>
                 <Form.Item name="phoneNumber" noStyle rules={[rule]}>
                   <Input />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Giới Tính" required>
-                <Form.Item name="gender" noStyle>
-                  <Select
-                    notFoundContent="Không tìm thấy"
-                    showSearch
-                    placeholder="- Chọn -"
-                    optionFilterProp="children"
-                    filterOption={filterOption}
-                    options={genderOptions}
-                  />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Số lượng đã gọi">
-                <Form.Item name="callCountNumber" noStyle>
-                  <Input type="number" min={0} />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Số lượng đơn hàng">
-                <Form.Item name="totalOrder" noStyle>
-                  <Input type="number" min={0} />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Số nhà/đường" required>
-                <Form.Item name="street" noStyle rules={[rule]}>
-                  <Input />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Tỉnh/TP" required>
-                <Form.Item name="province" noStyle rules={[rule]}>
-                  <Select
-                    loading={isProvincesLoading}
-                    notFoundContent="Không tìm thấy"
-                    showSearch
-                    placeholder="- Chọn -"
-                    optionFilterProp="children"
-                    filterOption={filterOption}
-                    onSelect={onSelectProvince}
-                    options={provinceOptions}
-                  />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Quận/Huyện" required>
-                <Form.Item name="district" noStyle rules={[rule]}>
-                  <Select
-                    notFoundContent="Không tìm thấy"
-                    showSearch
-                    placeholder="- Chọn -"
-                    optionFilterProp="children"
-                    filterOption={filterOption}
-                    onSelect={onSelectDistrict}
-                    options={districtOptions}
-                  />
-                </Form.Item>
-              </Form.Item>
-
-              <Form.Item label="Phường/Xã" required>
-                <Form.Item name="ward" noStyle rules={[rule]}>
-                  <Select
-                    notFoundContent="Không tìm thấy"
-                    showSearch
-                    placeholder="- Chọn -"
-                    optionFilterProp="children"
-                    filterOption={filterOption}
-                    options={wardOptions}
-                  />
                 </Form.Item>
               </Form.Item>
 
@@ -286,6 +202,67 @@ export default function CreateCustomerForm({
             >
               <Divider style={{ padding: "0px 20px" }}>Khác</Divider>
 
+              <Form.Item label="Giới Tính" required>
+                <Form.Item name="gender" noStyle>
+                  <Select
+                    notFoundContent="Không tìm thấy"
+                    showSearch
+                    placeholder="- Chọn -"
+                    optionFilterProp="children"
+                    filterOption={filterOption}
+                    options={genderOptions}
+                  />
+                </Form.Item>
+              </Form.Item>
+
+              <Form.Item label="Số nhà/đường" required>
+                <Form.Item name="street" noStyle rules={[rule]}>
+                  <Input />
+                </Form.Item>
+              </Form.Item>
+
+              <Form.Item label="Tỉnh/TP" required>
+                <Form.Item name="province" noStyle rules={[rule]}>
+                  <Select
+                    loading={isProvincesLoading}
+                    notFoundContent="Không tìm thấy"
+                    showSearch
+                    placeholder="- Chọn -"
+                    optionFilterProp="children"
+                    filterOption={filterOption}
+                    onSelect={onSelectProvince}
+                    options={provinceOptions}
+                  />
+                </Form.Item>
+              </Form.Item>
+
+              <Form.Item label="Quận/Huyện" required>
+                <Form.Item name="district" noStyle rules={[rule]}>
+                  <Select
+                    notFoundContent="Không tìm thấy"
+                    showSearch
+                    placeholder="- Chọn -"
+                    optionFilterProp="children"
+                    filterOption={filterOption}
+                    onSelect={onSelectDistrict}
+                    options={districtOptions}
+                  />
+                </Form.Item>
+              </Form.Item>
+
+              <Form.Item label="Phường/Xã" required>
+                <Form.Item name="ward" noStyle rules={[rule]}>
+                  <Select
+                    notFoundContent="Không tìm thấy"
+                    showSearch
+                    placeholder="- Chọn -"
+                    optionFilterProp="children"
+                    filterOption={filterOption}
+                    options={wardOptions}
+                  />
+                </Form.Item>
+              </Form.Item>
+              
               <div style={{ alignContent: "center" }}>
                 <Form.List name="contacts">
                   {(fields, { add, remove }) => (
