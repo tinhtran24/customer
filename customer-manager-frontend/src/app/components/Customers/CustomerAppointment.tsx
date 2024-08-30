@@ -49,7 +49,7 @@ export function CreateCustomerAppointment({
           customerId: customerId
         },
         createTaskDto: values.tasks.map((task: any) => ({
-          code: generateCode("DH", new Date(), Date.now().valueOf()),
+          code: generateCode("LH", new Date(), Date.now().valueOf()),
           description: task.description,
           date: task.date.format("YYYY-MM-DD"),
           label: task.label,
