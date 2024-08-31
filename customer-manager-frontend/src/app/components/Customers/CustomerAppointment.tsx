@@ -28,15 +28,15 @@ import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
 import { generateCode } from "@/app/utils/generateString";
-import { SettingSelect } from "../Common/Select";
+// import { SettingSelect } from "../Common/Select";
 
-const { Option } = Select;
+// const { Option } = Select;
 
 interface AppointmentData {
   code: string;
   date: string;
   content: string;
-  label: string;
+  // label: string;
 }
 
 interface CreateCustomerAppointmentProps {
@@ -80,7 +80,7 @@ export function CreateCustomerAppointment({
                 code: generateCode("LH", new Date(), Date.now().valueOf()),
                 description: values.content,
                 date: values.date,
-                label: values.label,
+                // label: values.label,
                 userInChargeId: (currentUser as any).sub,
               },
             ],
@@ -113,11 +113,6 @@ export function CreateCustomerAppointment({
   };
 
   const columns: TableColumnsType<AppointmentData> = [
-    {
-      title: "Mã công việc",
-      dataIndex: "label",
-      key: "label",
-    },
     {
       title: "Ngày hẹn",
       dataIndex: "date",
@@ -193,7 +188,7 @@ export function CreateCustomerAppointment({
             />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="label"
             label="Mã công việc"
             rules={[{ required: true, message: "Vui lòng chọn mã công việc" }]}
@@ -202,7 +197,7 @@ export function CreateCustomerAppointment({
               type={SETTINGS_TYPE.TASK_CODE}
               style={{ width: "100%" }}
             />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item
             name="content"

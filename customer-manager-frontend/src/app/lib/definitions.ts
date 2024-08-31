@@ -120,7 +120,7 @@ export type CreateCustomerAppointmentBody = {
   };
   createTaskDto: {
     code: string;
-    label: string;
+    // label: string;
     userInChargeId: string;
     description: string;
     date: string;
