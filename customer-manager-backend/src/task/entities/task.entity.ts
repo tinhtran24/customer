@@ -11,9 +11,6 @@ export class Task extends BaseEntity {
   @Column({ name: 'code' })
   code: string;
 
-  @Column({ name: 'label' })
-  label: string;
-
   @Column({ name: 'description' })
   description: string;
 

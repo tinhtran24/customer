@@ -12,11 +12,6 @@ export class CreateTaskDto {
     @ApiProperty()
     code: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    label: string;
-  
     @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
