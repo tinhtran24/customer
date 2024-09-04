@@ -25,27 +25,27 @@ export function TabsCustomer({
 }: CustomTabsProps) {
   const items: TabsProps["items"] = [
     {
-      label: "Mua bán",
+      label: "Trao đổi",
       key: "1",
+      children: (
+          <DiscussForm customerId={customerId} />
+      ),
+    },
+    {
+      label: "Mua bán",
+      key: "2",
       children: (
         <OrderProduct
           products={products}
-          customerId={customerId}
+          customer={customer}
           provinces={provinces}
         />
       ),
     },
     {
       label: "Lịch sử mua",
-      key: "2",
-      children: <History customerProducts={customerProducts} />,
-    },
-    {
-      label: "Trao đổi",
       key: "3",
-      children: (
-          <DiscussForm customerId={customerId} />
-      ),
+      children: <History customerProducts={customerProducts} />,
     },
     {
       label: "Lịch hẹn",

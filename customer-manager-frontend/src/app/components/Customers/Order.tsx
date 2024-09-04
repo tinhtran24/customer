@@ -1,5 +1,6 @@
 "use client";
 import {
+  Customer,
   NewCustomerProduct,
   Product,
   SETTINGS_TYPE,
@@ -36,12 +37,12 @@ interface OrderData {
 
 interface OrderProductProps {
   products: Product[];
-  customerId: string;
+  customer: Customer;
   provinces: any[];
 }
 export default function OrderProduct({
   products,
-  customerId,
+  customer,
 }: OrderProductProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const { currentUser } = useAuthContext();
@@ -67,7 +68,7 @@ export default function OrderProduct({
         })),
         createCustomerProduct: {
           code: code,
-          customerId: customerId,
+          customerId: customer.id,
           createdUserId: (currentUser as any).sub,
           street: values.street,
           price: data.reduce((acc, item) => acc + item.totalPrice, 0),
@@ -178,14 +179,17 @@ export default function OrderProduct({
     message.success("Đã xóa đơn hàng thành công");
   };
 
-  //mock data
-  const sources = [
-    { id: "1", name: "Kho Hà Nội" },
-    { id: "2", name: "Kho TP.HCM" },
-    { id: "3", name: "Nhà cung cấp A" },
-    { id: "4", name: "Nhà cung cấp B" },
-    { id: "5", name: "Nhà máy sản xuất X" },
-  ];
+  const getAddress = () => {
+    const { street, ward } = customer;
+    if (!street || !ward) return "";
+    const wardName = ward ? ward.fullName : "";
+    const districtName = ward && ward.district ? ward.district.fullName : "";
+    const provinceName =
+      ward && ward.district && ward.district.province
+        ? ward.district.province.fullName
+        : "";
+    return `${street}, ${wardName}, ${districtName}, ${provinceName}`;
+  };
 
   return (
     <div>
@@ -246,20 +250,13 @@ export default function OrderProduct({
           </Form.Item>
 
           <Form.Item name="source" label="Nguồn hàng">
-            <Select
-              placeholder="Chọn nguồn hàng"
+            <SettingSelect
+              notFoundContent="Không tìm thấy"
               showSearch
+              placeholder="- Chọn -"
               optionFilterProp="children"
-              filterOption={(input: any, option: any) =>
-                option?.children.toLowerCase().includes(input.toLowerCase())
-              }
-            >
-              {sources.map((source) => (
-                <Option key={source.id} value={source.name}>
-                  {source.name}
-                </Option>
-              ))}
-            </Select>
+              type={SETTINGS_TYPE.SOURCE_OF_GOODS}
+            />
           </Form.Item>
 
           <Form.Item
@@ -323,7 +320,12 @@ export default function OrderProduct({
       <Divider dashed style={{ margin: "2rem 0", borderColor: "blue" }} />
 
       <h3>Phương thức giao hàng</h3>
-      <Form form={form} layout="vertical" onFinish={handleFinish}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleFinish}
+        initialValues={{ street: getAddress() }}
+      >
         <Form.Item
           name="ShipMethod"
           label="Phương thức giao hàng"
@@ -369,7 +371,7 @@ export default function OrderProduct({
             placeholder="- Chọn -"
             optionFilterProp="children"
             type={SETTINGS_TYPE.PAYMENT_METHOD}
-            disabled={data.length === 0}  
+            disabled={data.length === 0}
           />
         </Form.Item>
 

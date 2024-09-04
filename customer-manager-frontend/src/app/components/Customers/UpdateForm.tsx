@@ -1,20 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Form,
-  Input,
-  Select,
-  Button,
-  Space,
-  message,
-  Col,
-  Row,
-  Divider,
-} from "antd";
+import { Form, Input, Select, Button, message, Col, Row, Divider } from "antd";
 import {
   Customer,
-  ENUM_STATUS_TYPE,
   NewCustomer,
   SETTINGS_TYPE,
   User,
@@ -23,16 +12,19 @@ import { createSchemaFieldRule } from "antd-zod";
 import { CreateCustomerFormSchema } from "@/app/lib/validations";
 import { fetchUsers, updateCustomer } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { SettingSelect } from "../Common/Select";
 const { Option } = Select;
 
-export default async function UpdateCustomerForm({
+export default function UpdateCustomerForm({
   provinces,
   customer,
+  isReload,
+  onCancel,
 }: {
   provinces: any[];
   customer: Customer;
+  isReload?: boolean;
+  onCancel?: any;
 }) {
   const [form] = Form.useForm();
   const [districtOptions, setDistrictOptions] = useState([]);
@@ -73,6 +65,7 @@ export default async function UpdateCustomerForm({
         userInChargeId: customer.userInChargeId,
         contacts: contacts,
         phoneNumber: customer.phoneNumber,
+        note: customer.note,
       });
     } catch (e) {
       throw e;
@@ -115,6 +108,7 @@ export default async function UpdateCustomerForm({
       street: values.street,
       wardCode: customer.wardCode,
       phoneNumber: values.phoneNumber,
+      note: values.note,
     };
 
     const result = await updateCustomer(customer.id, body);
@@ -126,7 +120,10 @@ export default async function UpdateCustomerForm({
       );
     } else {
       message.success("Cập nhật thông tin khách hàng thành công");
-      router.push("/dashboard/customers");
+      if (isReload) {
+        router.refresh();
+        if (onCancel) onCancel();
+      } else router.push("/dashboard/customers");
     }
   };
 
@@ -241,7 +238,7 @@ export default async function UpdateCustomerForm({
               }}
             >
               <Divider style={{ padding: "0px 20px" }}>Khác</Divider>
-              <Form.Item label="Giới Tính" required>
+              <Form.Item label="Giới Tính">
                 <Form.Item name="gender" noStyle>
                   <Select
                     notFoundContent="Không tìm thấy"
@@ -254,7 +251,7 @@ export default async function UpdateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Tỉnh/TP" required>
+              <Form.Item label="Tỉnh/TP">
                 <Form.Item name="province" noStyle rules={[rule]}>
                   <Select
                     loading={isProvincesLoading}
@@ -269,7 +266,7 @@ export default async function UpdateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Quận/Huyện" required>
+              <Form.Item label="Quận/Huyện">
                 <Form.Item name="district" noStyle rules={[rule]}>
                   <Select
                     notFoundContent="Không tìm thấy"
@@ -283,7 +280,7 @@ export default async function UpdateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Phường/Xã" required>
+              <Form.Item label="Phường/Xã">
                 <Form.Item name="ward" noStyle rules={[rule]}>
                   <Select
                     notFoundContent="Không tìm thấy"
@@ -296,13 +293,19 @@ export default async function UpdateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Số nhà/đường" required>
+              <Form.Item label="Số nhà/đường">
                 <Form.Item name="street" noStyle rules={[rule]}>
                   <Input />
                 </Form.Item>
               </Form.Item>
 
-              <div
+              <Form.Item label="Ghi chú">
+                <Form.Item name="note" noStyle>
+                  <Input.TextArea />
+                </Form.Item>
+              </Form.Item>
+
+              {/* <div
                 style={{
                   alignContent: "center",
                   alignItems: "end",
@@ -353,7 +356,7 @@ export default async function UpdateCustomerForm({
                     </>
                   )}
                 </Form.List>
-              </div>
+              </div> */}
             </Col>
           </Row>
 
@@ -375,14 +378,26 @@ export default async function UpdateCustomerForm({
               >
                 Sửa
               </Button>
-              <div style={{ position: "absolute", top: 0, right: "3rem" }}>
-                <Button
-                  type="primary"
-                  style={{ background: "gray", padding: "4px 2rem" }}
-                >
-                  <Link href="/dashboard/customers/">Hủy</Link>
-                </Button>
-              </div>
+              {onCancel ? (
+                <div style={{ position: "absolute", top: 0, right: "3rem" }}>
+                  <Button
+                    type="primary"
+                    style={{ background: "gray", padding: "4px 2rem" }}
+                    onClick={onCancel}
+                  >
+                    Hủy
+                  </Button>
+                </div>
+              ) : (
+                <div style={{ position: "absolute", top: 0, right: "3rem" }}>
+                  <Button
+                    type="primary"
+                    style={{ background: "gray", padding: "4px 2rem" }}
+                  >
+                    <Link href="/dashboard/customers/">Hủy</Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </Row>
         </Form>

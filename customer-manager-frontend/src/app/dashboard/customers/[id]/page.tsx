@@ -55,7 +55,7 @@ export default async function DetailCustomerPage({
         <Suspense fallback={<Spin size="large" />}>
           <div style={{ display: "flex", gap: "2rem" }}>
             <div style={{ width: "30%" }}>
-              <CustomersInfo customer={customer} />{" "}
+              <CustomersInfo customer={customer} provinces={provinces} />
             </div>
             <div style={{ width: "70%" }}>
               <TabsCustomer
