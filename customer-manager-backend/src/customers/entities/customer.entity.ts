@@ -8,11 +8,6 @@ import {
 import User from "../../users/entities/user.entity";
 import { BaseEntity } from "../../core/base/base.entity";
 
-export type Contact = {
-  name: string;
-  phone: string;
-};
-
 
 @Entity()
 class Customer extends BaseEntity {
@@ -25,16 +20,16 @@ class Customer extends BaseEntity {
   @Column({ name: 'full_name' })
   fullName: string;
 
-  @Column({ name: 'gender' })
+  @Column({ name: 'gender',  nullable: true })
   gender: string;
 
   @Column({ nullable: true })
   street: string;
 
-  @Column({ type: 'jsonb', nullable: true })
-  contacts: Contact[];
+  @Column({ nullable: true })
+  note: string;
 
-  @Column({ name: 'ward_code' })
+  @Column({ name: 'ward_code', nullable: true })
   wardCode: string;
 
   @Column({ name: 'user_in_charge' })

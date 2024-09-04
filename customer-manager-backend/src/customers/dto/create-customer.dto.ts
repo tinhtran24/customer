@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate } from 'class-validator';
-import { Contact } from 'src/customers/entities/customer.entity';
 import {
   FULLNAME_MUST_NOT_EMPTY, PHONE_NUMBER_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
-  WARDCODE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
 import { stringCleaner } from 'src/utils/stringCleaner';
 
@@ -25,6 +23,7 @@ export class CreateCustomerDto {
 
   @IsString()
   @ApiProperty()
+  @IsOptional()
   gender: string;
 
   @IsString()
@@ -70,9 +69,9 @@ export class CreateCustomerDto {
 
   @IsOptional()
   @ApiProperty()
-  contacts: Contact[];
+  note: string;
 
-  @IsNotEmpty({ message: WARDCODE_MUST_NOT_EMPTY })
+  @IsOptional()
   @ApiProperty()
   wardCode: string;
 }

@@ -3,10 +3,8 @@ import { CreateCustomerDto } from './create-customer.dto';
 import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID } from 'class-validator';
 import {
   FULLNAME_MUST_NOT_EMPTY, PHONE_NUMBER_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
-  WARDCODE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
 import { Transform } from 'class-transformer';
-import { Contact } from 'src/customers/entities/customer.entity';
 import { stringCleaner } from 'src/utils/stringCleaner';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -25,6 +23,7 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
   @ApiProperty()
   phoneNumber: string;
 
+  @IsOptional()
   @IsString()
   @ApiProperty()
   gender: string;
@@ -71,9 +70,9 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
 
   @IsOptional()
   @ApiProperty()
-  contacts: Contact[];
+  note: string;
 
-  @IsNotEmpty({ message: WARDCODE_MUST_NOT_EMPTY })
+  @IsOptional()
   @ApiProperty()
   wardCode: string;
 }
