@@ -33,6 +33,7 @@ export type Customer = {
   ward: any;
   userInChargeId: string;
   phoneNumber: string;
+  note?: string;
 };
 
 export type Category = {
@@ -53,6 +54,7 @@ export type NewCustomer = {
   contacts: any;
   wardCode: string;
   phoneNumber: string;
+  note?: string;
 };
 
 export type UpdateCustomer = {

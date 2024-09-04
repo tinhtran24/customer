@@ -19,7 +19,7 @@ import { deleteCustomer, fetchCustomers } from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
 import { FiEdit3 } from "react-icons/fi";
 import { DownOutlined } from "@ant-design/icons";
-import { boolean } from "zod";
+import { useAuthContext } from "../auth";
 
 export default function CustomerTable() {
   //#region hook
@@ -30,6 +30,8 @@ export default function CustomerTable() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("");
+
+  const { currentUser } = useAuthContext();
 
   const {
     token: { colorPrimary },
@@ -150,48 +152,48 @@ export default function CustomerTable() {
       dataIndex: "userInCharge",
       render: (userInCharge) => userInCharge.name,
     },
-    {
-      title: "Liên hệ",
-      dataIndex: "contacts",
-      render: (contacts: any[]) => {
-        try {
-          const parsedContacts = contacts.map((contact) => {
-            const correctedJson = contact.replace(/(\w+):/g, '"$1":');
-            return JSON.parse(correctedJson);
-          });
+    // {
+    //   title: "Liên hệ",
+    //   dataIndex: "contacts",
+    //   render: (contacts: any[]) => {
+    //     try {
+    //       const parsedContacts = contacts.map((contact) => {
+    //         const correctedJson = contact.replace(/(\w+):/g, '"$1":');
+    //         return JSON.parse(correctedJson);
+    //       });
 
-          return parsedContacts.map(
-            (contact: { name: string; phone: string }, index: number) => (
-              <div>
-                <Tag
-                  color="blue"
-                  key={index}
-                  style={{
-                    marginTop: "5px",
-                    width: "160px",
-                    textAlign: "center",
-                    WebkitLineClamp: 1,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    display: "-webkit-box",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {contact?.name?.length > 6
-                    ? contact.name.substring(0, 6) + "..."
-                    : contact.name}{" "}
-                  - {contact.phone}
-                </Tag>
-              </div>
-            )
-          );
-        } catch (error) {
-          console.error("Error parsing contacts:", error);
-          return null;
-        }
-      },
-    },
+    //       return parsedContacts.map(
+    //         (contact: { name: string; phone: string }, index: number) => (
+    //           <div>
+    //             <Tag
+    //               color="blue"
+    //               key={index}
+    //               style={{
+    //                 marginTop: "5px",
+    //                 width: "160px",
+    //                 textAlign: "center",
+    //                 WebkitLineClamp: 1,
+    //                 WebkitBoxOrient: "vertical",
+    //                 overflow: "hidden",
+    //                 display: "-webkit-box",
+    //                 textOverflow: "ellipsis",
+    //                 whiteSpace: "nowrap",
+    //               }}
+    //             >
+    //               {contact?.name?.length > 6
+    //                 ? contact.name.substring(0, 6) + "..."
+    //                 : contact.name}{" "}
+    //               - {contact.phone}
+    //             </Tag>
+    //           </div>
+    //         )
+    //       );
+    //     } catch (error) {
+    //       console.error("Error parsing contacts:", error);
+    //       return null;
+    //     }
+    //   },
+    // },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
@@ -221,13 +223,24 @@ export default function CustomerTable() {
     {
       title: "",
       width: "5%",
-      render: (customer) => (
-        <Dropdown overlay={menu(customer)} trigger={["click"]}>
-          <Button>
-            <DownOutlined />
-          </Button>
-        </Dropdown>
-      ),
+      render: (customer) =>
+        currentUser?.role === "admin" ? (
+          <Dropdown overlay={menu(customer)} trigger={["click"]}>
+            <Button>
+              <DownOutlined />
+            </Button>
+          </Dropdown>
+        ) : (
+          <a href={`/dashboard/customers/${customer.id}/update`}>
+            <FiEdit3
+              size={20}
+              style={{
+                color: "green",
+                cursor: "pointer",
+              }}
+            />
+          </a>
+        ),
     },
   ];
 

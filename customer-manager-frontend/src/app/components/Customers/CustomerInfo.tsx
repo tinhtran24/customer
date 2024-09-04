@@ -2,10 +2,17 @@
 import React from "react";
 import { Customer } from "@/app/lib/definitions";
 import { Collapse, Tag } from "antd";
+import { UpdateButtonDetail } from "./UpdateButtonDetail";
 
 const { Panel } = Collapse;
 
-export function CustomersInfo({ customer }: { customer: Customer }) {
+export function CustomersInfo({
+  customer,
+  provinces,
+}: {
+  customer: Customer;
+  provinces: any[];
+}) {
   const styles = {
     parent: {
       marginTop: "1rem",
@@ -40,6 +47,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
 
   const getAddress = () => {
     const { street, ward } = customer;
+    if (!street || !ward) return "_";
     const wardName = ward ? ward.fullName : "";
     const districtName = ward && ward.district ? ward.district.fullName : "";
     const provinceName =
@@ -81,14 +89,23 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
 
   return (
     <div>
-      <h3>Thông tin khách hàng</h3>
+      <div
+        style={{
+          margin: "10px 0",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <h3 style={{ margin: 0 }}>Thông tin khách hàng</h3>
+        <UpdateButtonDetail customer={customer} provinces={provinces} />
+      </div>
       <div style={{ marginTop: "1rem" }}>
         <Collapse defaultActiveKey={["1"]} style={{ fontSize: "16px" }}>
           <Panel
-              header={
-                <h4 style={{ margin: "0", fontSize: "15px" }}>Thông tin chính</h4>
-              }
-              key="1"
+            header={
+              <h4 style={{ margin: "0", fontSize: "15px" }}>Thông tin chính</h4>
+            }
+            key="1"
           >
             <div>
               <span style={{ fontWeight: "600" }}>Mã KH:</span> {customer.code}
@@ -104,7 +121,9 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
               {customer.phoneNumber}
             </div>
             <div>
-              <span style={{ fontWeight: "600" }}>Điện thoại Người liên hệ:</span>{" "}
+              <span style={{ fontWeight: "600" }}>
+                Điện thoại Người liên hệ:
+              </span>{" "}
               {getPhoneNumber(customer.contacts)}
             </div>
             <div>
@@ -112,7 +131,7 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Giới tính:</span>{" "}
-              {customer.gender}
+              {customer.gender ? customer.gender : "_"}
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Nhóm khách hàng:</span>{" "}
@@ -122,6 +141,10 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
               <span style={{ fontWeight: "600" }}>Trạng thái:</span>{" "}
               <span style={{ color: "green" }}>{customer.status}</span>
             </div>
+            <div>
+              <span style={{ fontWeight: "600" }}>Ghi chú:</span>{" "}
+              <span>{customer.note ? customer.note : "_"}</span>
+            </div>
           </Panel>
         </Collapse>
       </div>
@@ -130,11 +153,6 @@ export function CustomersInfo({ customer }: { customer: Customer }) {
         <Item title="Người phụ trách" value={customer.userInCharge.name} />
         <Item title="Ngày tạo" value={formatDate(customer.createdAt)} />
         <Item title="Lần sửa gần nhất" value={formatDate(customer.updatedAt)} />
-        <Item title="Đã mua" value={customer.totalOrder?.toString() || '0'} />
-        <Item
-          title="Số lần đã gọi"
-          value={customer.callCountNumber?.toString() || '0'}
-        />
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ import { CreateCustomerFormSchema } from "@/app/lib/validations";
 import { createCustomer, fetchUsers } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useAuthContext } from "@/app/components/auth";
+// import { useAuthContext } from "@/app/components/auth";
 import { SettingSelect } from "../Common/Select";
 const { Option } = Select;
 
@@ -40,7 +40,7 @@ export default function CreateCustomerForm({
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const router = useRouter();
 
-  const { currentUser } = useAuthContext();
+  // const { currentUser } = useAuthContext();
 
   const getUsers = async () => {
     var results = await fetchUsers();
@@ -87,6 +87,7 @@ export default function CreateCustomerForm({
       street: values.street,
       wardCode: values.ward,
       phoneNumber: values.phoneNumber,
+      note: values.note,
     };
 
     const result = await createCustomer(body);
@@ -208,7 +209,7 @@ export default function CreateCustomerForm({
             >
               <Divider style={{ padding: "0px 20px" }}>Khác</Divider>
 
-              <Form.Item label="Giới Tính" required>
+              <Form.Item label="Giới Tính">
                 <Form.Item name="gender" noStyle>
                   <Select
                     notFoundContent="Không tìm thấy"
@@ -221,8 +222,8 @@ export default function CreateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Tỉnh/TP" required>
-                <Form.Item name="province" noStyle rules={[rule]}>
+              <Form.Item label="Tỉnh/TP">
+                <Form.Item name="province" noStyle>
                   <Select
                     loading={isProvincesLoading}
                     notFoundContent="Không tìm thấy"
@@ -236,8 +237,8 @@ export default function CreateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Quận/Huyện" required>
-                <Form.Item name="district" noStyle rules={[rule]}>
+              <Form.Item label="Quận/Huyện">
+                <Form.Item name="district" noStyle>
                   <Select
                     notFoundContent="Không tìm thấy"
                     showSearch
@@ -250,8 +251,8 @@ export default function CreateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Phường/Xã" required>
-                <Form.Item name="ward" noStyle rules={[rule]}>
+              <Form.Item label="Phường/Xã">
+                <Form.Item name="ward" noStyle>
                   <Select
                     notFoundContent="Không tìm thấy"
                     showSearch
@@ -263,13 +264,19 @@ export default function CreateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Số nhà/đường" required>
-                <Form.Item name="street" noStyle rules={[rule]}>
+              <Form.Item label="Số nhà/đường">
+                <Form.Item name="street" noStyle>
                   <Input />
                 </Form.Item>
               </Form.Item>
 
-              <div
+              <Form.Item label="Ghi chú">
+                <Form.Item name="note" noStyle>
+                  <Input.TextArea />
+                </Form.Item>
+              </Form.Item>
+
+              {/* <div
                 style={{
                   alignContent: "center",
                   alignItems: "end",
@@ -320,7 +327,7 @@ export default function CreateCustomerForm({
                     </>
                   )}
                 </Form.List>
-              </div>
+              </div> */}
             </Col>
           </Row>
 
