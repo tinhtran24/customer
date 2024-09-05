@@ -1,6 +1,8 @@
 import { getMetadataStorage } from 'class-validator'
 import { ApiQuery } from '@nestjs/swagger'
 import { ValidationMetadata } from 'class-validator/types/metadata/ValidationMetadata'
+import { Between } from "typeorm";
+import { format } from "date-fns";
 
 const metaDataStorage = getMetadataStorage()
 
@@ -51,3 +53,10 @@ export const FilterQueries = (readFilterDto?: Function): MethodDecorator[] =>
         .map(metadata2ApiQuery)
         .filter(Boolean) as MethodDecorator[])
     : []
+
+
+export const BetweenDates = (from: Date | string, to: Date | string) =>
+    Between(
+        format(typeof from === 'string' ? new Date(from) : from, 'YYYY-MM-DD HH:MM:SS'),
+        format(typeof to === 'string' ? new Date(to) : to, 'YYYY-MM-DD HH:MM:SS'),
+    );

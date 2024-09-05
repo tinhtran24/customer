@@ -6,6 +6,7 @@ import { Crud } from "src/core/decorator/crud.decorator";
 import { CreateCustomerProductDto, UpdateCustomerProductDto } from "./dto/create-customer-product.dto";
 import { ListQueryDto, PaginateDto } from "src/core/base/base.dto";
 import { CreateCustomerOrderDto } from "./dto/create-customer-order.dto";
+import { QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
 
 @Crud({
     id: 'customer-product',
@@ -31,6 +32,13 @@ import { CreateCustomerOrderDto } from "./dto/create-customer-order.dto";
 export class CustomerProductController extends BaseController<CustomerProductService> {
     constructor(protected customerProductService: CustomerProductService) {
         super(customerProductService);
+    }
+
+    @Get('dashboard')
+    async dashboard(
+        @Query() options: QueryCustomerProductDto
+    ) {
+        return this.customerProductService.dashboard(options);
     }
 
     @Get('customer/:id')

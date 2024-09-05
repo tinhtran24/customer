@@ -23,7 +23,7 @@ const TableOrder: React.FC = () => {
       | null,
     customerName: "",
     paymentMethod: "",
-    deliveryMethod: "",
+    source: "",
     createdBy: "",
   });
 

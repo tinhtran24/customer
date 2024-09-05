@@ -10,11 +10,6 @@ const columns: ColumnsType<Task> = [
     key: "code",
   },
   {
-    title: "Mã công việc",
-    dataIndex: "label",
-    key: "label",
-  },
-  {
     title: "Chi tiết",
     dataIndex: "description",
     key: "description",

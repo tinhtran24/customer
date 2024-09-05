@@ -65,6 +65,7 @@ export default function OrderProduct({
           productId: item.product.id,
           quantity: Number(item.quantity),
           unitPrice: item.price,
+          source: item.source,
         })),
         createCustomerProduct: {
           code: code,

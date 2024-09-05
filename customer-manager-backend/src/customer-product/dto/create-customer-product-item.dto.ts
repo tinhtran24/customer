@@ -19,4 +19,9 @@ export class CreateCustomerProductItemDto {
     @IsNotEmpty()
     @ApiProperty()
     unitPrice: number
+
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty()
+    source: string
 }

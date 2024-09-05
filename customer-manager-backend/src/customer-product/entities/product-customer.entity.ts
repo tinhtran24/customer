@@ -10,6 +10,8 @@ import { BaseEntity } from "../../core/base/base.entity";
 import Customer from 'src/customers/entities/customer.entity';
 import User from 'src/users/entities/user.entity';
 import { Product } from 'src/products/entities/product.entity';
+import { IsNotEmpty, IsNumber } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity('customer_product')
 export class CustomerProduct extends BaseEntity {
@@ -76,4 +78,7 @@ export class CustomerProductItem extends BaseEntity {
 
   @Column({ name: 'unit_price' })
   unitPrice: number;
+
+  @Column({ name: 'source', nullable: true })
+  source: string
 }
