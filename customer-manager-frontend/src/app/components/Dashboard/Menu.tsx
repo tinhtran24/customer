@@ -1,6 +1,7 @@
 "use client";
 import { IdcardOutlined, DownSquareOutlined } from "@ant-design/icons";
 import { FaRegUser, FaShippingFast, FaTasks } from "react-icons/fa";
+import { FaShop } from "react-icons/fa6";
 import { GrDocumentConfig } from "react-icons/gr";
 import { Menu } from "antd";
 import type { GetProp, MenuProps } from "antd";
@@ -10,7 +11,11 @@ import { useAuthContext } from "@/app/components/auth";
 import "./DashboardMenu.css";
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import { AiOutlineProduct } from "react-icons/ai";
-import { MdOutlineSource, MdPayment, MdProductionQuantityLimits } from "react-icons/md";
+import {
+  MdOutlineSource,
+  MdPayment,
+  MdProductionQuantityLimits,
+} from "react-icons/md";
 import { RiCustomerServiceLine } from "react-icons/ri";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
@@ -48,7 +53,11 @@ export const DashboardMenu = () => {
       label: "Khách hàng",
       icon: <IdcardOutlined style={{ fontSize: "16px" }} />,
     },
-
+    {
+      key: "/dashboard/order",
+      label: "Đơn hàng",
+      icon: <FaShop style={{ fontSize: "16px" }} />,
+    },
     {
       key: "/dashboard/tasks",
       label: "Công việc",
@@ -101,7 +110,7 @@ export const DashboardMenu = () => {
               label: "Nguồn KH",
               icon: (
                 <span style={{ marginLeft: "10px" }}>
-                  <MdOutlineSource  style={{ fontSize: "16px" }} />
+                  <MdOutlineSource style={{ fontSize: "16px" }} />
                 </span>
               ),
             },

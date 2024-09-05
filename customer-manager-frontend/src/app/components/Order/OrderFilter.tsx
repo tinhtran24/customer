@@ -1,33 +1,41 @@
 import React from "react";
-import {
-  DatePicker,
-  Input,
-  Select,
-  Button,
-  Row,
-  Col,
-} from "antd";
+import { DatePicker, Input, Select, Button, Row, Col } from "antd";
 import moment, { Moment } from "moment";
+import { FilterValues } from "./Table";
+import { SettingSelect } from "../Common/Select";
+import { SETTINGS_TYPE } from "@/app/lib/definitions";
+import { Dayjs } from "dayjs";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-interface FilterValues {
-  dateRange?: [Moment, Moment];
-  customerName?: string;
-  sale?: string;
-  warehouse?: string;
-}
-
 interface OrderFilterProps {
-  onFilter: (filters: FilterValues) => void;
+  onFilter: (filters: Partial<FilterValues>) => void;
+  onSearch: any;
+  handleReset: () => void;
 }
 
-const OrderFilter: React.FC<OrderFilterProps> = ({ onFilter }) => {
-  const handleDateChange = (dates: [Moment, Moment] | null) => {
-    onFilter({
-      dateRange: dates || [moment(), moment()],
-    });
+const OrderFilter: React.FC<OrderFilterProps> = ({
+  onFilter,
+  onSearch,
+  handleReset,
+}) => {
+  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
+    if (dates) {
+      const momentDates: [Moment | null, Moment | null] = [
+        dates[0] ? moment(dates[0].toDate()) : null,
+        dates[1] ? moment(dates[1].toDate()) : null,
+      ];
+      onFilter({
+        from: momentDates[0]?.toDate() || null,
+        to: momentDates[1]?.toDate() || null,
+      });
+    } else {
+      onFilter({
+        from: null,
+        to: null,
+      });
+    }
   };
 
   const handleCustomerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,27 +44,22 @@ const OrderFilter: React.FC<OrderFilterProps> = ({ onFilter }) => {
     });
   };
 
-  const handleSaleChange = (value: string) => {
+  const handleSaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onFilter({
-      sale: value,
+      sale: e.target.value,
     });
   };
 
-  const handleWarehouseChange = (value: string) => {
+  const handleSourceOfGoodChange = (value: string) => {
     onFilter({
-      warehouse: value,
+      source: value,
     });
   };
-
-  const handleApplyFilter = () => {};
 
   return (
     <Row gutter={[16, 16]} style={{ margin: "1rem 0 2rem 0" }}>
       <Col span={5}>
-        <RangePicker
-          onChange={() => handleDateChange}
-          style={{ width: "100%" }}
-        />
+        <RangePicker onChange={handleDateChange} style={{ width: "100%" }} />
       </Col>
       <Col span={5}>
         <Input
@@ -65,37 +68,23 @@ const OrderFilter: React.FC<OrderFilterProps> = ({ onFilter }) => {
         />
       </Col>
       <Col span={5}>
-        <Select
-          placeholder="Sale"
-          style={{ width: "100%" }}
-          onChange={handleSaleChange}
-        >
-          <Option value="sale1">Sale 1</Option>
-          <Option value="sale2">Sale 2</Option>
-          <Option value="sale3">Sale 3</Option>
-        </Select>
+        <Input placeholder="Tên nhân viên" onChange={handleSaleChange} />
       </Col>
       <Col span={5}>
-        <Select
-          placeholder="Kho"
+        <SettingSelect
+          type={SETTINGS_TYPE.SOURCE_OF_GOODS}
           style={{ width: "100%" }}
-          onChange={handleWarehouseChange}
-        >
-          <Option value="Kho 1">Kho 1</Option>
-          <Option value="K2">Kho 2</Option>
-          <Option value="K3">Kho 3</Option>
-        </Select>
+          placeholder="- Chọn -"
+          onChange={handleSourceOfGoodChange}
+        />
       </Col>
       <Col span={4}>
-        <Button
-          type="primary"
-          onClick={handleApplyFilter}
-        >
+        <Button type="primary" onClick={onSearch}>
           Lọc
         </Button>
         <Button
           type="primary"
-          onClick={() => {}}
+          onClick={() => handleReset()}
           style={{
             marginLeft: "10px",
             background: "white",
