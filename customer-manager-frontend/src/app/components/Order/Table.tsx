@@ -1,35 +1,56 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table } from "antd";
+import { Table, TableColumnsType } from "antd";
 import OrderFilter from "./OrderFilter";
 import moment, { Moment } from "moment";
+import { fetchCustomerDashboard } from "@/app/lib/actions";
+import Loading from "@/app/dashboard/loading";
+import {
+  Customer,
+  CustomerProduct,
+  CustomerProductItem,
+  User,
+} from "@/app/lib/definitions";
 
-interface OrderData {
-  key: string;
-  orderNumber: string;
-  customerName: string;
-  price: number;
-  paymentMethod: string;
-  deliveryMethod: string;
-  createdBy: string;
-  createdAt: string;
+export interface FilterValues {
+  from: Date | null;
+  to: Date | null;
+  customerName?: string;
+  sale?: string;
+  source?: string;
 }
 
 const TableOrder: React.FC = () => {
-  const [filteredData, setFilteredData] = useState<OrderData[]>([]);
-  const [filters, setFilters] = useState({
-    dateRange: [moment().startOf("month"), moment().endOf("month")] as
-      | [Moment, Moment]
-      | null,
+  const initFilter = {
+    from: null,
+    to: null,
     customerName: "",
-    paymentMethod: "",
     source: "",
-    createdBy: "",
-  });
+    sale: "",
+  };
+  const [filteredData, setFilteredData] = useState<CustomerProduct[]>([]);
+  const [filters, setFilters] = useState<FilterValues>(initFilter);
+  const [isLoading, setIsLoading] = useState(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+
+  const getData = async () => {
+    setIsLoading(true);
+
+    const data = await fetchCustomerDashboard(
+      filters.customerName || null,
+      filters.sale || null,
+      filters.source || null,
+      filters.from ? moment(filters.from).startOf('day').format("YYYY-MM-DD HH:mm:ss") : null,
+      filters.to ? moment(filters.to).endOf('day').format("YYYY-MM-DD HH:mm:ss") : null
+    );
+
+    setFilteredData(data);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    // get data -- update later
-  }, [filters]);
+    getData();
+  }, []);
 
   const handleFilter = (newFilters: any) => {
     setFilters((prevFilters) => ({
@@ -38,37 +59,94 @@ const TableOrder: React.FC = () => {
     }));
   };
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(price);
+  };
+
+  const handleReset = () => {
+    // router.refresh();
+    window.location.reload();
+  };
+
+  const toggleExpand = (key: React.Key) => {
+    if (expandedRowKeys.includes(key)) {
+      setExpandedRowKeys(expandedRowKeys.filter((k) => k !== key));
+    } else {
+      setExpandedRowKeys([...expandedRowKeys, key]);
+    }
+  };
+
+  const expandedRowRender = (record: CustomerProduct) => {
+    const miniTableColumns: TableColumnsType<any> = [
+      {
+        title: "Tên sản phẩm",
+        key: "productName",
+        render: (_: any, s: CustomerProductItem) => s.product?.title,
+      },
+      {
+        title: "Đơn giá",
+        dataIndex: "unitPrice",
+        key: "unitPrice",
+        render: (s: number) => formatPrice(s),
+      },
+      {
+        title: "Số lượng",
+        dataIndex: "quantity",
+        key: "quantity",
+      },
+    ];
+
+    return (
+      <Table
+        columns={miniTableColumns}
+        dataSource={record.customerProductItems}
+        pagination={false}
+        rowKey="id"
+      />
+    );
+  };
+
   const columns = [
     {
       title: "Mã đơn hàng",
-      dataIndex: "orderNumber",
-      key: "orderNumber",
+      dataIndex: "code",
+      key: "code",
     },
     {
       title: "Tên khách hàng",
-      dataIndex: "customerName",
-      key: "customerName",
+      dataIndex: "customer",
+      key: "customer",
+      render: (customer: Customer) => customer.fullName,
     },
     {
       title: "Giá",
       dataIndex: "price",
       key: "price",
-      render: (text: number) => <span>{text.toLocaleString()} VND</span>,
+      render: (s: number) => formatPrice(s),
     },
     {
-      title: "PT thanh toán",
+      title: "PT Giao hàng",
+      dataIndex: "shipMethod",
+      key: "shipMethod",
+    },
+    {
+      title: "PT Thanh toán",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
     },
-    {
-      title: "PT giao hàng",
-      dataIndex: "deliveryMethod",
-      key: "deliveryMethod",
-    },
+    // {
+    //   title: "Địa chỉ",
+    //   dataIndex: "street",
+    //   key: "street",
+    // },
     {
       title: "Người tạo",
-      dataIndex: "createdBy",
-      key: "createdBy",
+      dataIndex: "createdUser",
+      key: "createdUser",
+      render: (user: User) => user.name,
     },
     {
       title: "Ngày tạo",
@@ -80,13 +158,26 @@ const TableOrder: React.FC = () => {
 
   return (
     <div>
-      <OrderFilter onFilter={handleFilter} />
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 10 }}
-        rowKey="key"
+      <OrderFilter
+        onFilter={handleFilter}
+        onSearch={getData}
+        handleReset={handleReset}
       />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          pagination={{ pageSize: 10 }}
+          rowKey="id"
+          expandedRowKeys={expandedRowKeys}
+          onExpand={(expanded, record) => toggleExpand(record.id)}
+          expandable={{
+            expandedRowRender,
+          }}
+        />
+      )}
     </div>
   );
 };

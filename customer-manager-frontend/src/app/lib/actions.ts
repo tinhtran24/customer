@@ -774,3 +774,47 @@ export async function deleteSetting(id: string) {
   }
 }
 //#endregion
+
+//#region customer dashboard
+export async function fetchCustomerDashboard(
+  customerName: string | null,
+  saleName: string |null,
+  source: string | null,
+  from: string | null,
+  to: string | null
+) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/customer-product/dashboard?page=1&limit=9999999999`
+    );
+
+    if (customerName) url.searchParams.append("customerName", customerName);
+    if (saleName) url.searchParams.append("saleName", saleName);
+    if (source) url.searchParams.append("source", source);
+    if (from && to) {
+      url.searchParams.append("from", from);
+      url.searchParams.append("to", to);
+    }
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers product");
+    }
+
+    const data = await res.json();
+    return data.data || [];
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}
+
+//#endregion
