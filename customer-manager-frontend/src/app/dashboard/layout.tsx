@@ -58,7 +58,7 @@ export default function DashboardLayout({
         {
             key: '1',
             label: (
-                <a target="_blank" rel="noopener noreferrer" href="#">
+                <a rel="noopener noreferrer" href="/dashboard/profile">
                     Thông tin cá nhân
                 </a>
             ),

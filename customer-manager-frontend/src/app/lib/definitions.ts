@@ -286,6 +286,10 @@ export type PaginationMeta = {
 export type Pagination<T> = {
   items: T[];
   meta: PaginationMeta;
+
+  //
+  data?:T[];
+  totalPrice?: number;
 };
 
 export enum ENUM_STATUS_TYPE {
