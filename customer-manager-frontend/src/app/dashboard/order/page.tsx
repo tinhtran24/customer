@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { shantell } from "@/app/utils/fontSetting";
 import Table from "@/app/components/Order/Table";
 
-export default async function ProductPage() {
+export default function ProductPage() {
   return (
     <main>
       <AntdRegistry>

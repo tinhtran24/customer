@@ -9,8 +9,47 @@ import {
   Customer,
   CustomerProduct,
   CustomerProductItem,
+  Pagination,
   User,
 } from "@/app/lib/definitions";
+import { Card, Col, Row, Statistic } from "antd";
+
+interface DashboardStatsProps {
+  totalOrders: string;
+  totalValue: string;
+}
+
+const DashboardStats: React.FC<DashboardStatsProps> = ({
+  totalOrders,
+  totalValue,
+}) => {
+  return (
+    <Row gutter={16}>
+      <Col span={12}>
+        <Card>
+          <Statistic
+            title="Tổng Đơn Hàng"
+            value={totalOrders}
+            valueStyle={{ fontSize: "24px", fontWeight: "bold" }}
+          />
+        </Card>
+      </Col>
+      <Col span={12}>
+        <Card>
+          <Statistic
+            title="Tổng Doanh Thu"
+            value={totalValue}
+            valueStyle={{
+              fontSize: "24px",
+              fontWeight: "bold",
+              color: "#3f8600",
+            }}
+          />
+        </Card>
+      </Col>
+    </Row>
+  );
+};
 
 export interface FilterValues {
   from: Date | null;
@@ -28,8 +67,12 @@ const TableOrder: React.FC = () => {
     source: "",
     sale: "",
   };
-  const [filteredData, setFilteredData] = useState<CustomerProduct[]>([]);
+  const [data, setData] = useState<Pagination<CustomerProduct>>();
+
   const [filters, setFilters] = useState<FilterValues>(initFilter);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
@@ -37,20 +80,27 @@ const TableOrder: React.FC = () => {
     setIsLoading(true);
 
     const data = await fetchCustomerDashboard(
+      currentPage,
+      pageSize,
       filters.customerName || null,
       filters.sale || null,
       filters.source || null,
-      filters.from ? moment(filters.from).startOf('day').format("YYYY-MM-DD HH:mm:ss") : null,
-      filters.to ? moment(filters.to).endOf('day').format("YYYY-MM-DD HH:mm:ss") : null
+      filters.from
+        ? moment(filters.from).startOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : null,
+      filters.to
+        ? moment(filters.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : null
     );
 
-    setFilteredData(data);
+    setData(data);
+
     setIsLoading(false);
   };
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [currentPage]);
 
   const handleFilter = (newFilters: any) => {
     setFilters((prevFilters) => ({
@@ -109,6 +159,12 @@ const TableOrder: React.FC = () => {
     );
   };
 
+  const handleTableChange = (pagination: any) => {
+    setCurrentPage(pagination.current);
+    setData(undefined);
+    setIsLoading(true);
+  };
+
   const columns = [
     {
       title: "Mã đơn hàng",
@@ -158,6 +214,10 @@ const TableOrder: React.FC = () => {
 
   return (
     <div>
+      <DashboardStats
+        totalOrders={data?.meta.totalItems?.toString() || "_"}
+        totalValue={data?.totalPrice ? formatPrice(data?.totalPrice) : "_"}
+      />
       <OrderFilter
         onFilter={handleFilter}
         onSearch={getData}
@@ -168,8 +228,14 @@ const TableOrder: React.FC = () => {
       ) : (
         <Table
           columns={columns}
-          dataSource={filteredData}
-          pagination={{ pageSize: 10 }}
+          dataSource={data?.data}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: data?.meta?.totalItems || 0,
+            showSizeChanger: false,
+          }}
+          onChange={handleTableChange}
           rowKey="id"
           expandedRowKeys={expandedRowKeys}
           onExpand={(expanded, record) => toggleExpand(record.id)}

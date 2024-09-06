@@ -777,6 +777,8 @@ export async function deleteSetting(id: string) {
 
 //#region customer dashboard
 export async function fetchCustomerDashboard(
+  page: number,
+  limit: number,
   customerName: string | null,
   saleName: string |null,
   source: string | null,
@@ -786,8 +788,10 @@ export async function fetchCustomerDashboard(
   try {
     const accessToken = cookies().get("accessToken");
     const url = new URL(
-      `${process.env.BACKEND_URL}/customer-product/dashboard?page=1&limit=9999999999`
+      `${process.env.BACKEND_URL}/customer-product/dashboard`
     );
+    url.searchParams.append("page", page.toString());
+    url.searchParams.append("limit", limit.toString());
 
     if (customerName) url.searchParams.append("customerName", customerName);
     if (saleName) url.searchParams.append("saleName", saleName);
@@ -810,7 +814,7 @@ export async function fetchCustomerDashboard(
     }
 
     const data = await res.json();
-    return data.data || [];
+    return data;
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];

@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { Form, Input, Button, Space, message } from "antd";
+import { Form, Input, Button, Space, message, Select } from "antd";
 import { useRouter } from "next/navigation";
 import { NewUser } from "@/app/lib/definitions";
 import { createUser } from "@/app/lib/actions";
+
+const { Option } = Select;
 
 export default function CreateUserForm() {
   const [form] = Form.useForm();
@@ -70,6 +72,21 @@ export default function CreateUserForm() {
           rules={[{ required: true, message: "Hãy nhập mật khẩu" }]}
         >
           <Input.Password autoComplete="none" />
+        </Form.Item>
+      </Form.Item>
+
+      {/* // awaiting for api */}
+      <Form.Item label="Quyền" required>
+        <Form.Item
+          name="role"
+          noStyle
+          rules={[{ required: true, message: "Hãy chọn quyền" }]}
+        >
+          <Select placeholder="Chọn quyền" allowClear>
+            <Option value="admin">Admin</Option>
+            <Option value="user">Người dùng</Option>
+            <Option value="marketing">Marketing</Option>
+          </Select>
         </Form.Item>
       </Form.Item>
 

@@ -1,55 +1,93 @@
-import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { Flex, Divider } from "antd";
+"use client";
+import { Divider, Input, Checkbox, Button } from "antd";
 import {
-  MailOutlined,
   UserOutlined,
+  MailOutlined,
   ApartmentOutlined,
+  LockOutlined,
 } from "@ant-design/icons";
-import { shantell } from "@/app/utils/fontSetting";
-import { getUserProfile } from "@/app/lib/data";
+import { useAuthContext } from "@/app/components/auth";
+import Loading from "../loading";
+import { useState } from "react";
 
-export default async function CustomerPage() {
-  const userProfile = await getUserProfile();
+export default function CustomerPage() {
+  const { currentUser } = useAuthContext();
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handlePasswordChange = () => {
+   // call api change pw
+  };
+
+  if (!currentUser) return <Loading />;
 
   return (
-    <main>
-      <AntdRegistry>
-        <Flex justify="space-between" gap="large" vertical>
-          <Flex justify="space-between" align="flex-end">
-            <h2
-              className={shantell.className}
-              style={{
-                color: "#0d2f5f",
-                alignItems: "end",
-                padding: 0,
-                margin: 0,
-              }}
+    <main style={{ paddingLeft: "3rem", minHeight: "100vh" }}>
+      <h2 style={{ color: "#0d2f5f", marginBottom: "2rem" }}>
+        Thông tin cá nhân
+      </h2>
+      <Divider />
+      <div style={{ fontSize: "1.2rem", marginBottom: "1.5rem" }}>
+        <UserOutlined style={{ marginRight: 10 }} />
+        <span style={{ fontWeight: 500 }}>Tên:</span> {currentUser?.name}
+      </div>
+      <div style={{ fontSize: "1.2rem", marginBottom: "1.5rem" }}>
+        <MailOutlined style={{ marginRight: 10 }} />
+        <span style={{ fontWeight: 500 }}>Email:</span> {currentUser?.email}
+      </div>
+      <div style={{ fontSize: "1.2rem", marginBottom: "2rem" }}>
+        <ApartmentOutlined style={{ marginRight: 10 }} />
+        <span style={{ fontWeight: 500 }}>Quyền:</span>
+        {currentUser?.role?.charAt(0).toUpperCase() +
+          currentUser?.role?.slice(1)}
+      </div>
+
+      <Divider />
+
+      <Checkbox
+        onChange={() => setIsChangingPassword(!isChangingPassword)}
+        checked={isChangingPassword}
+        style={{ fontSize: "1.2rem" }}
+      >
+        Thay đổi mật khẩu?
+      </Checkbox>
+
+      {isChangingPassword && (
+        <div style={{ marginTop: "2rem" }}>
+          <div>
+            <Input.Password
+              placeholder="Mật khẩu mới"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              iconRender={(visible) =>
+                visible ? <LockOutlined /> : <LockOutlined />
+              }
+              style={{ width: "300px" }}
+            />
+          </div>
+          <div>
+            <Input.Password
+              placeholder="Xác nhận mật khẩu mới"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              iconRender={(visible) =>
+                visible ? <LockOutlined /> : <LockOutlined />
+              }
+              style={{ width: "300px", marginTop: "1rem" }}
+            />
+          </div>
+          <div style={{ marginTop: "1.5rem" }}>
+            <Button
+              type="primary"
+              onClick={handlePasswordChange}
+              disabled={newPassword !== confirmPassword || newPassword === ""}
             >
-              PROFILE
-            </h2>
-          </Flex>
-
-          <Divider style={{ margin: 0 }} />
-
-          <Flex style={{ fontSize: 18 }} vertical>
-            <div>
-              <UserOutlined style={{ margin: 10 }} />
-              {userProfile?.name}
-            </div>
-
-            <div>
-              <MailOutlined style={{ margin: 10 }} />
-              {userProfile?.email}
-            </div>
-
-            <div>
-              <ApartmentOutlined style={{ margin: 10 }} />
-              {userProfile?.role?.charAt(0).toUpperCase() +
-                userProfile?.role?.slice(1)}
-            </div>
-          </Flex>
-        </Flex>
-      </AntdRegistry>
+              Đổi mật khẩu
+            </Button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
