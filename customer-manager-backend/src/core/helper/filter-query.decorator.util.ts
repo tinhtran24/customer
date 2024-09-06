@@ -57,6 +57,6 @@ export const FilterQueries = (readFilterDto?: Function): MethodDecorator[] =>
 
 export const BetweenDates = (from: Date | string, to: Date | string) =>
     Between(
-        format(typeof from === 'string' ? new Date(from) : from, 'YYYY-MM-DD HH:MM:SS'),
-        format(typeof to === 'string' ? new Date(to) : to, 'YYYY-MM-DD HH:MM:SS'),
+        format(typeof from === 'string' ? new Date(from) : from, 'yyyy-MM-dd HH:MM:SS'),
+        format(typeof to === 'string' ? new Date(to) : to, 'yyyy-MM-dd HH:MM:SS'),
     );

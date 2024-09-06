@@ -58,7 +58,6 @@ export class CustomerProductController extends BaseController<CustomerProductSer
         ...args: any[]
     ) {
         try {
-            console.log(data)
             return await this.customerProductService.createOrder(data);
         } catch (e) {
             throw e

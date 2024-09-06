@@ -45,10 +45,10 @@ export class QueryCustomerProductDto implements PaginateDto, TrashedDto {
     source: string;
 
     @IsOptional()
-    @IsDate()
+    @ApiProperty()
     from: Date;
 
     @IsOptional()
-    @IsDate()
+    @ApiProperty()
     to: Date;
 }
