@@ -39,7 +39,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         }
         const data = await this.repository.findPaginate(options, where);
 
-        let totalPrice =  this.repository.sum('price', where)
+        let totalPrice = await this.repository.sum('price', where)
        
         return {
             data: data.items,
