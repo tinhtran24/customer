@@ -65,6 +65,7 @@ export class UsersService {
           name: createUserDto.name,
           email: createUserDto.email,
           password: hashedPassword,
+          roleId: createUserDto.roleId || 2,
         });
 
         await this.usersRepository.insert(newUser);

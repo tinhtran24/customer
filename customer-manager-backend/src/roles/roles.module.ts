@@ -34,6 +34,12 @@ export class RolesModule {
       description: 'Normal user',
     };
 
-    await this.roleRepository.save([adminRoles, userRoles]);
+    const marketingRoles = {
+      id: 3,
+      role: 'marketing',
+      description: 'Marketing user',
+    };
+
+    await this.roleRepository.save([adminRoles, userRoles, marketingRoles]);
   }
 }
