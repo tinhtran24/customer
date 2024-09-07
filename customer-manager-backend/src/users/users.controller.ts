@@ -66,7 +66,6 @@ export class UsersController {
     if (!updatedUser) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
-
     return {
       message: 'Đã cập nhật thông tin người dùng',
     };
@@ -79,7 +78,6 @@ export class UsersController {
     if (!deletedUser) {
       throw new NotFoundException(USER_NOT_FOUND);
     }
-
     return {
       message: 'Đã xóa người dùng',
     };

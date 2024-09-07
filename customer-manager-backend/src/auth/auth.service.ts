@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcryptjs';
@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { NEW_USER_CREATED } from 'src/utils/messageConstants';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,32 @@ export class AuthService {
     }
 
     return { result: NEW_USER_CREATED };
+  }
+
+  
+  async changePassword(userID: string, data: ChangePasswordDto): Promise<{ result: string }> {
+    const user = await this.usersService.getUserById(userID);
+    if (!user) {
+      throw new BadRequestException('User does not exist');
+    }
+
+    if (user) {
+      const passwordMatch = await bcrypt.compare(data.oldPassword, user.password);
+      if (!passwordMatch) {
+        throw new BadRequestException('Old password is wrong');
+      }
+    }
+
+    const hash = await bcrypt.hash(data.newPassword, 10);
+    await this.usersService.updateUser(
+      userID,
+      {
+        password: hash,
+        name: user.name,
+        roleId: user.roleId
+      },
+    );
+    return { result: UPDATE_PASSWORD_SUCCESS };
   }
 
   async login(

@@ -21,6 +21,7 @@ import {
 import { RefreshTokenDto } from 'src/auth/dto/refreshToken.dto';
 import { RefreshAuthGuard } from 'src/auth/refresh.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -57,6 +58,15 @@ export class AuthController {
   @Get('logout')
   async logout(@Request() req) {
     return this.authService.logout(req?.user['userId']);
+  }
+
+  @Post('change-password')
+  @ApiBearerAuth()
+  async changePassword(
+    @Request() req,
+    @Body() data: ChangePasswordDto
+  ) {
+    return this.authService.changePassword(req?.user['userId'], data);
   }
 
   @UseGuards(RefreshAuthGuard)
