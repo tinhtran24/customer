@@ -38,10 +38,9 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             where.createdAt = BetweenDates(options.from, options.to)
         }
         const data = await this.repository.findPaginate(options, where);
-        let totalPrice = 0.0
-        for(const item of data.items) {
-            totalPrice += item.price
-        }
+
+        let totalPrice =  this.repository.sum('price', where)
+       
         return {
             data: data.items,
             totalPrice: totalPrice,
