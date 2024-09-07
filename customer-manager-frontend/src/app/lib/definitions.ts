@@ -110,6 +110,7 @@ export type NewUser = {
   email: string;
   name: string;
   password: string;
+  roleId: number;
 };
 
 export type UpdateUser = {
@@ -301,4 +302,11 @@ export enum ENUM_STATUS_TYPE {
   NEW_PATIENT = "BN Mới",
   CANCEL_PATIENT = "BN Bỏ",
   RE_TREATMENT_PATIENT = "BN Điều trị lại",
+}
+
+
+export enum UserRole {
+  Admin = 1,
+  User = 2,
+  Marketing = 3,
 }

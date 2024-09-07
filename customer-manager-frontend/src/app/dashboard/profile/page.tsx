@@ -1,23 +1,42 @@
 "use client";
-import { Divider, Input, Checkbox, Button } from "antd";
+import { Divider, Input, Checkbox, Button, message } from "antd";
 import {
   UserOutlined,
   MailOutlined,
   ApartmentOutlined,
-  LockOutlined,
 } from "@ant-design/icons";
+import { FaEye } from "react-icons/fa";
+import { IoEyeOffSharp } from "react-icons/io5";
 import { useAuthContext } from "@/app/components/auth";
 import Loading from "../loading";
 import { useState } from "react";
+import { changePassword } from "@/app/lib/actions";
 
 export default function CustomerPage() {
   const { currentUser } = useAuthContext();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSubmit, setIsSubmit] = useState(false);
 
-  const handlePasswordChange = () => {
-   // call api change pw
+  const handlePasswordChange = async () => {
+    setIsSubmit(true);
+
+    const result = await changePassword({
+      newPassword: newPassword,
+      oldPassword: oldPassword,
+    });
+
+    setIsSubmit(false);
+
+    if (result.statusCode) {
+      message.error(
+        Array.isArray(result.message) ? result.message[0] : result.message
+      );
+    } else {
+      message.success("Thay đổi mật khẩu thành công");
+    }
   };
 
   if (!currentUser) return <Loading />;
@@ -28,15 +47,18 @@ export default function CustomerPage() {
         Thông tin cá nhân
       </h2>
       <Divider />
-      <div style={{ fontSize: "1.2rem", marginBottom: "1.5rem" }}>
+
+      <div style={{ marginBottom: "1.5rem" }}>
         <UserOutlined style={{ marginRight: 10 }} />
         <span style={{ fontWeight: 500 }}>Tên:</span> {currentUser?.name}
       </div>
-      <div style={{ fontSize: "1.2rem", marginBottom: "1.5rem" }}>
+
+      <div style={{ marginBottom: "1.5rem" }}>
         <MailOutlined style={{ marginRight: 10 }} />
         <span style={{ fontWeight: 500 }}>Email:</span> {currentUser?.email}
       </div>
-      <div style={{ fontSize: "1.2rem", marginBottom: "2rem" }}>
+
+      <div style={{ marginBottom: "1.5rem" }}>
         <ApartmentOutlined style={{ marginRight: 10 }} />
         <span style={{ fontWeight: 500 }}>Quyền:</span>
         {currentUser?.role?.charAt(0).toUpperCase() +
@@ -48,40 +70,58 @@ export default function CustomerPage() {
       <Checkbox
         onChange={() => setIsChangingPassword(!isChangingPassword)}
         checked={isChangingPassword}
-        style={{ fontSize: "1.2rem" }}
       >
         Thay đổi mật khẩu?
       </Checkbox>
 
       {isChangingPassword && (
-        <div style={{ marginTop: "2rem" }}>
+        <div style={{ marginTop: "1rem" }}>
+          <div>
+            <Input.Password
+              placeholder="Mật khẩu cũ"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              iconRender={(visible) =>
+                visible ? <FaEye /> : <IoEyeOffSharp />
+              }
+              style={{ width: "300px" }}
+            />
+          </div>
+
           <div>
             <Input.Password
               placeholder="Mật khẩu mới"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               iconRender={(visible) =>
-                visible ? <LockOutlined /> : <LockOutlined />
+                visible ? <FaEye /> : <IoEyeOffSharp />
               }
-              style={{ width: "300px" }}
+              style={{ width: "300px", marginTop: "1rem" }}
             />
           </div>
+
           <div>
             <Input.Password
               placeholder="Xác nhận mật khẩu mới"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               iconRender={(visible) =>
-                visible ? <LockOutlined /> : <LockOutlined />
+                visible ? <FaEye /> : <IoEyeOffSharp />
               }
               style={{ width: "300px", marginTop: "1rem" }}
             />
           </div>
+
           <div style={{ marginTop: "1.5rem" }}>
             <Button
               type="primary"
               onClick={handlePasswordChange}
-              disabled={newPassword !== confirmPassword || newPassword === ""}
+              loading={isSubmit}
+              disabled={
+                newPassword !== confirmPassword ||
+                newPassword === "" ||
+                oldPassword === ""
+              }
             >
               Đổi mật khẩu
             </Button>

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Form, Input, Button, Space, message, Select } from "antd";
 import { useRouter } from "next/navigation";
-import { NewUser } from "@/app/lib/definitions";
+import { NewUser, UserRole } from "@/app/lib/definitions";
 import { createUser } from "@/app/lib/actions";
 
 const { Option } = Select;
@@ -20,6 +20,7 @@ export default function CreateUserForm() {
       email: values.email,
       name: values.name,
       password: values.password,
+      roleId: values.role
     };
 
     const result = await createUser(newUser);
@@ -75,18 +76,20 @@ export default function CreateUserForm() {
         </Form.Item>
       </Form.Item>
 
-      {/* // awaiting for api */}
       <Form.Item label="Quyền" required>
         <Form.Item
           name="role"
           noStyle
           rules={[{ required: true, message: "Hãy chọn quyền" }]}
         >
-          <Select placeholder="Chọn quyền" allowClear>
-            <Option value="admin">Admin</Option>
-            <Option value="user">Người dùng</Option>
-            <Option value="marketing">Marketing</Option>
-          </Select>
+          <Select
+            placeholder="- Chọn -"
+            options={[
+              { value: UserRole.Admin, label: "Admin" },
+              { value: UserRole.User, label: "User" },
+              { value: UserRole.Marketing, label: "Marketing" },
+            ]}
+          />
         </Form.Item>
       </Form.Item>
 

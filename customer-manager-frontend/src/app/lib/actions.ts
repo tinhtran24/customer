@@ -780,7 +780,7 @@ export async function fetchCustomerDashboard(
   page: number,
   limit: number,
   customerName: string | null,
-  saleName: string |null,
+  saleName: string | null,
   source: string | null,
   from: string | null,
   to: string | null
@@ -821,4 +821,33 @@ export async function fetchCustomerDashboard(
   }
 }
 
+//#endregion
+
+//#region Change pw
+export async function changePassword(body: {
+  newPassword: string;
+  oldPassword: string;
+}) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/auth/change-password";
+    const res = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/admin");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra.",
+    };
+  }
+}
 //#endregion
