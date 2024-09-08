@@ -29,10 +29,11 @@ export class AuthService {
 
   
   async changePassword(userID: string, data: ChangePasswordDto): Promise<{ result: string }> {
-    const user = await this.usersService.getUserById(userID);
+    const user = await this.usersService.getUserPassword(userID);
     if (!user) {
       throw new BadRequestException('User does not exist');
     }
+    console.log(data)
 
     if (user) {
       const passwordMatch = await bcrypt.compare(data.oldPassword, user.password);
@@ -40,7 +41,6 @@ export class AuthService {
         throw new BadRequestException('Old password is wrong');
       }
     }
-
     const hash = await bcrypt.hash(data.newPassword, 10);
     await this.usersService.updateUser(
       userID,

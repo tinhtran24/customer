@@ -18,6 +18,24 @@ export class UsersService {
     return users;
   }
 
+  async getUserPassword(userId: string) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: {
+          id: userId,
+        },
+        relations: {
+          role: true,
+        },
+        select: ['id', 'name', 'email', 'password', 'role', 'roleId'],
+      });
+
+      return user;
+    } catch (error) {
+      throw new ServiceUnavailableException();
+    }
+  }
+
   async getUserById(userId: string) {
     try {
       const user = await this.usersRepository.findOne({

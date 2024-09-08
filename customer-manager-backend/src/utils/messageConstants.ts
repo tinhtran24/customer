@@ -9,7 +9,7 @@ export const EMAIL_OR_PASSWORD_WRONG: string =
   'Email hoặc mật khẩu không chính xác';
 export const USER_ALREADY_EXISTED: string = 'Người dùng này đã có rồi';
 export const NEW_USER_CREATED: string = 'Đã tạo người dùng mới';
-export const UPDATE_PASSWORD_SUCCESS: string = 'Đã tạo người dùng mới';
+export const UPDATE_PASSWORD_SUCCESS: string = 'Đã thay đổi mật khẩu thành công';
 export const THIS_FEATURE_NEED_LOGIN: string =
   'Cần đăng nhập mới thực hiện được chức năng này';
 export const REFRESH_TOKEN_MUST_NOT_EMPTY: string =

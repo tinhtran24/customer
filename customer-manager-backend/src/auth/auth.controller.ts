@@ -63,10 +63,10 @@ export class AuthController {
   @Post('change-password')
   @ApiBearerAuth()
   async changePassword(
+    @Body() changePassDto: ChangePasswordDto,
     @Request() req,
-    @Body() data: ChangePasswordDto
   ) {
-    return this.authService.changePassword(req?.user['userId'], data);
+    return this.authService.changePassword(req?.user['userId'], changePassDto);
   }
 
   @UseGuards(RefreshAuthGuard)
