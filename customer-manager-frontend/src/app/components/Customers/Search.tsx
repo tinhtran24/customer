@@ -36,7 +36,7 @@ const SearchCustomers = ({
         />
         <SettingSelect
           value={status}
-          placeholder="Chọn trạng thái"
+          placeholder="- Chọn -"
           onChange={(e: string) => onChangeStatus(e)}
           style={{ width: "300px", height: "35px" }}
           type={SETTINGS_TYPE.STATUS}

@@ -133,15 +133,6 @@ export const DashboardMenu = () => {
               ),
             },
             {
-              key: "/dashboard/task-setting",
-              label: "Mã công việc",
-              icon: (
-                <span style={{ marginLeft: "10px" }}>
-                  <DownSquareOutlined style={{ fontSize: "16px" }} />
-                </span>
-              ),
-            },
-            {
               key: "/dashboard/source-of-goods",
               label: "Nguồn hàng",
               icon: (

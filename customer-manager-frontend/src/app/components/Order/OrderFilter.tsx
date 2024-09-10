@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DatePicker, Input, Select, Button, Row, Col } from "antd";
 import moment, { Moment } from "moment";
 import { FilterValues } from "./Table";
 import { SettingSelect } from "../Common/Select";
-import { SETTINGS_TYPE } from "@/app/lib/definitions";
+import { SETTINGS_TYPE, User } from "@/app/lib/definitions";
 import { Dayjs } from "dayjs";
+import { fetchUsers } from "@/app/lib/actions";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -20,6 +21,17 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
   onSearch,
   handleReset,
 }) => {
+    const [users, setUsers] = useState<User[]>([]);
+
+    const getUsers = async () => {
+      const results = await fetchUsers();
+      setUsers(results);
+    };
+
+    useEffect(() => {
+        getUsers();
+    }, []);
+
   const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     if (dates) {
       const momentDates: [Moment | null, Moment | null] = [
@@ -44,9 +56,9 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
     });
   };
 
-  const handleSaleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSaleChange = (value: string) => {
     onFilter({
-      sale: e.target.value,
+      sale: value,
     });
   };
 
@@ -68,7 +80,13 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
         />
       </Col>
       <Col span={5}>
-        <Input placeholder="Tên nhân viên" onChange={handleSaleChange} />
+          <Select placeholder="- Chọn tên nhân viên -" style={{ width: "100%" }} onChange={handleSaleChange}>
+              {users?.map((user) => (
+                  <Option key={user.id} value={user.name}>
+                      {`${user.name} - ${user.email}`}
+                  </Option>
+              ))}
+          </Select>
       </Col>
       <Col span={5}>
         <SettingSelect

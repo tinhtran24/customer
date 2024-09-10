@@ -147,6 +147,11 @@ const TableOrder: React.FC = () => {
         dataIndex: "quantity",
         key: "quantity",
       },
+      {
+        title: "Kho",
+        dataIndex: "source",
+        key: "source",
+      },
     ];
 
     return (
@@ -193,11 +198,6 @@ const TableOrder: React.FC = () => {
       dataIndex: "paymentMethod",
       key: "paymentMethod",
     },
-    // {
-    //   title: "Địa chỉ",
-    //   dataIndex: "street",
-    //   key: "street",
-    // },
     {
       title: "Người tạo",
       dataIndex: "createdUser",
