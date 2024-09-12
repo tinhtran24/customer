@@ -35,7 +35,7 @@ export abstract class BaseService<
      * @protected
      */
     protected enable_trash = false;
-    protected enable_generate_code = true;
+    protected enable_generate_code = false;
     protected code_prefix = 'SYSTEM';
 
     constructor(repository: R) {
@@ -79,14 +79,14 @@ export abstract class BaseService<
     }
     
     async generateCode(incrementBy: number = 1) {
-        const lastCustomer = await this.repository.find({
+        const lastRecord = await this.repository.find({
           take:1,
           order: { createdAt: 'DESC' } as any
         });
         let newCode = 1;
-        if (lastCustomer && lastCustomer[0].code) {
+        if (lastRecord && lastRecord[0].code) {
             newCode =
-            parseInt(lastCustomer[0].code.slice(-6), 10) + incrementBy;
+            parseInt(lastRecord[0].code.slice(-6), 10) + incrementBy;
         }
         const now= new Date();
         const year = now.getFullYear();
@@ -143,10 +143,13 @@ export abstract class BaseService<
      * @param {*} data
      * @returns {*}  {Promise<E>}
      */
-    create(data: any): Promise<E> {
+    async create(data: any): Promise<E> {
         try {
-            if (this.enable_generate_code === true) {
-                data.code = this.generateCode(1)
+            if (this.enable_generate_code) {
+                data = {
+                    ...data,
+                    code: await this.generateCode()
+                }
             }
             return this.repository.save(data, { reload: true }) 
         } catch {
