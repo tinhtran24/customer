@@ -8,7 +8,6 @@ import { QueryHook, QueryListParams, QueryParams, QueryTrashMode } from '../type
 import { PaginateDto } from './base.dto';
 import { manualPaginate } from '../pagination/paginate';
 
-
 /**
  * @description CURD
  * @export
@@ -36,6 +35,9 @@ export abstract class BaseService<
      * @protected
      */
     protected enable_trash = false;
+    protected enable_generate_code = true;
+    protected code_prefix = 'SYSTEM';
+
     constructor(repository: R) {
         this.repository = repository;
         if (
@@ -76,6 +78,21 @@ export abstract class BaseService<
         return qb.getMany();
     }
     
+    async generateCode(incrementBy: number = 1) {
+        const lastCustomer = await this.repository.find({
+          take:1,
+          order: { createdAt: 'DESC' } as any
+        });
+        let newCode = 1;
+        if (lastCustomer && lastCustomer[0].code) {
+            newCode =
+            parseInt(lastCustomer[0].code.slice(-6), 10) + incrementBy;
+        }
+        const now= new Date();
+        const year = now.getFullYear();
+        return `${this.code_prefix}_${year}${newCode.toString().padStart(6, "0")}`;
+      }
+
     async findPaginate(
         options: PaginateDto<M> & P,
         where?: any
@@ -128,6 +145,9 @@ export abstract class BaseService<
      */
     create(data: any): Promise<E> {
         try {
+            if (this.enable_generate_code === true) {
+                data.code = this.generateCode(1)
+            }
             return this.repository.save(data, { reload: true }) 
         } catch {
             throw new ForbiddenException(`Can not to create ${this.repository.getQBName()}!`);

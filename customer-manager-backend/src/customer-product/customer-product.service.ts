@@ -20,6 +20,8 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
     }
 
     protected enable_trash = true;
+    protected enable_generate_code = true;
+    protected code_prefix = 'DH';
 
     async dashboard(options: QueryCustomerProductDto) {
         const where: any = {}

@@ -11,7 +11,9 @@ export class TaskService extends BaseService<Task, TaskRepository> {
       }
     
       protected enable_trash = true;
-
+      protected enable_generate_code = true;
+      protected code_prefix = 'CV';
+      
       async getByCustomerId(customerId: string, options: PaginateDto) {
         return this.repository.findPaginate(options, {
           appoinment: {
