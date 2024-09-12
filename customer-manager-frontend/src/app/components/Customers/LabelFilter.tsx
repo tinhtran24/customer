@@ -1,39 +1,49 @@
 import { Flex } from "antd";
 import ReusableTag from "../Common/Tag";
+import { FilterCustomer } from "./customer.interface";
+
+export const removeFilterCustomer = (
+  handleFilterReset: (params: FilterCustomer) => void,
+  filterKey: string
+) => {
+  if (filterKey === CustomerFilterKey.SEARCH_TEXT) {
+    handleFilterReset({ isKwNull: true });
+  }
+
+  if (filterKey === CustomerFilterKey.STATUS) {
+    handleFilterReset({ isStatusNull: true });
+  }
+};
+
+export enum CustomerFilterKey {
+  SEARCH_TEXT = "searchText",
+  STATUS = "status",
+}
 
 interface LabelFilterProps {
   filteredValue: { searchText: string; status: string };
-  handleFilterReset: (params: {
-    isKwNull?: boolean;
-    isStatusNull?: boolean;
-  }) => void;
+  handleFilterReset: (params: FilterCustomer) => void;
 }
 export const LabelFilter = ({
   filteredValue,
   handleFilterReset,
 }: LabelFilterProps) => {
-  const removeFilter = (filterKey: string) => {
-    if (filterKey === "searchText") {
-      handleFilterReset({ isKwNull: true });
-    }
-
-    if (filterKey === "status") {
-      handleFilterReset({ isStatusNull: true });
-    }
-  };
-
   return (
     <Flex>
       {filteredValue.searchText && (
         <ReusableTag
           label={filteredValue.searchText}
-          onClose={() => removeFilter("searchText")}
+          onClose={() =>
+            removeFilterCustomer(handleFilterReset, CustomerFilterKey.SEARCH_TEXT)
+          }
         />
       )}
       {filteredValue.status && (
         <ReusableTag
           label={filteredValue.status}
-          onClose={() => removeFilter("status")}
+          onClose={() =>
+            removeFilterCustomer(handleFilterReset, CustomerFilterKey.STATUS)
+          }
         />
       )}
     </Flex>
