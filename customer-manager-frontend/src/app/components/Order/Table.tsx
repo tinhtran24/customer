@@ -13,6 +13,8 @@ import {
   User,
 } from "@/app/lib/definitions";
 import { Card, Col, Row, Statistic } from "antd";
+import { LabelFilterOrder } from "./LabelFilter";
+import { FilterValues, ParamsReset } from "./order.interface";
 
 interface DashboardStatsProps {
   totalOrders: string;
@@ -51,48 +53,66 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
   );
 };
 
-export interface FilterValues {
-  from: Date | null;
-  to: Date | null;
-  customerName?: string;
-  sale?: string;
-  source?: string;
-}
-
 const TableOrder: React.FC = () => {
   const initFilter = {
     from: null,
     to: null,
-    customerName: "",
-    source: "",
-    sale: "",
+    customerName: null,
+    source: null,
+    sale: null,
   };
   const [data, setData] = useState<Pagination<CustomerProduct>>();
 
   const [filters, setFilters] = useState<FilterValues>(initFilter);
+  const [filteredValues, setFilteredValues] =
+    useState<FilterValues>(initFilter);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
-  const getData = async () => {
+  const getData = async (params?: ParamsReset) => {
     setIsLoading(true);
+
+    const cusName = params?.isCustomerNameNull
+      ? null
+      : filters.customerName?.trim();
+    const sale = params?.isSaleNull ? null : filters.sale;
+    const source = params?.isSourceNull ? null : filters.source;
+    const from =
+      params?.isDateNull !== true && filters.from
+        ? moment(filters.from).startOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : null;
+    const to =
+      params?.isDateNull !== true && filters.to
+        ? moment(filters.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : null;
+
+    setFilters({
+      customerName: cusName,
+      sale: sale,
+      source: source,
+      from: from ? new Date(from) : null,
+      to: to ? new Date(to) : null,
+    });
+    setFilteredValues({
+      customerName: cusName,
+      sale: sale,
+      source: source,
+      from: from ? new Date(from) : null,
+      to: to ? new Date(to) : null,
+    });
 
     const data = await fetchCustomerDashboard(
       currentPage,
       pageSize,
-      filters.customerName || null,
-      filters.sale || null,
-      filters.source || null,
-      filters.from
-        ? moment(filters.from).startOf("day").format("YYYY-MM-DD HH:mm:ss")
-        : null,
-      filters.to
-        ? moment(filters.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
-        : null
+      cusName || null,
+      sale || null,
+      source || null,
+      from,
+      to
     );
-
     setData(data);
 
     setIsLoading(false);
@@ -219,10 +239,20 @@ const TableOrder: React.FC = () => {
         totalValue={data?.totalPrice ? formatPrice(data?.totalPrice) : "_"}
       />
       <OrderFilter
+        filtersValue={filters}
         onFilter={handleFilter}
         onSearch={getData}
         handleReset={handleReset}
       />
+      {!isLoading && (
+        <LabelFilterOrder
+          filteredValue={filteredValues}
+          handleFilterReset={(params: ParamsReset) => {
+            setCurrentPage(1);
+            getData(params);
+          }}
+        />
+      )}
       {isLoading ? (
         <Loading />
       ) : (

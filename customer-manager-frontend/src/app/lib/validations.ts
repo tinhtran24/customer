@@ -18,6 +18,11 @@ export const CustomerFormSchema = z.object({
       required_error: REQUIRED_FIELD,
     })
     .min(1, REQUIRED_FIELD),
+  status: z
+    .string({
+      required_error: REQUIRED_FIELD,
+    })
+    .min(1, REQUIRED_FIELD),
   code: z
     .string({
       required_error: REQUIRED_FIELD,

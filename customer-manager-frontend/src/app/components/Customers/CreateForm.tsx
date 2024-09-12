@@ -12,18 +12,12 @@ import {
   Row,
   Divider,
 } from "antd";
-import {
-  ENUM_STATUS_TYPE,
-  NewCustomer,
-  SETTINGS_TYPE,
-  User,
-} from "@/app/lib/definitions";
+import { NewCustomer, SETTINGS_TYPE, User } from "@/app/lib/definitions";
 import { createSchemaFieldRule } from "antd-zod";
 import { CreateCustomerFormSchema } from "@/app/lib/validations";
 import { createCustomer, fetchUsers } from "@/app/lib/actions";
 import { useRouter } from "next/navigation";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-// import { useAuthContext } from "@/app/components/auth";
+import { useAuthContext } from "@/app/components/auth";
 import { SettingSelect } from "../Common/Select";
 const { Option } = Select;
 
@@ -40,7 +34,8 @@ export default function CreateCustomerForm({
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const router = useRouter();
 
-  // const { currentUser } = useAuthContext();
+  const { currentUser } = useAuthContext();
+  const isAdmin = currentUser?.role === "admin";
 
   const getUsers = async () => {
     var results = await fetchUsers();
@@ -83,7 +78,9 @@ export default function CreateCustomerForm({
       group: values.group,
       source: values.source,
       status: values.status,
-      userInChargeId: values.userInChargeId,
+      userInChargeId: !isAdmin
+        ? (currentUser as any).sub
+        : values.userInChargeId,
       street: values.street,
       wardCode: values.ward,
       phoneNumber: values.phoneNumber,
@@ -138,6 +135,10 @@ export default function CreateCustomerForm({
           wrapperCol={{ span: 16 }}
           form={form}
           onFinish={onFinish}
+          initialValues={{
+            userInChargeId: (currentUser as any)?.sub || null,
+            status: "KH Mới",
+          }}
         >
           <Row>
             <Col span={24} lg={{ span: 12 }} style={{ padding: "0px 10px" }}>
@@ -158,19 +159,15 @@ export default function CreateCustomerForm({
               </Form.Item>
 
               <Form.Item
-                name="status"
                 label="Trạng thái"
+                required
                 rules={[
                   { required: true, message: "Vui lòng chọn trạng thái" },
-                ]} // Validation rule
+                ]}
               >
-                <Select placeholder="- Chọn -" style={{ width: "100%" }}>
-                  {Object.entries(ENUM_STATUS_TYPE).map(([key, value]) => (
-                    <Select.Option key={key} value={value}>
-                      {value}
-                    </Select.Option>
-                  ))}
-                </Select>
+                <Form.Item name="status" noStyle rules={[rule]}>
+                  <SettingSelect type={SETTINGS_TYPE.STATUS} />
+                </Form.Item>
               </Form.Item>
 
               <Form.Item label="Nhóm khách hàng" required>
@@ -185,19 +182,21 @@ export default function CreateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item
-                name="userInChargeId"
-                label="Người phụ trách"
-                rules={[{ required: true, message: "Chọn người phụ trách" }]} // Validation rule
-              >
-                <Select placeholder="- Chọn -" style={{ width: "100%" }}>
-                  {users?.map((user) => (
-                    <Option key={user.id} value={user.id}>
-                      {`${user.name} - ${user.email}`}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
+              {isAdmin && (
+                <Form.Item
+                  name="userInChargeId"
+                  label="Người phụ trách"
+                  rules={[{ required: true, message: "Chọn người phụ trách" }]}
+                >
+                  <Select placeholder="- Chọn -" style={{ width: "100%" }}>
+                    {users?.map((user) => (
+                      <Option key={user.id} value={user.id}>
+                        {`${user.name} - ${user.email}`}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              )}
             </Col>
 
             <Col
