@@ -12,6 +12,7 @@ import { FiEdit3 } from "react-icons/fi";
 import { DownOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
 import { LabelFilter } from "./LabelFilter";
+import { FilterCustomer } from "./customer.interface";
 
 export default function CustomerTable() {
   //#region hook
@@ -33,15 +34,12 @@ export default function CustomerTable() {
     token: { colorPrimary },
   } = theme.useToken();
 
-  const getData = async (params?: {
-    isKwNull?: boolean;
-    isStatusNull?: boolean;
-  }) => {
+  const getData = async (params?: FilterCustomer) => {
     setIsLoading(true);
 
     const q = params?.isKwNull ? "" : searchText?.trim();
     const s = params?.isStatusNull ? "" : status;
-    
+
     setSearchText(q);
     setStatus(s);
 
@@ -68,7 +66,7 @@ export default function CustomerTable() {
     else setIsLoading(false);
   }, [currentPage]);
 
-  const handleResetFilters = () => {
+  const handleResetFiltersAll = () => {
     setCurrentPage(1);
     getData({ isKwNull: true, isStatusNull: true });
   };
@@ -102,6 +100,11 @@ export default function CustomerTable() {
         handleDelete(customer.id);
       },
     });
+  };
+
+  const handleFilterReset = (params: FilterCustomer) => {
+    setCurrentPage(1);
+    getData(params);
   };
 
   const menu = (customer: any) => (
@@ -265,18 +268,13 @@ export default function CustomerTable() {
           getData();
         }}
         status={status}
-        handleResetFilters={handleResetFilters}
+        handleResetFiltersAll={handleResetFiltersAll}
+        handleFilterReset={handleFilterReset}
       />
       {!isLoading && (
         <LabelFilter
           filteredValue={filteredValue}
-          handleFilterReset={(params: {
-            isKwNull?: boolean;
-            isStatusNull?: boolean;
-          }) => {
-            setCurrentPage(1);
-            getData(params);
-          }}
+          handleFilterReset={handleFilterReset}
         />
       )}
       {isLoading || !data ? (

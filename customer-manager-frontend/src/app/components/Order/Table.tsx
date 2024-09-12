@@ -190,6 +190,11 @@ const TableOrder: React.FC = () => {
     setIsLoading(true);
   };
 
+  const handleFilterReset = (params: ParamsReset) => {
+    setCurrentPage(1);
+    getData(params);
+  };
+
   const columns = [
     {
       title: "Mã đơn hàng",
@@ -242,15 +247,13 @@ const TableOrder: React.FC = () => {
         filtersValue={filters}
         onFilter={handleFilter}
         onSearch={getData}
-        handleReset={handleReset}
+        handleResetAll={handleReset}
+        handleFilterReset={handleFilterReset}
       />
       {!isLoading && (
         <LabelFilterOrder
           filteredValue={filteredValues}
-          handleFilterReset={(params: ParamsReset) => {
-            setCurrentPage(1);
-            getData(params);
-          }}
+          handleFilterReset={handleFilterReset}
         />
       )}
       {isLoading ? (

@@ -5,7 +5,8 @@ import { SettingSelect } from "../Common/Select";
 import { SETTINGS_TYPE, User } from "@/app/lib/definitions";
 import { Dayjs } from "dayjs";
 import { fetchUsers } from "@/app/lib/actions";
-import { FilterValues } from "./order.interface";
+import { FilterValues, ParamsReset } from "./order.interface";
+import { OrderFilterKey, removeFilter } from "./LabelFilter";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -14,14 +15,16 @@ interface OrderFilterProps {
   filtersValue: FilterValues;
   onFilter: (filters: Partial<FilterValues>) => void;
   onSearch: any;
-  handleReset: () => void;
+  handleResetAll: () => void;
+  handleFilterReset: (params: ParamsReset) => void;
 }
 
 const OrderFilter: React.FC<OrderFilterProps> = ({
   filtersValue,
   onFilter,
   onSearch,
-  handleReset,
+  handleResetAll,
+  handleFilterReset,
 }) => {
   const [users, setUsers] = useState<User[]>([]);
 
@@ -49,6 +52,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
         from: null,
         to: null,
       });
+      removeFilter(handleFilterReset, OrderFilterKey.DATE)
     }
   };
 
@@ -56,6 +60,8 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
     onFilter({
       customerName: e.target.value,
     });
+    if(e.target.value === '')
+      removeFilter(handleFilterReset, OrderFilterKey.CUSTOMER_NAME)
   };
 
   const handleSaleChange = (value: string) => {
@@ -72,7 +78,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
 
   return (
     <Row gutter={[16, 16]} style={{ margin: "1rem 0 2rem 0" }}>
-      <Col span={5} style={{paddingLeft: "0"}}>
+      <Col span={5} style={{ paddingLeft: "0" }}>
         <RangePicker
           onChange={handleDateChange}
           style={{ width: "100%" }}
@@ -91,6 +97,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           placeholder="Tên khách hàng"
           onChange={handleCustomerNameChange}
           value={filtersValue?.customerName || ""}
+          allowClear
         />
       </Col>
       <Col span={5}>
@@ -99,6 +106,8 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           style={{ width: "100%" }}
           onChange={handleSaleChange}
           value={filtersValue?.sale}
+          allowClear
+          onClear={() => removeFilter(handleFilterReset, OrderFilterKey.SALE)}
         >
           {users?.map((user) => (
             <Option key={user.id} value={user.name}>
@@ -114,6 +123,8 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           placeholder="- Chọn nguồn hàng -"
           onChange={handleSourceOfGoodChange}
           value={filtersValue?.source}
+          allowClear
+          onClear={() => removeFilter(handleFilterReset, OrderFilterKey.SOURCE)}
         />
       </Col>
       <Col span={4}>
@@ -122,7 +133,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
         </Button>
         <Button
           type="primary"
-          onClick={() => handleReset()}
+          onClick={() => handleResetAll()}
           style={{
             marginLeft: "10px",
             background: "white",

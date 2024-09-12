@@ -3,6 +3,8 @@ import React from "react";
 import { Input, Button, Select } from "antd";
 import { SettingSelect } from "../Common/Select";
 import { SETTINGS_TYPE } from "@/app/lib/definitions";
+import { FilterCustomer } from "./customer.interface";
+import { CustomerFilterKey, removeFilterCustomer } from "./LabelFilter";
 
 interface SearchProps {
   text: string;
@@ -10,7 +12,8 @@ interface SearchProps {
   onChangeText: (text: string) => void;
   onChangeStatus: (status: string) => void;
   handleFilter: () => void;
-  handleResetFilters: any;
+  handleResetFiltersAll: any;
+  handleFilterReset: (params: FilterCustomer) => void;
 }
 
 const { Option } = Select;
@@ -21,7 +24,8 @@ const SearchCustomers = ({
   onChangeText,
   onChangeStatus,
   handleFilter,
-  handleResetFilters
+  handleResetFiltersAll,
+  handleFilterReset,
 }: SearchProps) => {
   return (
     <div style={{ maxWidth: "800px" }}>
@@ -31,7 +35,14 @@ const SearchCustomers = ({
           placeholder="Tên khách hàng, số điện thoại, email"
           allowClear
           size="large"
-          onChange={(e) => onChangeText(e.target.value)}
+          onChange={(e) => {
+            onChangeText(e.target.value);
+            if (e.target.value === "")
+              removeFilterCustomer(
+                handleFilterReset,
+                CustomerFilterKey.SEARCH_TEXT
+              );
+          }}
           style={{ width: "400px", height: "35px" }}
         />
         <SettingSelect
@@ -40,8 +51,11 @@ const SearchCustomers = ({
           onChange={(e: string) => onChangeStatus(e)}
           style={{ width: "300px", height: "35px" }}
           type={SETTINGS_TYPE.STATUS}
-        >
-        </SettingSelect>
+          allowClear
+          onClear={() =>
+            removeFilterCustomer(handleFilterReset, CustomerFilterKey.STATUS)
+          }
+        />
         <Button
           type="primary"
           onClick={handleFilter}
@@ -51,7 +65,7 @@ const SearchCustomers = ({
         </Button>
         <Button
           type="primary"
-          onClick={handleResetFilters}
+          onClick={handleResetFiltersAll}
           style={{
             height: "35px",
             background: "white",
