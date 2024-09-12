@@ -1,36 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { DatePicker, Input, Select, Button, Row, Col } from "antd";
 import moment, { Moment } from "moment";
-import { FilterValues } from "./Table";
 import { SettingSelect } from "../Common/Select";
 import { SETTINGS_TYPE, User } from "@/app/lib/definitions";
 import { Dayjs } from "dayjs";
 import { fetchUsers } from "@/app/lib/actions";
+import { FilterValues } from "./order.interface";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 interface OrderFilterProps {
+  filtersValue: FilterValues;
   onFilter: (filters: Partial<FilterValues>) => void;
   onSearch: any;
   handleReset: () => void;
 }
 
 const OrderFilter: React.FC<OrderFilterProps> = ({
+  filtersValue,
   onFilter,
   onSearch,
   handleReset,
 }) => {
-    const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
-    const getUsers = async () => {
-      const results = await fetchUsers();
-      setUsers(results);
-    };
+  const getUsers = async () => {
+    const results = await fetchUsers();
+    setUsers(results);
+  };
 
-    useEffect(() => {
-        getUsers();
-    }, []);
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
     if (dates) {
@@ -70,30 +72,48 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
 
   return (
     <Row gutter={[16, 16]} style={{ margin: "1rem 0 2rem 0" }}>
-      <Col span={5}>
-        <RangePicker onChange={handleDateChange} style={{ width: "100%" }} />
+      <Col span={5} style={{paddingLeft: "0"}}>
+        <RangePicker
+          onChange={handleDateChange}
+          style={{ width: "100%" }}
+          value={
+            filtersValue.from &&
+            filtersValue.to &&
+            ([moment(filtersValue.from), moment(filtersValue.to)] as [
+              Dayjs,
+              Dayjs
+            ])
+          }
+        />
       </Col>
       <Col span={5}>
         <Input
           placeholder="Tên khách hàng"
           onChange={handleCustomerNameChange}
+          value={filtersValue?.customerName || ""}
         />
       </Col>
       <Col span={5}>
-          <Select placeholder="- Chọn tên nhân viên -" style={{ width: "100%" }} onChange={handleSaleChange}>
-              {users?.map((user) => (
-                  <Option key={user.id} value={user.name}>
-                      {`${user.name} - ${user.email}`}
-                  </Option>
-              ))}
-          </Select>
+        <Select
+          placeholder="- Chọn tên nhân viên -"
+          style={{ width: "100%" }}
+          onChange={handleSaleChange}
+          value={filtersValue?.sale}
+        >
+          {users?.map((user) => (
+            <Option key={user.id} value={user.name}>
+              {`${user.name} - ${user.email}`}
+            </Option>
+          ))}
+        </Select>
       </Col>
       <Col span={5}>
         <SettingSelect
           type={SETTINGS_TYPE.SOURCE_OF_GOODS}
           style={{ width: "100%" }}
-          placeholder="- Chọn -"
+          placeholder="- Chọn nguồn hàng -"
           onChange={handleSourceOfGoodChange}
+          value={filtersValue?.source}
         />
       </Col>
       <Col span={4}>

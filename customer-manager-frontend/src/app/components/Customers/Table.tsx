@@ -1,15 +1,6 @@
 "use client";
 import { Customer, Pagination } from "@/app/lib/definitions";
-import {
-  Tag,
-  Table,
-  theme,
-  Modal,
-  message,
-  Menu,
-  Dropdown,
-  Button,
-} from "antd";
+import { Table, theme, Modal, message, Menu, Dropdown, Button } from "antd";
 import { useEffect, useState } from "react";
 import { TableColumnsType } from "antd";
 import Link from "next/link";
@@ -20,6 +11,7 @@ import Loading from "@/app/dashboard/loading";
 import { FiEdit3 } from "react-icons/fi";
 import { DownOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
+import { LabelFilter } from "./LabelFilter";
 
 export default function CustomerTable() {
   //#region hook
@@ -30,6 +22,10 @@ export default function CustomerTable() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("");
+  const [filteredValue, setFilteredValue] = useState({
+    searchText: "",
+    status: "",
+  });
 
   const { currentUser } = useAuthContext();
 
@@ -37,16 +33,32 @@ export default function CustomerTable() {
     token: { colorPrimary },
   } = theme.useToken();
 
-  const getData = async (isReset?: boolean) => {
+  const getData = async (params?: {
+    isKwNull?: boolean;
+    isStatusNull?: boolean;
+  }) => {
     setIsLoading(true);
+
+    const q = params?.isKwNull ? "" : searchText?.trim();
+    const s = params?.isStatusNull ? "" : status;
+    
+    setSearchText(q);
+    setStatus(s);
+
     setData(
       await fetchCustomers({
         page: currentPage.toString(),
         limit: pageSize.toString(),
-        q: isReset ? "" : searchText?.trim(),
-        status: isReset ? "" : status,
+        q: q,
+        status: s,
       })
     );
+
+    setFilteredValue({
+      searchText: q,
+      status: s,
+    });
+
     setIsLoading(false);
   };
 
@@ -57,10 +69,8 @@ export default function CustomerTable() {
   }, [currentPage]);
 
   const handleResetFilters = () => {
-    setSearchText("");
-    setStatus("");
     setCurrentPage(1);
-    getData(true);
+    getData({ isKwNull: true, isStatusNull: true });
   };
 
   const handleTableChange = (pagination: any) => {
@@ -257,6 +267,18 @@ export default function CustomerTable() {
         status={status}
         handleResetFilters={handleResetFilters}
       />
+      {!isLoading && (
+        <LabelFilter
+          filteredValue={filteredValue}
+          handleFilterReset={(params: {
+            isKwNull?: boolean;
+            isStatusNull?: boolean;
+          }) => {
+            setCurrentPage(1);
+            getData(params);
+          }}
+        />
+      )}
       {isLoading || !data ? (
         <Loading />
       ) : (
