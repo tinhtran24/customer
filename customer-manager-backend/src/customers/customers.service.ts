@@ -44,6 +44,25 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
     }
   }
 
+  async create(data: CreateCustomerDto): Promise<Customer> {
+    try {
+        if(data.phoneNumber && data.phoneNumber !== '') {
+          const existPhoneNumber = await this.repository.findOneBy({phoneNumber : data.phoneNumber});
+          if (existPhoneNumber) {
+            throw new ForbiddenException(`Không thể tạo khách hàng, trùng số điện thoại`);
+          }
+        }
+        const customerCode = await this.generateCode();
+        const dataReq = {
+          ...data,
+          code: customerCode
+        }
+        return this.repository.save(dataReq, { reload: true }) 
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async createCustomer(createCustomerDto: CreateCustomerDto) {
     try {
       const newCustomer = await this.customersRepository.create(createCustomerDto);
