@@ -57,7 +57,13 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
     }
 
     async createOrder(data: CreateCustomerOrderDto) {
-        const customerOrder = await this.repository.save(data.createCustomerProduct, { reload: true }) 
+        const code = this.generateCode(1)
+        const dataCreateCustomerOr : any = {
+            ...data.createCustomerProduct,
+            code: code,
+        }
+        
+        const customerOrder = await this.repository.save(dataCreateCustomerOr, { reload: true }) 
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
