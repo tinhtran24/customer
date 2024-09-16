@@ -27,10 +27,13 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
   handleFilterReset,
 }) => {
   const [users, setUsers] = useState<User[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
 
   const getUsers = async () => {
+    setIsLoadingUsers(true);
     const results = await fetchUsers();
     setUsers(results);
+    setIsLoadingUsers(false);
   };
 
   useEffect(() => {
@@ -52,7 +55,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
         from: null,
         to: null,
       });
-      removeFilter(handleFilterReset, OrderFilterKey.DATE)
+      removeFilter(handleFilterReset, OrderFilterKey.DATE);
     }
   };
 
@@ -60,8 +63,8 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
     onFilter({
       customerName: e.target.value,
     });
-    if(e.target.value === '')
-      removeFilter(handleFilterReset, OrderFilterKey.CUSTOMER_NAME)
+    if (e.target.value === "")
+      removeFilter(handleFilterReset, OrderFilterKey.CUSTOMER_NAME);
   };
 
   const handleSaleChange = (value: string) => {
@@ -108,6 +111,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           value={filtersValue?.sale}
           allowClear
           onClear={() => removeFilter(handleFilterReset, OrderFilterKey.SALE)}
+          loading={isLoadingUsers}
         >
           {users?.map((user) => (
             <Option key={user.id} value={user.name}>
