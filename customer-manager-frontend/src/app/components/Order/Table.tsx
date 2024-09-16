@@ -240,7 +240,7 @@ const TableOrder: React.FC = () => {
   return (
     <div>
       <DashboardStats
-        totalOrders={data?.meta.totalItems?.toString() || "_"}
+        totalOrders={data?.meta?.totalItems?.toString() || "_"}
         totalValue={data?.totalPrice ? formatPrice(data?.totalPrice) : "_"}
       />
       <OrderFilter

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Flex } from "antd";
+import StatisticsChart from "../components/Dashboard/chart";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -14,13 +15,12 @@ export default function Dashboard() {
           vertical
           style={{
             padding: "60px 0px 0px 15px",
+            width: "100%",
+            maxWidth: "80rem",
           }}
         >
-          <h1 style={{ color: "#0d2f5f" }}>Xin chào,</h1>
-          <div style={{ maxWidth: 500 }}>
-            <p style={{ fontSize: 18, lineHeight: 1.7 }}>
-              Customer manager
-            </p>
+          <div>
+            <StatisticsChart />
           </div>
         </Flex>
       </Flex>
