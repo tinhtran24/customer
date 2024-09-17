@@ -5,13 +5,13 @@ import {
     Index,
     ManyToOne,
     OneToMany,
+    BeforeInsert,
 } from 'typeorm';
 import { BaseEntity } from "../../core/base/base.entity";
 import Customer from 'src/customers/entities/customer.entity';
 import User from 'src/users/entities/user.entity';
 import { Product } from 'src/products/entities/product.entity';
-import { IsNotEmpty, IsNumber } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { format } from 'date-fns/format';
 
 @Entity('customer_product')
 export class CustomerProduct extends BaseEntity {
@@ -55,6 +55,23 @@ export class CustomerProduct extends BaseEntity {
   @ManyToOne(() => User, { cascade: false })
   @JoinColumn({ name: 'updated_user' })
   updatedUser: User;
+
+  @Column({ name: 'buy_date', nullable: true })
+  buyDate: string
+
+  @Column({ name: 'year', nullable: true })
+  year: number
+
+  @Column({ name: 'month', nullable: true })
+  month: number
+
+  @BeforeInsert()
+  updateDates() {
+      const dateObj = new Date();
+      this.year = dateObj.getFullYear()
+      this.month= dateObj.getMonth() + 1
+      this.buyDate = format(dateObj, 'yyyy-MM-dd')
+  }
 }
 
 @Entity('customer_product_item')

@@ -5,7 +5,7 @@ import { CustomerProductRepository } from './customer-product.repository';
 import { PaginateDto } from 'src/core/base/base.dto';
 import { CreateCustomerOrderDto } from './dto/create-customer-order.dto';
 import { CustomerProductItemRepository } from './customer-product-items.repository';
-import { QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
+import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
 import { BetweenDates } from "../core/helper/filter-query.decorator.util";
 import { ILike } from "typeorm";
 
@@ -33,9 +33,15 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         if (options.saleName) {
             where.createdUser = { name: ILike(`%${options.saleName}%`) }
         }
+
+        if (options.userId) {
+            where.createdUser = { id: options.userId }
+        }
+
         if (options.source) {
             where.customerProductItems = { source : options.source}
         }
+
         if (options.from && options.to) {
             where.createdAt = BetweenDates(options.from, options.to)
         }
@@ -49,6 +55,44 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             meta: data.meta
         }
     }
+
+
+    async chart(options: QueryChartCustomerProductDto) {
+        const qb = this.repository.createQueryBuilder('CustomerProduct')
+        .leftJoin('CustomerProduct.createdUser', 'CreatedUser')
+        .leftJoin('CustomerProduct.customerProductItems', 'CustomerProductItems')
+
+        let groupBy
+        if (options.year) {
+            qb.select(['"CustomerProduct"."month" as key'])
+            qb.where(`"CustomerProduct"."year" = ${options.year}`)
+            groupBy = '"CustomerProduct"."month"'
+        }
+
+        if (options.saleName) {
+            qb.where(`"CreatedUser"."name" = ${options.saleName}`)
+        }
+
+        if (options.source) {
+            qb.where(`"CustomerProductItems"."source" = ${options.source}`)
+        }
+
+        if (options.from && options.to) {
+            qb.select(['"CustomerProduct"."buy_date" as key'])
+            qb.where(`created_at BETWEEN '${options.from}' AND '${options.to}'`)
+            groupBy = '"CustomerProduct"."buy_date"'
+        }
+
+        qb.addSelect('SUM("CustomerProduct"."price") as value').groupBy(groupBy)
+
+        const result = await qb.getRawMany();
+       
+        console.log(result)
+        return {
+            data: result
+        }
+    }
+    
 
     async getByCustomerId(customerId: string, options: PaginateDto) {
         return this.repository.findPaginate(options, {

@@ -7,6 +7,7 @@ import { BaseTreeRepository } from './base.tree.repository';
 import { QueryHook, QueryListParams, QueryParams, QueryTrashMode } from '../type/query';
 import { PaginateDto } from './base.dto';
 import { manualPaginate } from '../pagination/paginate';
+import { QueryTaskDto } from 'src/task/dto/filter.dto';
 
 /**
  * @description CURD
@@ -94,9 +95,10 @@ export abstract class BaseService<
       }
 
     async findPaginate(
-        options: PaginateDto<M> & P,
+        options: QueryTaskDto,
         where?: any
     ){
+        
         return this.repository.findPaginate(options, where);
     }
     

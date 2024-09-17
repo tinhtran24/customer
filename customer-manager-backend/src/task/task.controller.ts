@@ -6,6 +6,7 @@ import { Crud } from "src/core/decorator/crud.decorator";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { PaginateDto } from "src/core/base/base.dto";
+import { QueryTaskDto } from "./dto/filter.dto";
 
 @Crud({
     id: 'task',
@@ -20,6 +21,7 @@ import { PaginateDto } from "src/core/base/base.dto";
         'restoreMulti',
     ],
     dtos: {
+        query: QueryTaskDto,
         create: CreateTaskDto,
         update: UpdateTaskDto,
     },
@@ -42,14 +44,14 @@ export class TaskController  extends BaseController<TaskService> {
     }
 
     @Get('')
-    async list(
-        @Query() options: PaginateDto,
+    async listPaging(
+        @Query() options: QueryTaskDto,
         @Request() req
     ) {
         let where = {}
         if (req.user['role'] !== 'admin') {
             where['userInChargeId'] = req.user['userId']
         }
-        return this.taskService.findPaginate(options, where);
+        return this.taskService.find(options, where);
     }
 }

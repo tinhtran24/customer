@@ -3,6 +3,8 @@ import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/core/base/base.service";
 import { TaskRepository } from "./task.repository";
 import { PaginateDto } from "src/core/base/base.dto";
+import { BetweenDates } from "src/core/helper/filter-query.decorator.util";
+import { QueryTaskDto } from "./dto/filter.dto";
 
 @Injectable()
 export class TaskService extends BaseService<Task, TaskRepository> {
@@ -21,4 +23,14 @@ export class TaskService extends BaseService<Task, TaskRepository> {
           }
         });
       }
+
+      async find(options: QueryTaskDto, where) {
+        if (options.from && options.to) {
+            where.createdAt = BetweenDates(options.from, options.to)
+        }
+        const data = await this.repository.findPaginate(options, where);       
+        return {
+            data: data
+        }
+    }
 }
