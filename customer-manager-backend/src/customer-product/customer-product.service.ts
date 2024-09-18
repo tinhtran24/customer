@@ -21,7 +21,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
 
     protected enable_trash = true;
     protected enable_generate_code = true;
-    protected code_prefix = 'DH';
+    protected code_prefix = 'ĐH';
 
     async dashboard(options: QueryCustomerProductDto) {
         const where: any = {}
@@ -101,13 +101,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
     }
 
     async createOrder(data: CreateCustomerOrderDto) {
-        const code = this.generateCode(1)
-        const dataCreateCustomerOr : any = {
-            ...data.createCustomerProduct,
-            code: code,
-        }
-        
-        const customerOrder = await this.repository.save(dataCreateCustomerOr, { reload: true }) 
+        const customerOrder = await this.create(data.createCustomerProduct)
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })

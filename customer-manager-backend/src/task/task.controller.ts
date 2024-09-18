@@ -38,9 +38,10 @@ export class TaskController  extends BaseController<TaskService> {
     async getByCustomerId(
         @Param('id', new ParseUUIDPipe())
         item: string,
-        @Query() options: PaginateDto
+        @Query() options: PaginateDto,
+        @Request() req
     ) {
-        return this.taskService.getByCustomerId(item, options);
+        return this.taskService.getByCustomerId(item, options, req.user);
     }
 
     @Get('')

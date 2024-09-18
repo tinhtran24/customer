@@ -14,8 +14,12 @@ export class UsersService {
   ) {}
 
   async getAllUsers() {
-    const users = await this.usersRepository.find();
-    return users;
+    return await this.usersRepository.find({
+      relations: {
+        role: true,
+      },
+      select: ['id', 'name', 'email', 'role', 'roleId'],
+    });
   }
 
   async getUserPassword(userId: string) {

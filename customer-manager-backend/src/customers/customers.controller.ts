@@ -44,7 +44,7 @@ export class CustomersController extends BaseController<CustomersService> {
       @Request() req
   ) {
       let where = {}
-      if (req.user['role'] !== 'admin') {
+      if (!['admin', 'marketing'].includes(req.user['role'])){
         where['userInChargeId'] = req.user['userId']
       }
       return this.customersService.findPaginate(options, where);

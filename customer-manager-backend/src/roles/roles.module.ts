@@ -25,19 +25,19 @@ export class RolesModule {
     const adminRoles = {
       id: 1,
       role: 'admin',
-      description: 'Administrator',
+      description: 'Quản lý',
     };
 
     const userRoles = {
       id: 2,
       role: 'user',
-      description: 'Normal user',
+      description: 'Nhân viên văn phòng',
     };
 
     const marketingRoles = {
       id: 3,
       role: 'marketing',
-      description: 'Marketing user',
+      description: 'Nhân viên Marketing',
     };
 
     await this.roleRepository.save([adminRoles, userRoles, marketingRoles]);

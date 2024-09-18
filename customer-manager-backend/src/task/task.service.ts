@@ -10,27 +10,28 @@ import { QueryTaskDto } from "./dto/filter.dto";
 export class TaskService extends BaseService<Task, TaskRepository> {
     constructor(protected taskRepository: TaskRepository) {
         super(taskRepository);
-      }
-    
-      protected enable_trash = true;
-      protected enable_generate_code = true;
-      protected code_prefix = 'CV';
-      
-      async getByCustomerId(customerId: string, options: PaginateDto) {
-        return this.repository.findPaginate(options, {
-          appoinment: {
-            customerId
-          }
-        });
-      }
+    }
 
-      async find(options: QueryTaskDto, where) {
+    protected enable_trash = true;
+    protected enable_generate_code = true;
+    protected code_prefix = 'CV';
+
+    async getByCustomerId(customerId: string, options: PaginateDto, user: any) {
+        let where = {
+            appoinment: {
+                customerId
+            }
+        }
+        if (user['role'] !== 'admin') {
+            where['userInChargeId'] = user['userId']
+        }
+        return this.repository.findPaginate(options, where);
+    }
+
+    async find(options: QueryTaskDto, where) {
         if (options.from && options.to) {
             where.createdAt = BetweenDates(options.from, options.to)
         }
-        const data = await this.repository.findPaginate(options, where);       
-        return {
-            data: data
-        }
+        return this.findPaginate(options, where);
     }
 }

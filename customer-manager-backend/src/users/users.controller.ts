@@ -1,22 +1,19 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
-  NotFoundException,
   ConflictException,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import User from './entities/user.entity';
-import {
-  USER_ALREADY_EXISTED,
-  USER_NOT_FOUND,
-} from 'src/utils/messageConstants';
+import { USER_ALREADY_EXISTED, USER_NOT_FOUND, } from 'src/utils/messageConstants';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/role.enum';
 import { ApiTags } from '@nestjs/swagger';
@@ -29,8 +26,7 @@ export class UsersController {
 
   @Get()
   async getAllUsers(): Promise<User[]> {
-    const users = await this.usersService.getAllUsers();
-    return users;
+    return await this.usersService.getAllUsers();
   }
 
   @Get(':id')

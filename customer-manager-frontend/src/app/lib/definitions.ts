@@ -310,3 +310,9 @@ export enum UserRole {
   User = 2,
   Marketing = 3,
 }
+
+export type Role = {
+  id: number;
+  role: string;
+  description: string;
+};

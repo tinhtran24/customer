@@ -1,6 +1,6 @@
 "use client";
 
-import { User, UserDataType } from "@/app/lib/definitions";
+import { Customer, Role, User, UserDataType } from "@/app/lib/definitions";
 import type { TableColumnsType } from "antd";
 import { Table } from "antd";
 import { useEffect, useState } from "react";
@@ -18,8 +18,9 @@ export default function UserTable({ users }: { users: User[] }) {
     userId: user.id,
     name: user.name,
     email: user.email,
+    role: user.role,
   }));
-
+  console.log(users)
   const columns: TableColumnsType<UserDataType> = [
     {
       title: "Tên người dùng",
@@ -33,6 +34,12 @@ export default function UserTable({ users }: { users: User[] }) {
     {
       title: "Email",
       dataIndex: "email",
+    },
+    {
+      title: "Quyền",
+      dataIndex: "role",
+      key: "role",
+      render: (role: Role) => role.description,
     },
   ];
   return (

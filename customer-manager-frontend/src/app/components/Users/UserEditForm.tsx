@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Form, Input, Button, Space, message, Modal } from "antd";
+import { Form, Input, Button, Space, message, Modal, Select } from "antd";
 import { useRouter } from "next/navigation";
-import { UpdateUser, User } from "@/app/lib/definitions";
+import { UpdateUser, User, UserRole } from "@/app/lib/definitions";
 import { deleteUser, updateUser } from "@/app/lib/actions";
 
 export default function EditUserForm({ user }: { user: User }) {
@@ -18,6 +18,7 @@ export default function EditUserForm({ user }: { user: User }) {
   const initialValues = {
     name: user.name,
     email: user.email,
+    roleId: user.roleId
   };
 
   useEffect(() => {
@@ -98,6 +99,23 @@ export default function EditUserForm({ user }: { user: User }) {
           rules={[{ required: true, message: "Hãy nhập tên người dùng" }]}
         >
           <Input autoComplete="none" />
+        </Form.Item>
+      </Form.Item>
+
+      <Form.Item label="Quyền" required>
+        <Form.Item
+            name="roleId"
+            noStyle
+            rules={[{ required: true, message: "Hãy chọn quyền" }]}
+        >
+          <Select
+              placeholder="- Chọn -"
+              options={[
+                { value: UserRole.Admin, label: "Admin" },
+                { value: UserRole.User, label: "User" },
+                { value: UserRole.Marketing, label: "Marketing" },
+              ]}
+          />
         </Form.Item>
       </Form.Item>
 
