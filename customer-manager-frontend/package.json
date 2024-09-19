@@ -6,7 +6,8 @@
     "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "next build && pm2 startOrRestart ecosystem.config.js"
   },
   "dependencies": {
     "@ant-design/charts": "^2.2.1",
