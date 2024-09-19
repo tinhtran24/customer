@@ -17,6 +17,7 @@ export default function Dashboard() {
             padding: "60px 0px 0px 15px",
             width: "100%",
             maxWidth: "80rem",
+            height: "100vh"
           }}
         >
           <div>

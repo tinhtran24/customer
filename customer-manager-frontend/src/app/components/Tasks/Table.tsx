@@ -1,9 +1,21 @@
 "use client";
+import Loading from "@/app/dashboard/loading";
+import { fetchAllTask } from "@/app/lib/actions";
 import { Task } from "@/app/lib/definitions";
-import { Table } from "antd";
+import { DatePicker, Button, Row, Col, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { useEffect, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+const { RangePicker } = DatePicker;
 
 const columns: ColumnsType<Task> = [
+  {
+    title: "STT",
+    key: "index",
+    render: (_: any, __: any, index: number) => (
+      <div style={{ textAlign: "center" }}>{index + 1}</div>
+    ),
+  },
   {
     title: "Mã số",
     dataIndex: "code",
@@ -24,18 +36,100 @@ const columns: ColumnsType<Task> = [
     title: "Người phụ trách",
     dataIndex: ["userInCharge", "name"],
     key: "userInCharge",
-  }
+  },
 ];
 
-interface TaskTableProps {
-  tasks: Task[];
-}
-export default function TaskTable({ tasks }: TaskTableProps) {
+export default function TaskTable() {
+  const [tasks, setTasks] = useState<Task[]>();
+  const [isLoading, setLoading] = useState(false);
+  const [filtersValue, setFiltersValue] = useState({
+    from: null as Dayjs | null,
+    to: null as Dayjs | null,
+  });
+
+  const getData = async (from?: string, to?: string) => {
+    setLoading(true);
+    const data = await fetchAllTask({ from, to });
+    setTasks(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const handleResetAll = () => {
+    setFiltersValue({ from: null, to: null });
+    getData();
+  };
+
+  const handleDateChange = (
+    dates: [Dayjs | null, Dayjs | null] | null,
+    dateStrings: [string, string]
+  ) => {
+    if (dates) {
+      setFiltersValue({
+        from: dates[0],
+        to: dates[1],
+      });
+    } else {
+      setFiltersValue({
+        from: null,
+        to: null,
+      });
+    }
+  };
+
+  const onSearch = () => {
+    if (filtersValue.from && filtersValue.to) {
+      getData(
+        dayjs(filtersValue.from).startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+        dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
+      );
+    } else {
+      getData();
+    }
+  };
+
+  if (isLoading) return <Loading />;
+
   return (
-    <Table
-      dataSource={tasks}
-      columns={columns}
-      rowKey={(record) => record.id}
-    />
+    <>
+      <Row gutter={[16, 16]} style={{ margin: "1rem 0 2rem 0" }}>
+        <Col span={6} style={{ paddingLeft: "0" }}>
+          <RangePicker
+            onChange={handleDateChange}
+            style={{ width: "100%" }}
+            value={
+              filtersValue.from && filtersValue.to
+                ? ([filtersValue.from, filtersValue.to] as [Dayjs, Dayjs])
+                : undefined
+            }
+          />
+        </Col>
+        <Col span={4}>
+          <Button type="primary" onClick={onSearch}>
+            Lọc
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => handleResetAll()}
+            style={{
+              marginLeft: "10px",
+              background: "white",
+              border: "1px solid blue",
+              color: "blue",
+            }}
+          >
+            Bỏ lọc
+          </Button>
+        </Col>
+      </Row>
+      <Table
+        dataSource={tasks}
+        columns={columns}
+        rowKey={(record) => record.id}
+      />
+    </>
   );
 }

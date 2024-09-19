@@ -565,14 +565,23 @@ export async function deleteAppointment(id: string) {
 //#endregion
 
 //#region Task
-export async function fetchAllTask() {
+export async function fetchAllTask(params?: { from?: string; to?: string }) {
   try {
     const accessToken = cookies().get("accessToken");
-    const url = new URL(
-      `${process.env.BACKEND_URL}/task?page=1&limit=9999999999`
-    );
+    const url = new URL(`${process.env.BACKEND_URL}/task`);
+
+    url.searchParams.set("page", "1");
+    url.searchParams.set("limit", "9999999999");
+
+    if (params?.from) {
+      url.searchParams.set("from", params.from);
+    }
+    if (params?.to) {
+      url.searchParams.set("to", params.to);
+    }
 
     const res = await fetch(url.toString(), {
+      method: "GET",
       cache: "no-store",
       headers: {
         "Content-Type": "application/json",
@@ -850,4 +859,50 @@ export async function changePassword(body: {
     };
   }
 }
+//#endregion
+
+//#region Chart
+export async function getDataChart(params: {
+  sale?: string | null;
+  source?: string | null;
+  from?: string | null;
+  to?: string | null;
+  year?: string | null;
+}) {
+  const { sale, source, from, to, year } = params;
+  const accessToken = cookies().get("accessToken");
+
+  try {
+    const queryString = new URLSearchParams({
+      ...(sale && { sale }),
+      ...(source && { source }),
+      ...(from && { from }),
+      ...(to && { to }),
+      ...(year && { year }),
+    }).toString();
+
+    const url = `${process.env.BACKEND_URL}/customer-product/chart${
+      queryString ? `?${queryString}` : ""
+    }`;
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard");
+
+    const data = await res.json();
+    return data.data || [];
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra.",
+    };
+  }
+}
+
 //#endregion
