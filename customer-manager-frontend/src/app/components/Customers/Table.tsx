@@ -1,6 +1,15 @@
 "use client";
 import { Customer, Pagination } from "@/app/lib/definitions";
-import { Table, theme, Modal, message, Menu, Dropdown, Button } from "antd";
+import {
+  Table,
+  theme,
+  Modal,
+  message,
+  Menu,
+  Dropdown,
+  Button,
+  Tooltip,
+} from "antd";
 import { useEffect, useState } from "react";
 import { TableColumnsType } from "antd";
 import Link from "next/link";
@@ -131,7 +140,9 @@ export default function CustomerTable() {
       title: "STT",
       key: "index",
       render: (_: any, __: Customer, index: number) => (
-        <div style={{ textAlign: "center" }}>{index + 1 + (currentPage - 1) * pageSize}</div>
+        <div style={{ textAlign: "center" }}>
+          {index + 1 + (currentPage - 1) * pageSize}
+        </div>
       ),
     },
     {
@@ -154,6 +165,19 @@ export default function CustomerTable() {
     {
       title: "Điện thoại",
       dataIndex: "phoneNumber",
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "street",
+      render: (address) => {
+        const shortenedAddress =
+          address.length > 15 ? `${address.slice(0, 15)}...` : address;
+        return (
+          <Tooltip title={address}>
+            <div>{shortenedAddress}</div>
+          </Tooltip>
+        );
+      },
     },
     {
       title: "Trạng thái",

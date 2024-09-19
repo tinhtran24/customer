@@ -12,6 +12,7 @@ import "./DashboardMenu.css";
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import { AiOutlineProduct } from "react-icons/ai";
 import {
+  MdOutlineDashboard,
   MdOutlineSource,
   MdPayment,
   MdProductionQuantityLimits,
@@ -48,6 +49,11 @@ export const DashboardMenu = () => {
   }, []);
 
   const items: MenuItem[] = [
+    {
+      key: "/dashboard",
+      label: "Dashboard",
+      icon: <MdOutlineDashboard style={{ fontSize: "16px" }} />,
+    },
     {
       key: "/dashboard/customers",
       label: "Khách hàng",

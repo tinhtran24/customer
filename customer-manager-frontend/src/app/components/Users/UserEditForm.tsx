@@ -32,6 +32,7 @@ export default function EditUserForm({ user }: { user: User }) {
 
     const updatingUser: UpdateUser = {
       name: values.name,
+      roleId: values.roleId,
     };
 
     const result = await updateUser(user.id, updatingUser);
