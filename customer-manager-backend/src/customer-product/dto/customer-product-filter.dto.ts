@@ -59,29 +59,10 @@ export class QueryCustomerProductDto implements PaginateDto, TrashedDto {
 
 @Injectable()
 @DtoValidation({ type: 'query' })
-export class QueryChartCustomerProductDto implements PaginateDto, TrashedDto {
-    @Transform(({ value }) => Boolean(value))
-    @IsBoolean()
-    @IsOptional()
-    isPublished?: boolean;
-
+export class QueryChartCustomerProductDto {
     @IsEnum(QueryTrashMode)
     @IsOptional()
     trashed?: QueryTrashMode;
-
-    @Transform(({ value }) => Number(value))
-    @Min(1, { message: '1' })
-    @IsNumber()
-    @IsOptional()
-    @ApiProperty()
-    page: number;
-
-    @Transform(({ value }) => Number(value))
-    @Min(1, { message: '1' })
-    @IsNumber()
-    @IsOptional()
-    @ApiProperty()
-    limit: number;
 
     @IsOptional()
     @ApiProperty()
