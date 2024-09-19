@@ -128,6 +128,13 @@ export default function CustomerTable() {
 
   const columns: TableColumnsType<Customer> = [
     {
+      title: "STT",
+      key: "index",
+      render: (_: any, __: Customer, index: number) => (
+        <div style={{ textAlign: "center" }}>{index + 1 + (currentPage - 1) * pageSize}</div>
+      ),
+    },
+    {
       title: "Mã KH",
       dataIndex: "code",
     },

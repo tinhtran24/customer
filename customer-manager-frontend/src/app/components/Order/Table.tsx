@@ -195,7 +195,14 @@ const TableOrder: React.FC = () => {
     getData(params);
   };
 
-  const columns = [
+  const columns: TableColumnsType<any>  = [
+    {
+      title: "STT",
+      key: "index",
+      render: (_: any, __: any, index: number) => (
+        <div style={{ textAlign: "center" }}>{index + 1 + (currentPage - 1) * pageSize}</div>
+      ),
+    },
     {
       title: "Mã đơn hàng",
       dataIndex: "code",

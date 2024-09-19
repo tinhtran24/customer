@@ -6,8 +6,6 @@ import { fetchAllTask } from "@/app/lib/actions";
 import TaskTable from "@/app/components/Tasks/Table";
 
 export default async function ProductPage() {
-  const tasks = await fetchAllTask();
-
   return (
     <main>
       <AntdRegistry>
@@ -28,7 +26,7 @@ export default async function ProductPage() {
           <Divider style={{ margin: 0 }} />
 
           <Suspense fallback={<Spin size="large" />}>
-            <TaskTable tasks={tasks} />
+            <TaskTable />
           </Suspense>
         </Flex>
       </AntdRegistry>
