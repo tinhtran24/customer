@@ -62,30 +62,31 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         const qb = this.repository.createQueryBuilder('CustomerProduct')
         .leftJoin('CustomerProduct.createdUser', 'CreatedUser')
         .leftJoin('CustomerProduct.customerProductItems', 'CustomerProductItems')
-
         let groupBy
-        if (options.year) {
-            qb.select(['"CustomerProduct"."month" as key'])
-            qb.where(`"CustomerProduct"."year" = ${options.year}`)
+        if(!options.year && !options.from && !options.to) {
+            qb.select([`concat('Tháng ', "CustomerProduct"."month") as key`])
+            qb.where(`"CustomerProduct"."year" = ${new Date().getFullYear}`)
             groupBy = '"CustomerProduct"."month"'
         }
-
+        if (options.year) {
+            qb.select([`concat('Tháng ', "CustomerProduct"."month") as key`])
+            qb.where(`"CustomerProduct"."year" = ${options.year}`)
+            groupBy = '"CustomerProduct"."month"'
+        } else if (options.from && options.to) {
+                qb.select(['"CustomerProduct"."buy_date" as key'])
+                qb.where(`"CustomerProduct"."created_at" BETWEEN '${options.from}' AND '${options.to}'`)
+                groupBy = '"CustomerProduct"."buy_date"'
+        }
+        console.log(options.saleName)
         if (options.saleName) {
-            qb.where(`"CreatedUser"."name" = ${options.saleName}`)
+            qb.andWhere(`"CreatedUser"."name" ILIKE '%${options.saleName}%'`)
         }
 
         if (options.source) {
-            qb.where(`"CustomerProductItems"."source" = ${options.source}`)
+            qb.andWhere(`"CustomerProductItems"."source" ILIKE '%${options.source}%'`)
         }
-
-        if (options.from && options.to) {
-            qb.select(['"CustomerProduct"."buy_date" as key'])
-            qb.where(`"CustomerProduct"."created_at" BETWEEN '${options.from}' AND '${options.to}'`)
-            groupBy = '"CustomerProduct"."buy_date"'
-        }
-
+    
         qb.addSelect('SUM("CustomerProduct"."price") as value').groupBy(groupBy)
-
         const result = await qb.getRawMany();
        
         return {
