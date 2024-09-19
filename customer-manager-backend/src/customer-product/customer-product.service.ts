@@ -64,19 +64,19 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         .leftJoin('CustomerProduct.customerProductItems', 'CustomerProductItems')
 
         let groupBy
-        // if (options.year) {
-        //     qb.select(['"CustomerProduct"."month" as key'])
-        //     qb.where(`"CustomerProduct"."year" = ${options.year}`)
-        //     groupBy = '"CustomerProduct"."month"'
-        // }
+        if (options.year) {
+            qb.select(['"CustomerProduct"."month" as key'])
+            qb.where(`"CustomerProduct"."year" = ${options.year}`)
+            groupBy = '"CustomerProduct"."month"'
+        }
 
-        // if (options.saleName) {
-        //     qb.where(`"CreatedUser"."name" = ${options.saleName}`)
-        // }
+        if (options.saleName) {
+            qb.where(`"CreatedUser"."name" = ${options.saleName}`)
+        }
 
-        // if (options.source) {
-        //     qb.where(`"CustomerProductItems"."source" = ${options.source}`)
-        // }
+        if (options.source) {
+            qb.where(`"CustomerProductItems"."source" = ${options.source}`)
+        }
 
         if (options.from && options.to) {
             qb.select(['"CustomerProduct"."buy_date" as key'])
