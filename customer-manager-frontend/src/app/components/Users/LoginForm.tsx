@@ -54,9 +54,9 @@ const LoginForm: React.FC = () => {
       <Form.Item
         name="email"
         style={{ margin: "0px 0px 40px 0px" }}
-        rules={[{ required: true, type: "email", message: "Hãy nhập email" }]}
+        rules={[{ required: true, message: "Hãy nhập email hoặc tên tài khoản" }]}
       >
-        <Input prefix={<MailOutlined />} placeholder="Email" />
+        <Input prefix={<MailOutlined />} placeholder="Email hoặc tên tài khoản" />
       </Form.Item>
 
       <Form.Item

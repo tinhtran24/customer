@@ -50,7 +50,7 @@ export default function CreateUserForm() {
         <Form.Item
           name="email"
           noStyle
-          rules={[{ required: true, type: "email", message: "Hãy nhập email" }]}
+          rules={[{ required: true, message: "Hãy nhập email hoặc tên tài khoản" }]}
         >
           <Input autoComplete="none" />
         </Form.Item>

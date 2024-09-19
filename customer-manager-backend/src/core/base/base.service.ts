@@ -85,7 +85,7 @@ export abstract class BaseService<
           order: { createdAt: 'DESC' } as any
         });
         let newCode = 1;
-        if (lastRecord && lastRecord[0].code) {
+        if (lastRecord.length > 0 && lastRecord[0]?.code) {
             newCode =
             parseInt(lastRecord[0].code.slice(-6), 10) + incrementBy;
         }

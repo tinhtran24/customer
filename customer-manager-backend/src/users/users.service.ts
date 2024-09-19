@@ -1,7 +1,7 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import User from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
@@ -57,16 +57,28 @@ export class UsersService {
   async getUserByEmail(email: string) {
     try {
       const user = await this.usersRepository.findOne({
-        where: [
-            { email: email },
-            { name: email }
-        ],
+        where: { email: email },
         relations: {
           role: true,
         },
         select: ['id', 'name', 'email', 'password', 'role', 'roleId'],
       });
+      return user;
+    } catch (error) {
+      throw new ServiceUnavailableException();
+    }
+  }
 
+
+  async getUserByName(name: string) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { name: ILike(name) },
+        relations: {
+          role: true,
+        },
+        select: ['id', 'name', 'email', 'password', 'roleId'],
+      });
       return user;
     } catch (error) {
       throw new ServiceUnavailableException();

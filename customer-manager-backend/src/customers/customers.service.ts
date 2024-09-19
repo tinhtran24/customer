@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
@@ -7,6 +7,8 @@ import { CustomerRepository } from './customer.repository';
 import { QueryHook } from 'src/core/type/query';
 import { QueryCustomertDto } from './dto/filter-customer.dto';
 import { Equal, Raw } from 'typeorm';
+import { Workbook } from "exceljs";
+import { ImportCustomerDto } from './dto/import-cusomter.dto';
 
 @Injectable()
 export class CustomersService extends BaseService<Customer, CustomerRepository> {
@@ -49,7 +51,7 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
         if(data.phoneNumber && data.phoneNumber !== '') {
           const existPhoneNumber = await this.repository.findOneBy({phoneNumber : data.phoneNumber});
           if (existPhoneNumber) {
-            throw new ForbiddenException(`Không thể tạo khách hàng, trùng số điện thoại`);
+            throw new BadRequestException(`Không thể tạo khách hàng, trùng số điện thoại`);
           }
         }
         const customerCode = await this.generateCode();
@@ -117,5 +119,93 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
     } catch (error) {
       throw new ServiceUnavailableException();
     }
+  }
+
+  private readonly templateHeader = {
+    columns: [
+        {
+            header: "Tên khách hàng",
+            key: "fullName",
+            width: 20,
+            style: { font: { name: "Arial" } },
+        },
+        {
+            header: "Điện thoại",
+            key: "phoneNumber",
+            width: 30,
+            style: {
+                font: { name: "Arial" },
+            }
+        },
+        {
+          header: "Mối quan hệ",
+          key: "status",
+          width: 20,
+          style: { font: { name: "Arial" } },
+        },
+        {
+            header: "Nhóm khách hàng",
+            key: "group",
+            width: 20,
+            style: { font: { name: "Arial" } },
+        },
+        {
+            header: "Nguồn khách hàng",
+            key: "source",
+            width: 20,
+            style: { font: { name: "Arial" } },
+        },
+        {
+          header: "Người phụ trách",
+          key: "userInCharge",
+          width: 20,
+          style: { font: { name: "Arial" } },
+        },
+        {
+          header: "Địa chỉ",
+          key: "street",
+          width: 20,
+          style: { font: { name: "Arial" } },
+        },
+        {
+          header: "Liên hệ lần cuối",
+          key: "lastConnected",
+          width: 20,
+          style: { font: { name: "Arial" } },
+        }
+    ],
+};
+
+  private rowToJSON(row: any) {
+    const headers = this.templateHeader.columns;
+    let data = {};
+    for (let i = 1; i < row.length; i++) {
+        const field = headers[i - 1] ? headers[i - 1].key : undefined;
+        if (!field) continue;
+        data[field] =
+            row[i] && row[i].result
+                ? row[i].result.toFixed(0)
+                : row[i] && row[i].text
+                    ? row[i].text
+                    : row[i]
+                        ? row[i].toString()
+                        : '';
+    }
+    return data;
+}
+
+  async transform(file: Express.Multer.File) {
+    const imports = [];
+    const workbook = new Workbook();
+    await workbook.xlsx.load(file.buffer);
+    const sheet = workbook.getWorksheet('Sheet1');
+    sheet.eachRow((row, index) => {
+        let values = row.values;
+        if (index > 1) {
+            const rowJson = this.rowToJSON(values);
+            imports.push(rowJson);
+        }
+    });
+    return imports
   }
 }
