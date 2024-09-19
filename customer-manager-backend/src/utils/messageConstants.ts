@@ -2,7 +2,7 @@
  * @AUTH  *
  **********/
 
-export const EMAIL_MUST_NOT_EMPTY: string = 'Email không được bỏ trống';
+export const EMAIL_MUST_NOT_EMPTY: string = 'Email hoặc tài khoản không được bỏ trống';
 export const EMAIL_MUST_VALID: string = 'Email không đúng định dạng';
 export const PASSWORD_MUST_NOT_EMPTY: string = 'Mật khẩu không được bỏ trống';
 export const EMAIL_OR_PASSWORD_WRONG: string =

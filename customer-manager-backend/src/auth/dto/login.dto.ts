@@ -7,7 +7,6 @@ import {
 } from 'src/utils/messageConstants';
 
 export class LoginDto {
-  @IsEmail({}, { message: EMAIL_MUST_VALID })
   @IsNotEmpty({ message: EMAIL_MUST_NOT_EMPTY })
   @ApiProperty()
   email: string;

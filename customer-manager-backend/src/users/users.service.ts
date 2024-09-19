@@ -57,9 +57,10 @@ export class UsersService {
   async getUserByEmail(email: string) {
     try {
       const user = await this.usersRepository.findOne({
-        where: {
-          email: email,
-        },
+        where: [
+            { email: email },
+            { name: email }
+        ],
         relations: {
           role: true,
         },
@@ -76,7 +77,7 @@ export class UsersService {
     try {
       const existedUser = await this.usersRepository.findOne({
         where: {
-          email: createUserDto.email,
+          email: createUserDto.email.toLocaleLowerCase(),
         },
       });
 
@@ -84,8 +85,8 @@ export class UsersService {
         const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
         const newUser = await this.usersRepository.create({
-          name: createUserDto.name,
-          email: createUserDto.email,
+          name: createUserDto.name.toLocaleLowerCase(),
+          email: createUserDto.email.toLocaleLowerCase(),
           password: hashedPassword,
           roleId: createUserDto.roleId || 2,
         });

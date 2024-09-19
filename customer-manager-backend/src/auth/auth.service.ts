@@ -149,7 +149,6 @@ export class AuthService {
 
   async validateUser(email: string, inputPassword: string): Promise<any> {
     const user = await this.usersService.getUserByEmail(email);
-
     if (!user) {
       return null;
     }
