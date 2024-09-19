@@ -8,6 +8,7 @@ import { CustomerProductItemRepository } from './customer-product-items.reposito
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
 import { BetweenDates } from "../core/helper/filter-query.decorator.util";
 import { ILike } from "typeorm";
+import { format } from 'date-fns';
 
 @Injectable()
 export class CustomerProductService extends BaseService<CustomerProduct, CustomerProductRepository> {
@@ -63,23 +64,23 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         .leftJoin('CustomerProduct.customerProductItems', 'CustomerProductItems')
 
         let groupBy
-        if (options.year) {
-            qb.select(['"CustomerProduct"."month" as key'])
-            qb.where(`"CustomerProduct"."year" = ${options.year}`)
-            groupBy = '"CustomerProduct"."month"'
-        }
+        // if (options.year) {
+        //     qb.select(['"CustomerProduct"."month" as key'])
+        //     qb.where(`"CustomerProduct"."year" = ${options.year}`)
+        //     groupBy = '"CustomerProduct"."month"'
+        // }
 
-        if (options.saleName) {
-            qb.where(`"CreatedUser"."name" = ${options.saleName}`)
-        }
+        // if (options.saleName) {
+        //     qb.where(`"CreatedUser"."name" = ${options.saleName}`)
+        // }
 
-        if (options.source) {
-            qb.where(`"CustomerProductItems"."source" = ${options.source}`)
-        }
+        // if (options.source) {
+        //     qb.where(`"CustomerProductItems"."source" = ${options.source}`)
+        // }
 
         if (options.from && options.to) {
             qb.select(['"CustomerProduct"."buy_date" as key'])
-            qb.where(`created_at BETWEEN '${options.from}' AND '${options.to}'`)
+            qb.where(`"CustomerProduct"."created_at" BETWEEN '${options.from}' AND '${options.to}'`)
             groupBy = '"CustomerProduct"."buy_date"'
         }
 
@@ -87,7 +88,6 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
 
         const result = await qb.getRawMany();
        
-        console.log(result)
         return {
             data: result
         }
@@ -101,7 +101,14 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
     }
 
     async createOrder(data: CreateCustomerOrderDto) {
-        const customerOrder = await this.create(data.createCustomerProduct)
+        const dateObj = new Date();
+        const dataCustomerOrder = {
+            ...data.createCustomerProduct,
+            year: dateObj.getFullYear(),
+            month: dateObj.getMonth() + 1,
+            buyDate: format(dateObj, 'yyyy-MM-dd')
+        }
+        const customerOrder = await this.create(dataCustomerOrder)
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
