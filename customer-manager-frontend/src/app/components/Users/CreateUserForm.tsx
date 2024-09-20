@@ -46,13 +46,13 @@ export default function CreateUserForm() {
       form={form}
       onFinish={onFinish}
     >
-      <Form.Item label="Email" required>
+      <Form.Item label="Tên tài khoản" required>
         <Form.Item
           name="email"
           noStyle
           rules={[{ required: true, message: "Hãy nhập email hoặc tên tài khoản" }]}
         >
-          <Input autoComplete="none" />
+          <Input autoComplete="none" placeholder="Nhập email hoặc tên tài khoản"/>
         </Form.Item>
       </Form.Item>
 

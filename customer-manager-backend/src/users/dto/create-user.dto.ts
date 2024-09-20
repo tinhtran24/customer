@@ -18,7 +18,6 @@ export class CreateUserDto {
   })
   name: string;
 
-  @IsEmail({}, { message: EMAIL_MUST_VALID })
   @IsNotEmpty({ message: EMAIL_MUST_NOT_EMPTY })
   email: string;
   
