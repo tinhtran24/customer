@@ -7,7 +7,7 @@ import { CreateCustomerOrderDto } from './dto/create-customer-order.dto';
 import { CustomerProductItemRepository } from './customer-product-items.repository';
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
 import { BetweenDates } from "../core/helper/filter-query.decorator.util";
-import { ILike } from "typeorm";
+import { ILike, Not } from "typeorm";
 import { format } from 'date-fns';
 
 @Injectable()
@@ -46,6 +46,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         if (options.from && options.to) {
             where.createdAt = BetweenDates(options.from, options.to)
         }
+        where.code = Not("ĐH_CŨ")
         const data = await this.repository.findPaginate(options, where);
 
         let totalPrice = await this.repository.sum('price', where)
@@ -77,15 +78,13 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 qb.where(`"CustomerProduct"."created_at" BETWEEN '${options.from}' AND '${options.to}'`)
                 groupBy = '"CustomerProduct"."buy_date"'
         }
-        console.log(options.saleName)
         if (options.saleName) {
             qb.andWhere(`"CreatedUser"."name" ILIKE '%${options.saleName}%'`)
         }
-
         if (options.source) {
             qb.andWhere(`"CustomerProductItems"."source" ILIKE '%${options.source}%'`)
         }
-    
+        qb.andWhere('"CustomerProduct"."code" !== "ĐH_CŨ"')
         qb.addSelect('SUM("CustomerProduct"."price") as value').groupBy(groupBy)
         const result = await qb.getRawMany();
        
