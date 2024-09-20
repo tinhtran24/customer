@@ -1,11 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { BellOutlined } from "@ant-design/icons";
 import {
     Layout,
     theme,
     ConfigProvider,
-    Badge,
     Dropdown,
     Avatar,
     MenuProps,
@@ -109,11 +107,6 @@ export default function DashboardLayout({
               <Layout>
                   <Header style={{ padding: 0, ...getThemeBg(curTheme), display: 'flex' }}>
                   <div className={styles.rightControl}>
-                      <span className={styles.msg}>
-                        <Badge dot>
-                            <BellOutlined />
-                        </Badge>
-                      </span>
                       <div className={styles.avatar}>
                           <Dropdown menu={{ items }} placement="bottomLeft" arrow>
                               <Avatar style={{color: '#fff', backgroundColor: colorTextBase}}>{currentUser?.name}</Avatar>

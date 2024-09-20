@@ -171,7 +171,7 @@ export default function CustomerTable() {
       dataIndex: "street",
       render: (address) => {
         const shortenedAddress =
-          address.length > 15 ? `${address.slice(0, 15)}...` : address;
+          address?.length > 15 ? `${address.slice(0, 15)}...` : address;
         return (
           <Tooltip title={address}>
             <div>{shortenedAddress}</div>
