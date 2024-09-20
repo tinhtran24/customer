@@ -50,11 +50,6 @@ export const DashboardMenu = () => {
 
   const items: MenuItem[] = [
     {
-      key: "/dashboard",
-      label: "Dashboard",
-      icon: <MdOutlineDashboard style={{ fontSize: "16px" }} />,
-    },
-    {
       key: "/dashboard/customers",
       label: "Khách hàng",
       icon: <IdcardOutlined style={{ fontSize: "16px" }} />,
@@ -68,6 +63,11 @@ export const DashboardMenu = () => {
       key: "/dashboard/tasks",
       label: "Công việc",
       icon: <FaTasks style={{ fontSize: "16px" }} />,
+    },
+    {
+      key: "/dashboard",
+      label: "Dashboard",
+      icon: <MdOutlineDashboard style={{ fontSize: "16px" }} />,
     },
     userRole === "admin"
       ? {
