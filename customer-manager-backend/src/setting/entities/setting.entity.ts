@@ -1,7 +1,8 @@
 import { BaseEntity } from "src/core/base/base.entity";
-import { Column, Entity} from "typeorm";
+import { Column, Entity, Unique} from "typeorm";
 
 @Entity()
+@Unique(['label', 'type'])
 export class Setting extends BaseEntity {
   @Column({ name: 'label' })
   label: string;
