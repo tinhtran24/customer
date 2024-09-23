@@ -84,7 +84,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         if (options.source) {
             qb.andWhere(`"CustomerProductItems"."source" ILIKE '%${options.source}%'`)
         }
-        qb.andWhere('"CustomerProduct"."code" !== "ĐH_CŨ"')
+        qb.andWhere(`"CustomerProduct"."code" !== 'ĐH_CŨ'`)
         qb.addSelect('SUM("CustomerProduct"."price") as value').groupBy(groupBy)
         const result = await qb.getRawMany();
        
