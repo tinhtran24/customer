@@ -283,7 +283,7 @@ const TableOrder: React.FC = () => {
     {
       title: "",
       key: "edit",
-      render: (s: any) => <ModalEdit customerProduct={s} stateUtil={stateUtil}/>,
+      render: (s: any) => <ModalEdit customerProduct={s} stateUtil={stateUtil} refetch={() => {getData()}}/>,
     },
   ];
 

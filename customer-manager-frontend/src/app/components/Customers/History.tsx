@@ -201,6 +201,10 @@ export function History({
           customer={customer}
           provinces={provinces}
           initData={selected}
+          refetch={() => {
+            getData();
+            setVisible(false);
+          }}
         />
       </Modal>
     </>
