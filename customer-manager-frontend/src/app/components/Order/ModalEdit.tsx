@@ -17,9 +17,11 @@ const cssButton: React.CSSProperties = {
 export function ModalEdit({
   customerProduct,
   stateUtil,
+  refetch,
 }: {
   customerProduct: CustomerProduct;
   stateUtil: { products: Product[]; provinces: any[] };
+  refetch: any;
 }) {
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState<{
@@ -78,6 +80,10 @@ export function ModalEdit({
             customer={customerProduct.customer}
             provinces={[]}
             initData={selected}
+            refetch={() => {
+              setVisible(false);
+              refetch();
+            }}
           />
         )}
       </Modal>
