@@ -31,6 +31,11 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 fullName: ILike(`%${options.customerName}%`)
             }
         }
+        if (options.customerStatus) {
+            where.customer = {
+                status: ILike(`%${options.customerStatus}%`)
+            }
+        }
         if (options.saleName) {
             where.createdUser = { name: ILike(`%${options.saleName}%`) }
         }
