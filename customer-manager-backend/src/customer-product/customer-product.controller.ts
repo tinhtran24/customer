@@ -1,5 +1,5 @@
 import { BaseController } from "../core/base/base.controller";
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, Query, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Put, Query, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CustomerProductService } from "./customer-product.service";
 import { Crud } from "src/core/decorator/crud.decorator";
@@ -79,7 +79,7 @@ export class CustomerProductController extends BaseController<CustomerProductSer
         }
     }
 
-    @Put('order')
+    @Patch('order/:id')
     @Roles(RoleEnum.Admin)
     @ApiBody({ type: UpdateCustomerOrderDto })
     async updateOrder(
