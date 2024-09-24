@@ -65,8 +65,8 @@ export function History({
   };
 
   const openModal = (s: CustomerProduct) => {
-    const products: OrderData[] = s.customerProductItems.map((i) => ({
-      no: 1,
+    const products: OrderData[] = s.customerProductItems.map((i, index) => ({
+      no: index + 1,
       product: i.product,
       price: i.unitPrice,
       quantity: i.quantity,
@@ -135,7 +135,7 @@ export function History({
     },
     {
       title: "",
-      key: "delete",
+      key: "edit",
       render: (s: any) => (
         <FiEdit3 onClick={() => openModal(s)} size={20} style={cssButton} />
       ),

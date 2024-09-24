@@ -1,20 +1,26 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table, TableColumnsType } from "antd";
+import { Table, TableColumnsType, Modal } from "antd";
 import OrderFilter from "./OrderFilter";
-import moment, { Moment } from "moment";
-import { fetchCustomerDashboard } from "@/app/lib/actions";
+import moment from "moment";
+import {
+  fetchAllProducts,
+  fetchCustomerDashboard,
+} from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
 import {
   Customer,
   CustomerProduct,
   CustomerProductItem,
   Pagination,
+  Product,
   User,
 } from "@/app/lib/definitions";
 import { Card, Col, Row, Statistic } from "antd";
 import { LabelFilterOrder } from "./LabelFilter";
 import { FilterValues, ParamsReset } from "./order.interface";
+import { StatusFilter } from "../Customers/StatusFilter";
+import { ModalEdit } from "./ModalEdit";
 
 interface DashboardStatsProps {
   totalOrders: string;
@@ -72,7 +78,7 @@ const TableOrder: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
-  const getData = async (params?: ParamsReset) => {
+  const getData = async (params?: ParamsReset, statusFilter?: string) => {
     setIsLoading(true);
 
     const cusName = params?.isCustomerNameNull
@@ -88,8 +94,9 @@ const TableOrder: React.FC = () => {
       params?.isDateNull !== true && filters.to
         ? moment(filters.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
         : null;
-
-    const customerStatus = params?.isCustomerStatusNull ? null : filters.status;
+    const customerStatus = params?.isCustomerStatusNull
+      ? null
+      : statusFilter || filters.status;
 
     setFilters({
       customerName: cusName,
@@ -126,6 +133,30 @@ const TableOrder: React.FC = () => {
   useEffect(() => {
     getData();
   }, [currentPage]);
+
+  //#region get data for modal faster
+  const [stateUtil, setStateUtil] = useState<{
+    products: Product[];
+    provinces: any[];
+  }>({
+    products: [],
+    provinces: [],
+  });
+
+  const getProductsAndProvinces = async () => {
+    const [products] = await Promise.all([
+      fetchAllProducts(),
+    ]);
+    setStateUtil((prevState) => ({
+      ...prevState,
+      products: products,
+    }));
+  };
+
+  useEffect(() => {
+    getProductsAndProvinces();
+  }, []);
+  //#endregion
 
   const handleFilter = (newFilters: any) => {
     setFilters((prevFilters) => ({
@@ -249,6 +280,11 @@ const TableOrder: React.FC = () => {
       key: "createdAt",
       render: (text: string) => moment(text).format("YYYY-MM-DD"),
     },
+    {
+      title: "",
+      key: "edit",
+      render: (s: any) => <ModalEdit customerProduct={s} stateUtil={stateUtil}/>,
+    },
   ];
 
   return (
@@ -265,15 +301,25 @@ const TableOrder: React.FC = () => {
         handleFilterReset={handleFilterReset}
       />
       {!isLoading && (
-        <LabelFilterOrder
-          filteredValue={filteredValues}
-          handleFilterReset={handleFilterReset}
-        />
+        <>
+          <StatusFilter
+            handleFilter={(status: string) => {
+              setCurrentPage(1);
+              if (!status) getData({ isCustomerStatusNull: true });
+              else getData(undefined, status);
+            }}
+          />
+          <LabelFilterOrder
+            filteredValue={filteredValues}
+            handleFilterReset={handleFilterReset}
+          />
+        </>
       )}
       {isLoading ? (
         <Loading />
       ) : (
         <Table
+          style={{ marginTop: "1rem" }}
           columns={columns}
           dataSource={data?.data}
           pagination={{

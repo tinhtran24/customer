@@ -230,7 +230,12 @@ export default function OrderProduct({
 
   const onDeleteItem = (record: OrderData) => {
     setData((pre) => {
-      return pre.filter((order) => order.no !== record.no);
+      return pre
+        .filter((order) => order.no !== record.no)
+        .map((order, index) => ({
+          ...order,
+          no: index + 1,
+        }));
     });
     message.success("Đã xóa đơn hàng thành công");
   };
