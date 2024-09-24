@@ -22,7 +22,10 @@ import { useState, useEffect } from "react";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { generateCode } from "@/app/utils/generateString";
 const { Option } = Select;
-import { createCustomerProduct } from "@/app/lib/actions";
+import {
+  createCustomerProduct,
+  updateCustomerProduct,
+} from "@/app/lib/actions";
 import { SettingSelect } from "../Common/Select";
 
 export interface OrderData {
@@ -51,6 +54,7 @@ interface OrderProductProps {
   customer: Customer;
   provinces: any[];
   initData?: {
+    id: string;
     products: OrderData[];
     paymentInformation: PaymentInformation;
   };
@@ -76,40 +80,58 @@ export default function OrderProduct({
     if (initData) {
       form.resetFields();
       setData(initData.products);
-      form.setFieldsValue(initData.paymentInformation);
+      form.setFieldsValue({
+        ...initData.paymentInformation,
+        street: getAddress(),
+      });
     } else
       form.setFieldsValue({
         province: customer.ward?.district?.province?.name,
         district: customer.ward?.district?.name,
         ward: customer.ward?.name,
-        street: customer.street,
+        street: getAddress(),
       });
   }, [initData]);
 
   const handleFinish = async (values: any) => {
     setIsFormSubmitting(true);
+    const body: NewCustomerProduct = {
+      items: data.map((item) => ({
+        productId: item.product.id,
+        quantity: Number(item.quantity),
+        unitPrice: item.price,
+        source: item.source,
+      })),
+      createCustomerProduct: {
+        code: code,
+        customerId: customer.id,
+        createdUserId: (currentUser as any).sub,
+        street: values.street,
+        price: data.reduce((acc, item) => acc + item.totalPrice, 0),
+        paymentMethod: values.PaymentMethod,
+        shipMethod: values.ShipMethod,
+      },
+    };
     if (initData) {
-      //call api update
+      const result = await updateCustomerProduct({
+        id: initData.id,
+        body: body,
+      });
+      try {
+        setIsFormSubmitting(false);
+
+        if (result.statusCode) {
+          message.error(
+            Array.isArray(result.message) ? result.message[0] : result.message
+          );
+        } else {
+          message.success("Tạo đơn thành công");
+          form.resetFields();
+          setData([]);
+        }
+      } catch {}
     } else {
       try {
-        const body: NewCustomerProduct = {
-          items: data.map((item) => ({
-            productId: item.product.id,
-            quantity: Number(item.quantity),
-            unitPrice: item.price,
-            source: item.source,
-          })),
-          createCustomerProduct: {
-            code: code,
-            customerId: customer.id,
-            createdUserId: (currentUser as any).sub,
-            street: values.street,
-            price: data.reduce((acc, item) => acc + item.totalPrice, 0),
-            paymentMethod: values.PaymentMethod,
-            shipMethod: values.ShipMethod,
-          },
-        };
-
         const result = await createCustomerProduct(body);
 
         setIsFormSubmitting(false);
@@ -386,10 +408,7 @@ export default function OrderProduct({
               { required: true, message: "Vui lòng thêm địa chỉ cụ thể" },
             ]}
           >
-            <Input
-              placeholder="Địa chỉ ..."
-              disabled={data.length === 0}
-            />
+            <Input placeholder="Địa chỉ ..." disabled={data.length === 0} />
           </Form.Item>
         </Form.Item>
 
