@@ -22,6 +22,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
 import { LabelFilter } from "./LabelFilter";
 import { FilterCustomer } from "./customer.interface";
+import { StatusFilter } from "./StatusFilter";
 
 export default function CustomerTable() {
   //#region hook
@@ -43,11 +44,11 @@ export default function CustomerTable() {
     token: { colorPrimary },
   } = theme.useToken();
 
-  const getData = async (params?: FilterCustomer) => {
+  const getData = async (params?: FilterCustomer, statusFilter?: string) => {
     setIsLoading(true);
 
     const q = params?.isKwNull ? "" : searchText?.trim();
-    const s = params?.isStatusNull ? "" : status;
+    const s = params?.isStatusNull ? "" : statusFilter || status;
 
     setSearchText(q);
     setStatus(s);
@@ -303,10 +304,19 @@ export default function CustomerTable() {
         handleFilterReset={handleFilterReset}
       />
       {!isLoading && (
-        <LabelFilter
-          filteredValue={filteredValue}
-          handleFilterReset={handleFilterReset}
-        />
+        <>
+          <StatusFilter
+            handleFilter={(status: string) => {
+              setCurrentPage(1);
+              if (!status) getData({ isStatusNull: true });
+              else getData(undefined, status);
+            }}
+          />
+          <LabelFilter
+            filteredValue={filteredValue}
+            handleFilterReset={handleFilterReset}
+          />
+        </>
       )}
       {isLoading || !data ? (
         <Loading />

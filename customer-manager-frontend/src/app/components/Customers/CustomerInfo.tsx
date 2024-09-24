@@ -47,7 +47,8 @@ export function CustomersInfo({
 
   const getAddress = () => {
     const { street, ward } = customer;
-    if (!street || !ward) return "_";
+    if (!street ) return "_";
+    if(!ward) return street;
     const wardName = ward ? ward.fullName : "";
     const districtName = ward && ward.district ? ward.district.fullName : "";
     const provinceName =
@@ -119,12 +120,6 @@ export function CustomersInfo({
             <div>
               <span style={{ fontWeight: "600" }}>Điện thoại:</span>{" "}
               {customer.phoneNumber}
-            </div>
-            <div>
-              <span style={{ fontWeight: "600" }}>
-                Điện thoại Người liên hệ:
-              </span>{" "}
-              {getPhoneNumber(customer.contacts)}
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Địa chỉ:</span> {getAddress()}

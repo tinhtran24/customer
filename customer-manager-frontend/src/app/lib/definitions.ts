@@ -164,12 +164,14 @@ export type CustomerProduct = {
   customer: Customer;
   customerProductItems: CustomerProductItem[];
   createdUser: User;
+  code?: string;
 };
 
 export type CustomerProductItem = {
   unitPrice: 10000;
   quantity: number;
   product: Product;
+  source?: string;
 };
 
 export type NewCustomerProduct = {

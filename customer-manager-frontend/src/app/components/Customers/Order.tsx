@@ -25,7 +25,7 @@ const { Option } = Select;
 import { createCustomerProduct } from "@/app/lib/actions";
 import { SettingSelect } from "../Common/Select";
 
-interface OrderData {
+export interface OrderData {
   no: number;
   product: Product;
   price: number;
@@ -35,63 +35,96 @@ interface OrderData {
   source: string;
 }
 
+export interface PaymentInformation {
+  code: string;
+  province?: string;
+  district?: string;
+  ward?: string;
+  street?: string;
+  price: number;
+  PaymentMethod: string;
+  ShipMethod: string;
+}
+
 interface OrderProductProps {
   products: Product[];
   customer: Customer;
   provinces: any[];
+  initData?: {
+    products: OrderData[];
+    paymentInformation: PaymentInformation;
+  };
 }
 export default function OrderProduct({
   products,
   customer,
+  provinces,
+  initData,
 }: OrderProductProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const { currentUser } = useAuthContext();
   const [selectedProduct, setSelectedProduct] = useState<Product>();
-  const [data, setData] = useState<OrderData[]>([]);
+  const [data, setData] = useState<OrderData[]>(initData?.products || []);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [code, setcode] = useState("");
 
   const [form] = Form.useForm();
   const [formModal] = Form.useForm();
+
   useEffect(() => {
     setcode(generateCode("DH", new Date(), Date.now().valueOf()));
-  }, []);
+    if (initData) {
+      form.resetFields();
+      setData(initData.products);
+      form.setFieldsValue(initData.paymentInformation);
+    } else
+      form.setFieldsValue({
+        province: customer.ward?.district?.province?.name,
+        district: customer.ward?.district?.name,
+        ward: customer.ward?.name,
+        street: customer.street,
+      });
+  }, [initData]);
 
   const handleFinish = async (values: any) => {
     setIsFormSubmitting(true);
-    try {
-      const body: NewCustomerProduct = {
-        items: data.map((item) => ({
-          productId: item.product.id,
-          quantity: Number(item.quantity),
-          unitPrice: item.price,
-          source: item.source,
-        })),
-        createCustomerProduct: {
-          code: code,
-          customerId: customer.id,
-          createdUserId: (currentUser as any).sub,
-          street: values.street,
-          price: data.reduce((acc, item) => acc + item.totalPrice, 0),
-          paymentMethod: values.PaymentMethod,
-          shipMethod: values.ShipMethod,
-        },
-      };
+    if (initData) {
+      //call api update
+    } else {
+      try {
+        const body: NewCustomerProduct = {
+          items: data.map((item) => ({
+            productId: item.product.id,
+            quantity: Number(item.quantity),
+            unitPrice: item.price,
+            source: item.source,
+          })),
+          createCustomerProduct: {
+            code: code,
+            customerId: customer.id,
+            createdUserId: (currentUser as any).sub,
+            street: values.street,
+            price: data.reduce((acc, item) => acc + item.totalPrice, 0),
+            paymentMethod: values.PaymentMethod,
+            shipMethod: values.ShipMethod,
+          },
+        };
 
-      const result = await createCustomerProduct(body);
+        const result = await createCustomerProduct(body);
 
-      setIsFormSubmitting(false);
+        setIsFormSubmitting(false);
 
-      if (result.statusCode) {
-        message.error(
-          Array.isArray(result.message) ? result.message[0] : result.message
-        );
-      } else {
-        message.success("Tạo đơn thành công");
-        form.resetFields();
-        setData([]);
-      }
-    } catch {}
+        if (result.statusCode) {
+          message.error(
+            Array.isArray(result.message) ? result.message[0] : result.message
+          );
+        } else {
+          message.success("Tạo đơn thành công");
+          form.resetFields();
+          setData([]);
+        }
+      } catch {}
+    }
   };
 
   const formatPrice = (price: number) => {
@@ -182,7 +215,8 @@ export default function OrderProduct({
 
   const getAddress = () => {
     const { street, ward } = customer;
-    if (!street || !ward) return "";
+    if (!street) return "_";
+    if (!ward) return street;
     const wardName = ward ? ward.fullName : "";
     const districtName = ward && ward.district ? ward.district.fullName : "";
     const provinceName =
@@ -344,7 +378,7 @@ export default function OrderProduct({
           />
         </Form.Item>
 
-        <Form.Item label="Số nhà/đường" required>
+        <Form.Item label="Địa chỉ" required>
           <Form.Item
             name="street"
             noStyle
@@ -353,7 +387,7 @@ export default function OrderProduct({
             ]}
           >
             <Input
-              placeholder="Số nhà/đường ..."
+              placeholder="Địa chỉ ..."
               disabled={data.length === 0}
             />
           </Form.Item>
@@ -383,7 +417,7 @@ export default function OrderProduct({
             loading={isFormSubmitting}
             disabled={data.length === 0}
           >
-            Tạo đơn hàng
+            {initData ? "Cập nhật" : "Tạo đơn hàng"}
           </Button>
         </Form.Item>
       </Form>
