@@ -23,6 +23,7 @@ import { useAuthContext } from "../auth";
 import { LabelFilter } from "./LabelFilter";
 import { FilterCustomer } from "./customer.interface";
 import { StatusFilter } from "./StatusFilter";
+import { Dayjs } from "dayjs";
 
 export default function CustomerTable() {
   //#region hook
@@ -33,9 +34,11 @@ export default function CustomerTable() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("");
+  const [date, setDate] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
   const [filteredValue, setFilteredValue] = useState({
     searchText: "",
     status: "",
+    date: [null, null] as [Dayjs | null, Dayjs | null],
   });
 
   const { currentUser } = useAuthContext();
@@ -49,9 +52,19 @@ export default function CustomerTable() {
 
     const q = params?.isKwNull ? "" : searchText?.trim();
     const s = params?.isStatusNull ? "" : statusFilter || status;
+    const from =
+      params?.isDateNull || !date[0]
+        ? ""
+        : date[0].startOf("day").format("YYYY-MM-DD");
+    const to =
+      params?.isDateNull || !date[1]
+        ? ""
+        : date[1].endOf("day").format("YYYY-MM-DD");
 
     setSearchText(q);
     setStatus(s);
+    
+    if(params?.isDateNull) setDate([null, null])
 
     setData(
       await fetchCustomers({
@@ -59,12 +72,15 @@ export default function CustomerTable() {
         limit: pageSize.toString(),
         q: q,
         status: s,
+        from: from,
+        to: to,
       })
     );
 
     setFilteredValue({
       searchText: q,
       status: s,
+      date: date,
     });
 
     setIsLoading(false);
@@ -115,6 +131,10 @@ export default function CustomerTable() {
   const handleFilterReset = (params: FilterCustomer) => {
     setCurrentPage(1);
     getData(params);
+  };
+
+  const handleDateChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
+    setDate(dates || [null, null]);
   };
 
   const menu = (customer: any) => (
@@ -293,6 +313,8 @@ export default function CustomerTable() {
     <>
       <SearchCustomers
         text={searchText}
+        date={date}
+        handleDateChange={handleDateChange}
         onChangeText={setSearchText}
         onChangeStatus={setStatus}
         handleFilter={() => {

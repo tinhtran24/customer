@@ -1,16 +1,21 @@
 "use client";
 import React from "react";
-import { Input, Button, Select } from "antd";
+import { Input, Button, Select, DatePicker } from "antd";
 import { SettingSelect } from "../Common/Select";
 import { SETTINGS_TYPE } from "@/app/lib/definitions";
 import { FilterCustomer } from "./customer.interface";
 import { CustomerFilterKey, removeFilterCustomer } from "./LabelFilter";
+import { Dayjs } from "dayjs";
+
+const { RangePicker } = DatePicker;
 
 interface SearchProps {
   text: string;
   status: string;
+  date: [Dayjs | null, Dayjs | null];
   onChangeText: (text: string) => void;
   onChangeStatus: (status: string) => void;
+  handleDateChange: (dates: [Dayjs | null, Dayjs | null] | null) => void;
   handleFilter: () => void;
   handleResetFiltersAll: any;
   handleFilterReset: (params: FilterCustomer) => void;
@@ -21,8 +26,10 @@ const { Option } = Select;
 const SearchCustomers = ({
   text,
   status,
+  date,
   onChangeText,
   onChangeStatus,
+  handleDateChange,
   handleFilter,
   handleResetFiltersAll,
   handleFilterReset,
@@ -55,6 +62,12 @@ const SearchCustomers = ({
           onClear={() =>
             removeFilterCustomer(handleFilterReset, CustomerFilterKey.STATUS)
           }
+        />
+        <RangePicker
+          onChange={handleDateChange}
+          style={{ width: "100%" }}
+          value={date[0] !== null ? date : null}
+          placeholder={["Tạo từ ngày", "Đến ngày"]}
         />
         <Button
           type="primary"

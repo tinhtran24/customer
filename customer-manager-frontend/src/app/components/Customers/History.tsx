@@ -34,6 +34,7 @@ export function History({
   //update
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState<{
+    id: string;
     products: OrderData[];
     paymentInformation: PaymentInformation;
   }>();
@@ -84,6 +85,7 @@ export function History({
     setVisible(true);
     setSelected((prevState) => ({
       ...prevState,
+      id: s.id,
       products: products,
       paymentInformation: info,
     }));
