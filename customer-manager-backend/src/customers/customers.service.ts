@@ -9,6 +9,7 @@ import { QueryCustomertDto } from './dto/filter-customer.dto';
 import { Equal, Raw } from 'typeorm';
 import { Workbook } from "exceljs";
 import { ImportCustomerDto } from './dto/import-cusomter.dto';
+import { BetweenDates } from 'src/core/helper/filter-query.decorator.util';
 
 @Injectable()
 export class CustomersService extends BaseService<Customer, CustomerRepository> {
@@ -29,6 +30,9 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
     }
     if (options.status) {
       where['status'] = Equal(options.status)
+    }
+    if (options.from && options.to) {
+      where.createdAt = BetweenDates(options.from, options.to)
     }
     return this.repository.findPaginate(options, where);
   }

@@ -51,7 +51,7 @@ export class CustomersController extends BaseController<CustomersService> {
   }
 
   @Get('')
-  async list(
+  async listPaging(
       @Query() options: QueryCustomertDto,
       @Request() req
   ) {
