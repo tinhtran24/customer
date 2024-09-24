@@ -79,9 +79,15 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
     });
   };
 
+  const handleCustomerStatusChange = (value: string) => {
+    onFilter({
+      status: value,
+    });
+  };
+
   return (
     <Row gutter={[16, 16]} style={{ margin: "1rem 0 2rem 0" }}>
-      <Col span={5} style={{ paddingLeft: "0" }}>
+      <Col span={4} style={{ paddingLeft: "0" }}>
         <RangePicker
           onChange={handleDateChange}
           style={{ width: "100%" }}
@@ -95,7 +101,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           }
         />
       </Col>
-      <Col span={5}>
+      <Col span={4}>
         <Input
           placeholder="Tên khách hàng"
           onChange={handleCustomerNameChange}
@@ -103,7 +109,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           allowClear
         />
       </Col>
-      <Col span={5}>
+      <Col span={4}>
         <Select
           placeholder="- Chọn tên nhân viên -"
           style={{ width: "100%" }}
@@ -120,7 +126,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           ))}
         </Select>
       </Col>
-      <Col span={5}>
+      <Col span={4}>
         <SettingSelect
           type={SETTINGS_TYPE.SOURCE_OF_GOODS}
           style={{ width: "100%" }}
@@ -129,6 +135,17 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           value={filtersValue?.source}
           allowClear
           onClear={() => removeFilter(handleFilterReset, OrderFilterKey.SOURCE)}
+        />
+      </Col>
+      <Col span={4}>
+        <SettingSelect
+          value={filtersValue.status || null}
+          placeholder="- Chọn trạng thái -"
+          onChange={handleCustomerStatusChange}
+          style={{ width: "100%" }}
+          type={SETTINGS_TYPE.STATUS}
+          allowClear
+          onClear={() => removeFilter(handleFilterReset, OrderFilterKey.CUSTOMER_STATUS)}
         />
       </Col>
       <Col span={4}>

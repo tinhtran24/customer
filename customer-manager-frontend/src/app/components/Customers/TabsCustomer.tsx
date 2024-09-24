@@ -13,7 +13,6 @@ interface CustomTabsProps {
   products: Product[];
   customerId: string;
   provinces: any[];
-  customerProducts: CustomerProduct[];
 }
 
 export function TabsCustomer({
@@ -21,15 +20,12 @@ export function TabsCustomer({
   products,
   customerId,
   provinces,
-  customerProducts,
 }: CustomTabsProps) {
   const items: TabsProps["items"] = [
     {
       label: "Trao đổi",
       key: "1",
-      children: (
-          <DiscussForm customerId={customerId} />
-      ),
+      children: <DiscussForm customerId={customerId} />,
     },
     {
       label: "Mua bán",
@@ -45,7 +41,13 @@ export function TabsCustomer({
     {
       label: "Lịch sử mua",
       key: "3",
-      children: <History customerProducts={customerProducts} />,
+      children: (
+        <History
+          products={products}
+          customer={customer}
+          provinces={provinces}
+        />
+      ),
     },
     {
       label: "Lịch hẹn",

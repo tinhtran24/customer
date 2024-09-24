@@ -1,14 +1,52 @@
 "use client";
-import { CustomerProduct, CustomerProductItem, User } from "@/app/lib/definitions";
-import { Table, Spin, TableColumnsType, Button } from "antd";
-import { useState } from "react";
+import {
+  Customer,
+  CustomerProduct,
+  CustomerProductItem,
+  Product,
+  User,
+} from "@/app/lib/definitions";
+import { Table, Spin, TableColumnsType, Modal } from "antd";
+import { useEffect, useState } from "react";
+import { FiEdit3 } from "react-icons/fi";
+import OrderProduct, { OrderData, PaymentInformation } from "./Order";
+import { fetchCustomerProducts } from "@/app/lib/actions";
+import Loading from "@/app/dashboard/loading";
+
+const cssButton: React.CSSProperties = {
+  cursor: "pointer",
+  color: "green",
+};
 
 export function History({
-  customerProducts,
+  products,
+  customer,
+  provinces,
 }: {
-  customerProducts: CustomerProduct[];
+  products: Product[];
+  customer: Customer;
+  provinces: any[];
 }) {
+  const [customerProducts, setCustomerProducts] = useState<CustomerProduct[]>();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+  //update
+  const [visible, setVisible] = useState(false);
+  const [selected, setSelected] = useState<{
+    products: OrderData[];
+    paymentInformation: PaymentInformation;
+  }>();
+
+  const getData = async () => {
+    setIsLoading(true);
+    setCustomerProducts(await fetchCustomerProducts(customer.id));
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, [customer]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -17,13 +55,38 @@ export function History({
     }).format(price);
   };
 
-  console.log(customerProducts)
   const toggleExpand = (key: React.Key) => {
     if (expandedRowKeys.includes(key)) {
       setExpandedRowKeys(expandedRowKeys.filter((k) => k !== key));
     } else {
       setExpandedRowKeys([...expandedRowKeys, key]);
     }
+  };
+
+  const openModal = (s: CustomerProduct) => {
+    const products: OrderData[] = s.customerProductItems.map((i) => ({
+      no: 1,
+      product: i.product,
+      price: i.unitPrice,
+      quantity: i.quantity,
+      code: i.product.code,
+      totalPrice: i.quantity * i.unitPrice,
+      source: i.source || "",
+    }));
+    const info: PaymentInformation = {
+      code: s.code || "",
+      street: s.street,
+      price: s.price,
+      PaymentMethod: s.paymentMethod,
+      ShipMethod: s.shipMethod,
+    };
+
+    setVisible(true);
+    setSelected((prevState) => ({
+      ...prevState,
+      products: products,
+      paymentInformation: info,
+    }));
   };
 
   const columns: TableColumnsType<CustomerProduct> = [
@@ -60,13 +123,20 @@ export function History({
       key: "createdAt",
       render: (updated_at: string) => {
         const date = new Date(updated_at);
-        const formattedDate = `${date.getDate()
-          .toString()
-          .padStart(2, "0")}/${(date.getMonth() + 1)
+        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
           .toString()
           .padStart(2, "0")}/${date.getFullYear()}`;
         return <div style={{ textAlign: "left" }}>{formattedDate}</div>;
       },
+    },
+    {
+      title: "",
+      key: "delete",
+      render: (s: any) => (
+        <FiEdit3 onClick={() => openModal(s)} size={20} style={cssButton} />
+      ),
     },
   ];
 
@@ -100,29 +170,37 @@ export function History({
     );
   };
 
-  if (!customerProducts)
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          margin: "5rem 0",
-        }}
-      >
-        <Spin size="large" />
-      </div>
-    );
+  if (isLoading || !customerProducts) return <Loading />;
 
   return (
-    <Table
-      columns={columns}
-      dataSource={customerProducts}
-      rowKey="id"
-      expandedRowKeys={expandedRowKeys}
-      onExpand={(expanded, record) => toggleExpand(record.id)}
-      expandable={{
-        expandedRowRender,
-      }}
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={customerProducts}
+        rowKey="id"
+        expandedRowKeys={expandedRowKeys}
+        onExpand={(expanded, record) => toggleExpand(record.id)}
+        expandable={{
+          expandedRowRender,
+        }}
+      />
+      <Modal
+        visible={visible}
+        title="Cập nhật"
+        onCancel={() => {
+          setVisible(false);
+          setSelected(undefined);
+        }}
+        width={"80%"}
+        footer={[]}
+      >
+        <OrderProduct
+          products={products}
+          customer={customer}
+          provinces={provinces}
+          initData={selected}
+        />
+      </Modal>
+    </>
   );
 }

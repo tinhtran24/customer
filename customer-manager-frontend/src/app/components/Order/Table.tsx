@@ -89,12 +89,15 @@ const TableOrder: React.FC = () => {
         ? moment(filters.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
         : null;
 
+    const customerStatus = params?.isCustomerStatusNull ? null : filters.status;
+
     setFilters({
       customerName: cusName,
       sale: sale,
       source: source,
       from: from ? new Date(from) : null,
       to: to ? new Date(to) : null,
+      status: customerStatus,
     });
     setFilteredValues({
       customerName: cusName,
@@ -102,6 +105,7 @@ const TableOrder: React.FC = () => {
       source: source,
       from: from ? new Date(from) : null,
       to: to ? new Date(to) : null,
+      status: customerStatus,
     });
 
     const data = await fetchCustomerDashboard(
@@ -111,7 +115,8 @@ const TableOrder: React.FC = () => {
       sale || null,
       source || null,
       from,
-      to
+      to,
+      customerStatus || null
     );
     setData(data);
 
@@ -195,12 +200,14 @@ const TableOrder: React.FC = () => {
     getData(params);
   };
 
-  const columns: TableColumnsType<any>  = [
+  const columns: TableColumnsType<any> = [
     {
       title: "STT",
       key: "index",
       render: (_: any, __: any, index: number) => (
-        <div style={{ textAlign: "center" }}>{index + 1 + (currentPage - 1) * pageSize}</div>
+        <div style={{ textAlign: "center" }}>
+          {index + 1 + (currentPage - 1) * pageSize}
+        </div>
       ),
     },
     {

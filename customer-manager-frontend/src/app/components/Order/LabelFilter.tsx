@@ -22,6 +22,10 @@ export const removeFilter = (
   if (filterKey === OrderFilterKey.SOURCE) {
     handleFilterReset({ isSourceNull: true });
   }
+  
+  if (filterKey === OrderFilterKey.CUSTOMER_STATUS) {
+    handleFilterReset({ isCustomerStatusNull: true });
+  }
 };
 
 export enum OrderFilterKey {
@@ -29,6 +33,7 @@ export enum OrderFilterKey {
   CUSTOMER_NAME = "customerName",
   SALE = "sale",
   SOURCE = "source",
+  CUSTOMER_STATUS = "customerStatus",
 }
 
 interface LabelFilterProps {
@@ -70,6 +75,13 @@ export const LabelFilterOrder = ({
         <ReusableTag
           label={filteredValue.source}
           onClose={() => removeFilter(handleFilterReset, OrderFilterKey.SOURCE)}
+        />
+      )}
+
+      {filteredValue.status && (
+        <ReusableTag
+          label={filteredValue.status}
+          onClose={() => removeFilter(handleFilterReset, OrderFilterKey.CUSTOMER_STATUS)}
         />
       )}
     </Flex>

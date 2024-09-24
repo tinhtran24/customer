@@ -792,7 +792,8 @@ export async function fetchCustomerDashboard(
   saleName: string | null,
   source: string | null,
   from: string | null,
-  to: string | null
+  to: string | null,
+  customerStatus : string | null,
 ) {
   try {
     const accessToken = cookies().get("accessToken");
@@ -809,6 +810,7 @@ export async function fetchCustomerDashboard(
       url.searchParams.append("from", from);
       url.searchParams.append("to", to);
     }
+    if (customerStatus) url.searchParams.append("customerStatus", customerStatus);
 
     const res = await fetch(url.toString(), {
       cache: "no-store",
@@ -906,3 +908,32 @@ export async function getDataChart(params: {
 }
 
 //#endregion
+
+
+export async function fetchCustomerStatus() {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/customers/status`
+    );
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch customers");
+    }
+
+    // Parse response và lấy items
+    const data = await res.json();
+    return data.data || [];
+  } catch (error) {
+    console.error("Error fetching customers:", error);
+    return [];
+  }
+}

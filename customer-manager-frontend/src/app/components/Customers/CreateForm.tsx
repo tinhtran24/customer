@@ -35,7 +35,7 @@ export default function CreateCustomerForm({
   const router = useRouter();
 
   const { currentUser } = useAuthContext();
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin = currentUser?.role === "admin" || currentUser?.role === "marketing";
 
   const getUsers = async () => {
     var results = await fetchUsers();
@@ -44,7 +44,7 @@ export default function CreateCustomerForm({
 
   useEffect(() => {
     getUsers();
-    if (!provinces) setIsProvincesLoading(true);
+    // if (!provinces) setIsProvincesLoading(true);
   }, [provinces]);
 
   const filterOption = (
@@ -52,11 +52,11 @@ export default function CreateCustomerForm({
     option?: { label: string; value: string }
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
-  const provinceOptions = provinces.map((province: any) => ({
-    value: province.name,
-    label: province.name,
-    districts: province.districts,
-  }));
+  // const provinceOptions = provinces.map((province: any) => ({
+  //   value: province.name,
+  //   label: province.name,
+  //   districts: province.districts,
+  // }));
 
   const genderOptions = [
     {
@@ -101,27 +101,27 @@ export default function CreateCustomerForm({
     }
   };
 
-  const onSelectProvince = (value: any, option: any) => {
-    form.resetFields(["district", "ward"]);
-    const districts = option.districts;
-    const _districtOptions = districts.map((district: any) => ({
-      value: district.name,
-      label: district.name,
-      wards: district.wards,
-    }));
-    setDistrictOptions(_districtOptions);
-  };
+  // const onSelectProvince = (value: any, option: any) => {
+  //   form.resetFields(["district", "ward"]);
+  //   const districts = option.districts;
+  //   const _districtOptions = districts.map((district: any) => ({
+  //     value: district.name,
+  //     label: district.name,
+  //     wards: district.wards,
+  //   }));
+  //   setDistrictOptions(_districtOptions);
+  // };
 
-  const onSelectDistrict = (value: any, option: any) => {
-    form.resetFields(["ward"]);
-    const wards = option.wards;
-    const _wardOptions = wards.map((ward: any) => ({
-      value: ward.code,
-      label: ward.name,
-      wardCode: ward.code,
-    }));
-    setWardOptions(_wardOptions);
-  };
+  // const onSelectDistrict = (value: any, option: any) => {
+  //   form.resetFields(["ward"]);
+  //   const wards = option.wards;
+  //   const _wardOptions = wards.map((ward: any) => ({
+  //     value: ward.code,
+  //     label: ward.name,
+  //     wardCode: ward.code,
+  //   }));
+  //   setWardOptions(_wardOptions);
+  // };
 
   const rule = createSchemaFieldRule(CreateCustomerFormSchema);
 
@@ -137,7 +137,7 @@ export default function CreateCustomerForm({
           onFinish={onFinish}
           initialValues={{
             userInChargeId: (currentUser as any)?.sub || null,
-            status: "KH Mới",
+            status: "Data Mới",
           }}
         >
           <Row>
@@ -221,7 +221,7 @@ export default function CreateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Tỉnh/TP">
+              {/* <Form.Item label="Tỉnh/TP">
                 <Form.Item name="province" noStyle>
                   <Select
                     loading={isProvincesLoading}
@@ -261,9 +261,9 @@ export default function CreateCustomerForm({
                     options={wardOptions}
                   />
                 </Form.Item>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item label="Số nhà/đường">
+              <Form.Item label="Địa chỉ">
                 <Form.Item name="street" noStyle>
                   <Input />
                 </Form.Item>
