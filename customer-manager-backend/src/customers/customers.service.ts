@@ -208,4 +208,13 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
     });
     return imports
   }
+
+  async customerStatus() {
+    const qb = this.repository.createQueryBuilder('Customer')
+    qb.select(['"Customer"."status" as key' ,'COUNT("Customer"."status") as value']).groupBy(`"Customer"."status"`)
+    const result = await qb.getRawMany();
+    return {
+        data: result
+    }
+  }
 }

@@ -1,12 +1,14 @@
 import { BaseController } from "../core/base/base.controller";
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query, Request } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, Query, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CustomerProductService } from "./customer-product.service";
 import { Crud } from "src/core/decorator/crud.decorator";
 import { CreateCustomerProductDto, UpdateCustomerProductDto } from "./dto/create-customer-product.dto";
 import { ListQueryDto, PaginateDto } from "src/core/base/base.dto";
-import { CreateCustomerOrderDto } from "./dto/create-customer-order.dto";
+import { CreateCustomerOrderDto, UpdateCustomerOrderDto } from "./dto/create-customer-order.dto";
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
+import { Roles } from "src/roles/roles.decorator";
+import { RoleEnum } from "src/roles/role.enum";
 
 @Crud({
     id: 'customer-product',
@@ -72,6 +74,23 @@ export class CustomerProductController extends BaseController<CustomerProductSer
     ) {
         try {
             return await this.customerProductService.createOrder(data);
+        } catch (e) {
+            throw e
+        }
+    }
+
+    @Put('order')
+    @Roles(RoleEnum.Admin)
+    @ApiBody({ type: UpdateCustomerOrderDto })
+    async updateOrder(
+        @Param('id', new ParseUUIDPipe())
+        item: string,
+        @Body()
+        data: any,
+        ...args: any[]
+    ) {
+        try {
+            return await this.customerProductService.updateOrder(item, data);
         } catch (e) {
             throw e
         }

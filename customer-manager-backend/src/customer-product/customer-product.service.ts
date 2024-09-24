@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CustomerProduct } from "./entities/product-customer.entity";
 import { BaseService } from "../core/base/base.service";
 import { CustomerProductRepository } from './customer-product.repository';
 import { PaginateDto } from 'src/core/base/base.dto';
-import { CreateCustomerOrderDto } from './dto/create-customer-order.dto';
+import { CreateCustomerOrderDto, UpdateCustomerOrderDto } from './dto/create-customer-order.dto';
 import { CustomerProductItemRepository } from './customer-product-items.repository';
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
 import { BetweenDates } from "../core/helper/filter-query.decorator.util";
@@ -109,6 +109,25 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             buyDate: format(dateObj, 'yyyy-MM-dd')
         }
         const customerOrder = await this.create(dataCustomerOrder)
+        for (const item of data.items) {
+            item.customerProductId = customerOrder.id
+            await this.customerProductItemRepository.save(item, { reload: true })
+        }
+        return customerOrder
+    }
+
+    async updateOrder(item: string, data: UpdateCustomerOrderDto) {
+        const customerProduct = await this.detail(item)
+        if (!customerProduct) {
+            throw new BadRequestException(
+              'Đơn hàng không tồn tại',
+            )
+          }
+        const customerOrder = await this.update(item, data.createCustomerProduct)
+        const oldItem = customerOrder.customerProductItems;
+        for (const item of oldItem) {
+            await this.customerProductItemRepository.delete(item.id)
+        }
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })

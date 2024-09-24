@@ -61,6 +61,11 @@ export class CustomersController extends BaseController<CustomersService> {
       }
       return this.customersService.findPaginate(options, where);
   }
+
+  @Get('status')
+  async listCustomerStatus() {
+      return this.customersService.customerStatus();
+  }
   
   @Post('upload')
   @ApiConsumes('multipart/form-data')
