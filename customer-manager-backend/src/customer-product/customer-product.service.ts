@@ -129,10 +129,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             )
           }
         const customerOrder = await this.update(item, data.createCustomerProduct)
-        const oldItem = customerOrder.customerProductItems;
-        for (const item of oldItem) {
-            await this.customerProductItemRepository.delete(item.id)
-        }
+        await this.customerProductItemRepository.delete({customerProductId: item})
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
