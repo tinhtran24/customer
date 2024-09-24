@@ -793,7 +793,7 @@ export async function fetchCustomerDashboard(
   source: string | null,
   from: string | null,
   to: string | null,
-  customerStatus : string | null,
+  customerStatus: string | null
 ) {
   try {
     const accessToken = cookies().get("accessToken");
@@ -810,7 +810,8 @@ export async function fetchCustomerDashboard(
       url.searchParams.append("from", from);
       url.searchParams.append("to", to);
     }
-    if (customerStatus) url.searchParams.append("customerStatus", customerStatus);
+    if (customerStatus)
+      url.searchParams.append("customerStatus", customerStatus);
 
     const res = await fetch(url.toString(), {
       cache: "no-store",
@@ -909,13 +910,10 @@ export async function getDataChart(params: {
 
 //#endregion
 
-
 export async function fetchCustomerStatus() {
   try {
     const accessToken = cookies().get("accessToken");
-    const url = new URL(
-      `${process.env.BACKEND_URL}/customers/status`
-    );
+    const url = new URL(`${process.env.BACKEND_URL}/customers/status`);
 
     const res = await fetch(url.toString(), {
       cache: "no-store",
@@ -935,5 +933,33 @@ export async function fetchCustomerStatus() {
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];
+  }
+}
+
+export async function updateCustomerProduct(params: {
+  id: string;
+  body: NewCustomerProduct;
+}) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url =
+      process.env.BACKEND_URL + `/customer-product/order/${params.id}`;
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(params.body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/admin");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra.",
+    };
   }
 }

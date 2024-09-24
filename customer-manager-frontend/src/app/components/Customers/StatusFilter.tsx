@@ -18,7 +18,7 @@ const colors = [
 interface StatusFilterProps {
   handleFilter: (status: string) => void;
 }
-export async function StatusFilter({ handleFilter }: StatusFilterProps) {
+export function StatusFilter({ handleFilter }: StatusFilterProps) {
   const [status, setStatus] = useState<{key: string, value: string}[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,7 +36,7 @@ export async function StatusFilter({ handleFilter }: StatusFilterProps) {
 
   return (
     <Flex wrap="wrap">
-      <div style={{ position: "relative", padding: "5px", cursor: "pointer" }}>
+      <div style={{ position: "relative", padding: "5px 5px 5px 0", cursor: "pointer" }}>
         <div
           style={{
             backgroundColor: "white",
