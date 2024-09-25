@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table, TableColumnsType, Modal } from "antd";
+import { Table, TableColumnsType, Modal, message } from "antd";
 import OrderFilter from "./OrderFilter";
 import moment from "moment";
 import {
@@ -126,7 +126,14 @@ const TableOrder: React.FC = () => {
       to,
       customerStatus || null
     );
-    setData(data);
+    if (data.statusCode == 500) {
+      message.error(
+          Array.isArray(data.message) ? data.message[0] : data.message
+      );
+    } else {
+      setData(data);
+    }
+
 
     setIsLoading(false);
   };

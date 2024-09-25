@@ -263,16 +263,13 @@ export async function fetchUsers() {
         Authorization: `Bearer ${accessToken?.value}`,
       },
     });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch users");
-    }
-
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error("Error fetching users:", error);
-    return [];
+    return {
+      statusCode: 500,
+      message: error,
+    };
   }
 }
 
@@ -815,16 +812,13 @@ export async function fetchCustomerDashboard(
         Authorization: `Bearer ${accessToken?.value}`,
       },
     });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch customers product");
-    }
-
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error("Error fetching customers:", error);
-    return [];
+    return {
+      statusCode: 500,
+      message: error,
+    };
   }
 }
 

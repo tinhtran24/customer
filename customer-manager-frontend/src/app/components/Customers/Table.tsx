@@ -72,7 +72,7 @@ export default function CustomerTable() {
       from: from ? from.format("YYYY-MM-DD") : "",
       to: to ? to.format("YYYY-MM-DD") : "",
     })
-    if (result.statusCode) {
+    if (result.statusCode === 500) {
       message.error(
           Array.isArray(result.message) ? result.message[0] : result.message
       );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DatePicker, Input, Select, Button, Row, Col } from "antd";
+import { DatePicker, Input, Select, Button, Row, Col, message } from "antd";
 import moment, { Moment } from "moment";
 import { SettingSelect } from "../Common/Select";
 import { SETTINGS_TYPE, User } from "@/app/lib/definitions";
@@ -32,7 +32,13 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
   const getUsers = async () => {
     setIsLoadingUsers(true);
     const results = await fetchUsers();
-    setUsers(results);
+    if (results.statusCode == 500) {
+      message.error(
+          Array.isArray(results.message) ? results.message[0] : results.message
+      );
+    } else {
+      setUsers(results);
+    }
     setIsLoadingUsers(false);
   };
 
