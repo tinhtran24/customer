@@ -321,22 +321,22 @@ const TableOrder: React.FC = () => {
         handleResetAll={handleReset}
         handleFilterReset={handleFilterReset}
       />
+      <StatusFilter
+        handleFilter={(status: string) => {
+          if (isLoading) return;
+
+          setCurrentPage(1);
+          if (!status) getData({ isCustomerStatusNull: true });
+          else getData(undefined, status);
+        }}
+        status={customerStatus}
+        isLoading={isLoadingStatus}
+      />
       {!isLoading && (
-        <>
-          <StatusFilter
-            handleFilter={(status: string) => {
-              setCurrentPage(1);
-              if (!status) getData({ isCustomerStatusNull: true });
-              else getData(undefined, status);
-            }}
-            status={customerStatus}
-            isLoading={isLoadingStatus}
-          />
-          <LabelFilterOrder
-            filteredValue={filteredValues}
-            handleFilterReset={handleFilterReset}
-          />
-        </>
+        <LabelFilterOrder
+          filteredValue={filteredValues}
+          handleFilterReset={handleFilterReset}
+        />
       )}
       {isLoading ? (
         <Loading />
