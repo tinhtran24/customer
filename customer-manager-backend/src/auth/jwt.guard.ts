@@ -31,7 +31,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw new UnauthorizedException(THIS_FEATURE_NEED_LOGIN);
     }
-
     return user;
   }
 }

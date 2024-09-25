@@ -79,9 +79,9 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             qb.where(`"CustomerProduct"."year" = ${options.year}`)
             groupBy = '"CustomerProduct"."month"'
         } else if (options.from && options.to) {
-                qb.select(['"CustomerProduct"."buy_date" as key'])
-                qb.where(`"CustomerProduct"."created_at" BETWEEN '${options.from}' AND '${options.to}'`)
-                groupBy = '"CustomerProduct"."buy_date"'
+            qb.select(['"CustomerProduct"."buy_date" as key'])
+            qb.where(`"CustomerProduct"."created_at" BETWEEN '${options.from}' AND '${options.to}'`)
+            groupBy = '"CustomerProduct"."buy_date"'
         }
         if (options.saleName) {
             qb.andWhere(`"CreatedUser"."name" ILIKE '%${options.saleName}%'`)
@@ -92,7 +92,6 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         qb.andWhere(`"CustomerProduct"."code" !== 'ĐH_CŨ'`)
         qb.addSelect('SUM("CustomerProduct"."price") as value').groupBy(groupBy)
         const result = await qb.getRawMany();
-       
         return {
             data: result
         }

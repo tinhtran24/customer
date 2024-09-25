@@ -11,13 +11,14 @@ import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { RolesModule } from './roles/roles.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { CustomersModule } from './customers/customers.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { seconds, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ProductModule } from "./products/product.module";
 import { AppoinmentModule } from './appointment/appoinment.module';
 import { TaskModule } from './task/task.module';
 import { CustomerProductModule } from './customer-product/customer-product.module';
 import { NoteModule } from './note/note.module';
 import { SettingModule } from './setting/setting.module';
+import { CustomThrottlerGuard } from "./core/guards/throttler-behind-proxy.guard";
 
 @Module({
   imports: [
@@ -31,25 +32,11 @@ import { SettingModule } from './setting/setting.module';
         PORT: Joi.number(),
       }),
     }),
-    ThrottlerModule.forRoot({
-      errorMessage: 'Thao tác quá nhanh, hãy thử lại',
-      throttlers: [
-        {
-          name: 'short',
-          ttl: 10,
-          limit: 3,
-        },
-        {
-          name: 'medium',
-          ttl: 1000,
-          limit: 3,
-        },
-        {
-          name: 'long',
-          ttl: 6000,
-          limit: 3,
-        },
-      ],
+    ThrottlerModule.forRootAsync({
+      useFactory: () => ({
+        errorMessage: 'Thao tác quá nhanh, hãy thử lại',
+        throttlers: [{ ttl: seconds(10), limit: 10 }],
+       }),
     }),
     DatabaseModule.forRoot(),
     UsersModule,
@@ -69,7 +56,7 @@ import { SettingModule } from './setting/setting.module';
   providers: [
     AppService,
     { provide: APP_GUARD, useClass: JwtAuthGuard },
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: CustomThrottlerGuard },
   ],
 })
 export class AppModule {}

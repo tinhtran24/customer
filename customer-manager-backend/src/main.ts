@@ -7,9 +7,7 @@ import { useSwagger } from "./app.swagger";
 import * as cors from 'cors';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    rawBody: true,
-  });
+  const app = await NestFactory.create(AppModule);
   app.use(
       cors({
         origin: true,
