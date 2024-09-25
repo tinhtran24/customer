@@ -952,3 +952,11 @@ export async function updateCustomerProduct(params: {
     };
   }
 }
+
+export async function getToken() {
+    return cookies().get("accessToken");
+}
+
+export async function getURL() {
+  return process.env.BACKEND_URL
+}

@@ -29,22 +29,30 @@ import { FilterCustomer } from "./customer.interface";
 import { StatusFilter } from "./StatusFilter";
 import { Dayjs } from "dayjs";
 
-export default function CustomerTable() {
+interface CustomerTableProps {
+  filteredValue: {
+    searchText: string;
+    status: string;
+    date: [Dayjs | null, Dayjs | null];
+  };
+  setFilteredValue: React.Dispatch<React.SetStateAction<{
+    searchText: string;
+    status: string;
+    date: [Dayjs | null, Dayjs | null];
+  }>>;
+  pageSize: number;
+  currentPage: number,
+  setCurrentPage:  React.Dispatch<React.SetStateAction<number>>
+}
+
+export default function CustomerTable({filteredValue, setFilteredValue, pageSize, currentPage, setCurrentPage}: CustomerTableProps) {
   //#region hook
   const [data, setData] = useState<Pagination<Customer>>();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("");
   const [date, setDate] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
-  const [filteredValue, setFilteredValue] = useState({
-    searchText: "",
-    status: "",
-    date: [null, null] as [Dayjs | null, Dayjs | null],
-  });
-
   const { currentUser } = useAuthContext();
 
   const {
