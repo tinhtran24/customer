@@ -32,6 +32,7 @@ import { Dayjs } from "dayjs";
 export default function CustomerTable() {
   //#region hook
   const [data, setData] = useState<Pagination<Customer>>();
+  console.log("🚀 ~ CustomerTable ~ data:", data?.data?.length)
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
@@ -340,22 +341,22 @@ export default function CustomerTable() {
         handleResetFiltersAll={handleResetFiltersAll}
         handleFilterReset={handleFilterReset}
       />
+      <StatusFilter
+        handleFilter={(status: string) => {
+          if (isLoading) return;
+
+          setCurrentPage(1);
+          if (!status) getData({ isStatusNull: true });
+          else getData(undefined, status);
+        }}
+        status={customerStatus}
+        isLoading={isLoadingStatus}
+      />
       {!isLoading && (
-        <>
-          <StatusFilter
-            handleFilter={(status: string) => {
-              setCurrentPage(1);
-              if (!status) getData({ isStatusNull: true });
-              else getData(undefined, status);
-            }}
-            status={customerStatus}
-            isLoading={isLoadingStatus}
-          />
-          <LabelFilter
-            filteredValue={filteredValue}
-            handleFilterReset={handleFilterReset}
-          />
-        </>
+        <LabelFilter
+          filteredValue={filteredValue}
+          handleFilterReset={handleFilterReset}
+        />
       )}
       {isLoading || !data ? (
         <Loading />
