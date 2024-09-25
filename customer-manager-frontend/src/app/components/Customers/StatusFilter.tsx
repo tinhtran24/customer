@@ -1,7 +1,6 @@
 "use client";
 import { Flex, Skeleton } from "antd";
-import React, { useEffect, useState } from "react";
-import { fetchCustomerStatus } from "@/app/lib/actions"
+import React from "react";
 
 const colors = [
   "#3a87ad",
@@ -17,26 +16,27 @@ const colors = [
 
 interface StatusFilterProps {
   handleFilter: (status: string) => void;
+  status: { key: string; value: string }[];
+  isLoading: boolean;
 }
-export function StatusFilter({ handleFilter }: StatusFilterProps) {
-  const [status, setStatus] = useState<{key: string, value: string}[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+export function StatusFilter({
+  handleFilter,
+  status,
+  isLoading,
+}: StatusFilterProps) {
+  if (isLoading) return <Skeleton active paragraph={{ rows: 1 }} />;
 
-  const getData = async () => {
-    setIsLoading(true);
-    setStatus(await fetchCustomerStatus());
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  if (isLoading || !status || status.length === 0) return  <Skeleton active paragraph={{ rows: 1 }} />
+  if (!status || status.length === 0) return <></>;
 
   return (
     <Flex wrap="wrap">
-      <div style={{ position: "relative", padding: "5px 5px 5px 0", cursor: "pointer" }}>
+      <div
+        style={{
+          position: "relative",
+          padding: "5px 5px 5px 0",
+          cursor: "pointer",
+        }}
+      >
         <div
           style={{
             backgroundColor: "white",

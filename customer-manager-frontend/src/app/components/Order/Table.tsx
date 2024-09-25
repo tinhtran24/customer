@@ -6,6 +6,7 @@ import moment from "moment";
 import {
   fetchAllProducts,
   fetchCustomerDashboard,
+  fetchCustomerStatus,
 } from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
 import {
@@ -134,7 +135,7 @@ const TableOrder: React.FC = () => {
     getData();
   }, [currentPage]);
 
-  //#region get data for modal faster
+  //#region get data for modal faster and get customer status =)))
   const [stateUtil, setStateUtil] = useState<{
     products: Product[];
     provinces: any[];
@@ -143,14 +144,26 @@ const TableOrder: React.FC = () => {
     provinces: [],
   });
 
+  //get customer status to filter
+  const [customerStatus, setCustomerStatus] = useState<
+    { key: string; value: string }[]
+  >([]);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(false);
+
   const getProductsAndProvinces = async () => {
-    const [products] = await Promise.all([
+    setIsLoadingStatus(true);
+
+    const [products, customerStatusData] = await Promise.all([
       fetchAllProducts(),
+      fetchCustomerStatus(),
     ]);
     setStateUtil((prevState) => ({
       ...prevState,
       products: products,
     }));
+    setCustomerStatus(customerStatusData);
+
+    setIsLoadingStatus(false);
   };
 
   useEffect(() => {
@@ -283,7 +296,15 @@ const TableOrder: React.FC = () => {
     {
       title: "",
       key: "edit",
-      render: (s: any) => <ModalEdit customerProduct={s} stateUtil={stateUtil} refetch={() => {getData()}}/>,
+      render: (s: any) => (
+        <ModalEdit
+          customerProduct={s}
+          stateUtil={stateUtil}
+          refetch={() => {
+            getData();
+          }}
+        />
+      ),
     },
   ];
 
@@ -308,6 +329,8 @@ const TableOrder: React.FC = () => {
               if (!status) getData({ isCustomerStatusNull: true });
               else getData(undefined, status);
             }}
+            status={customerStatus}
+            isLoading={isLoadingStatus}
           />
           <LabelFilterOrder
             filteredValue={filteredValues}

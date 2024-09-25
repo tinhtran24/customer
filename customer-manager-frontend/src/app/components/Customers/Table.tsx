@@ -15,7 +15,11 @@ import { TableColumnsType } from "antd";
 import Link from "next/link";
 import { MdDeleteOutline } from "react-icons/md";
 import SearchCustomers from "./Search";
-import { deleteCustomer, fetchCustomers } from "@/app/lib/actions";
+import {
+  deleteCustomer,
+  fetchCustomers,
+  fetchCustomerStatus,
+} from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
 import { FiEdit3 } from "react-icons/fi";
 import { DownOutlined } from "@ant-design/icons";
@@ -84,6 +88,24 @@ export default function CustomerTable() {
     if (!data) setIsLoading(true);
     else setIsLoading(false);
   }, [currentPage]);
+
+  //#region get customer status to filter
+  const [customerStatus, setCustomerStatus] = useState<
+    { key: string; value: string }[]
+  >([]);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(false);
+
+  const getCustomerStatus = async () => {
+    setIsLoadingStatus(true);
+    setCustomerStatus(await fetchCustomerStatus());
+    setIsLoadingStatus(false);
+  };
+
+  useEffect(() => {
+    getCustomerStatus();
+  }, []);
+
+  //#endregion
 
   const handleResetFiltersAll = () => {
     setCurrentPage(1);
@@ -326,6 +348,8 @@ export default function CustomerTable() {
               if (!status) getData({ isStatusNull: true });
               else getData(undefined, status);
             }}
+            status={customerStatus}
+            isLoading={isLoadingStatus}
           />
           <LabelFilter
             filteredValue={filteredValue}
