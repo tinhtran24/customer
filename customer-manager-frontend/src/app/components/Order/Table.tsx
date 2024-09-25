@@ -145,30 +145,30 @@ const TableOrder: React.FC = () => {
   });
 
   //get customer status to filter
-  const [customerStatus, setCustomerStatus] = useState<
-    { key: string; value: string }[]
-  >([]);
-  const [isLoadingStatus, setIsLoadingStatus] = useState(false);
+  // const [customerStatus, setCustomerStatus] = useState<
+  //   { key: string; value: string }[]
+  // >([]);
+  // const [isLoadingStatus, setIsLoadingStatus] = useState(false);
 
-  const getProductsAndProvinces = async () => {
-    setIsLoadingStatus(true);
+  // const getProductsAndProvinces = async () => {
+  //   setIsLoadingStatus(true);
 
-    const [products, customerStatusData] = await Promise.all([
-      fetchAllProducts(),
-      fetchCustomerStatus(),
-    ]);
-    setStateUtil((prevState) => ({
-      ...prevState,
-      products: products,
-    }));
-    setCustomerStatus(customerStatusData);
+  //   const [products, customerStatusData] = await Promise.all([
+  //     fetchAllProducts(),
+  //     fetchCustomerStatus(),
+  //   ]);
+  //   setStateUtil((prevState) => ({
+  //     ...prevState,
+  //     products: products,
+  //   }));
+  //   setCustomerStatus(customerStatusData);
 
-    setIsLoadingStatus(false);
-  };
+  //   setIsLoadingStatus(false);
+  // };
 
-  useEffect(() => {
-    getProductsAndProvinces();
-  }, []);
+  // useEffect(() => {
+    // getProductsAndProvinces();
+  // }, []);
   //#endregion
 
   const handleFilter = (newFilters: any) => {
@@ -321,7 +321,7 @@ const TableOrder: React.FC = () => {
         handleResetAll={handleReset}
         handleFilterReset={handleFilterReset}
       />
-      <StatusFilter
+      {/* <StatusFilter
         handleFilter={(status: string) => {
           if (isLoading) return;
 
@@ -331,7 +331,7 @@ const TableOrder: React.FC = () => {
         }}
         status={customerStatus}
         isLoading={isLoadingStatus}
-      />
+      /> */}
       {!isLoading && (
         <LabelFilterOrder
           filteredValue={filteredValues}
