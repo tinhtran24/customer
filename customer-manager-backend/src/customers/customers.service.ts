@@ -1,4 +1,10 @@
-import { BadRequestException, ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+    ServiceUnavailableException,
+    StreamableFile
+} from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
@@ -7,10 +13,13 @@ import { CustomerRepository } from './customer.repository';
 import { QueryHook } from 'src/core/type/query';
 import { QueryCustomertDto } from './dto/filter-customer.dto';
 import { Equal, Raw } from 'typeorm';
-import { Workbook } from "exceljs";
-import { ImportCustomerDto } from './dto/import-cusomter.dto';
 import { BetweenDates } from 'src/core/helper/filter-query.decorator.util';
+import { PassThrough } from 'stream';
+import { Column, Workbook } from 'exceljs';
 
+interface ObjectType {
+    [key: string]:any
+}
 @Injectable()
 export class CustomersService extends BaseService<Customer, CustomerRepository> {
   constructor(protected customersRepository: CustomerRepository) {
@@ -21,11 +30,24 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
   protected enable_generate_code = true;
   protected code_prefix = 'KH';
 
+    async export(columns: Partial<Column>[], data: Array<Record<string, any>>, filename: string) {
+        const workbook = new Workbook();
+        const worksheet = workbook.addWorksheet('customer');
+        worksheet.columns = columns;
+        worksheet.addRows(data);
+        const stream = new PassThrough();
+        await workbook.xlsx.write(stream);
+        return new StreamableFile(stream, {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            disposition: 'attachment; filename=' + filename
+        });
+    }
+
   async findPaginate(
     options: QueryCustomertDto,
     where?: any,
   ){
-    if (options.q !== '') {
+    if (options.q && options.q !== '') {
       where['fullName'] = Raw(fullName => `${fullName} ILIKE '%${options.q}%' OR "Customer"."code" ILIKE '%${options.q}%' OR "Customer"."phone_number" ILIKE '%${options.q}%'`)
     }
     if (options.status) {

@@ -35,7 +35,7 @@ import { CustomThrottlerGuard } from "./core/guards/throttler-behind-proxy.guard
     ThrottlerModule.forRootAsync({
       useFactory: () => ({
         errorMessage: 'Thao tác quá nhanh, hãy thử lại',
-        throttlers: [{ ttl: seconds(10), limit: 10 }],
+        throttlers: [{ ttl: seconds(10), limit: 100 }],
        }),
     }),
     DatabaseModule.forRoot(),

@@ -28,9 +28,7 @@ export async function createCustomer(customer: NewCustomer) {
         Authorization: `Bearer ${accessToken?.value}`,
       },
     });
-
     revalidatePath("/dashboard/customers");
-
     return res.json();
   } catch {
     return {
@@ -243,16 +241,13 @@ export async function fetchCustomers(queryParams: Record<string, string>) {
         Authorization: `Bearer ${accessToken?.value}`,
       },
     });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch customers");
-    }
-
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error("Error fetching customers:", error);
-    return [];
+    return {
+      statusCode: 500,
+      message: error,
+    };
   }
 }
 

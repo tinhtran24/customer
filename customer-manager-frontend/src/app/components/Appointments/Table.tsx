@@ -4,16 +4,10 @@ import { Table, Tooltip, theme, message, Modal, Spin } from "antd";
 import { Suspense, useEffect, useState } from "react";
 import type { TableColumnsType } from "antd";
 import { MdDeleteOutline } from "react-icons/md";
-import { FiEdit3 } from "react-icons/fi";
 import {
   deleteAppointment,
-  fetchCustomers,
-  fetchUsers,
-  updateAppointment,
 } from "@/app/lib/actions";
-import router from "next/router";
 import Loading from "@/app/dashboard/loading";
-import { UpdateAppointmentModal } from "./UpdateModal";
 
 interface AppointmentTableProps {
   currentPage: number;

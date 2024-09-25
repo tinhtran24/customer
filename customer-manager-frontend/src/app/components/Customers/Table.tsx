@@ -63,16 +63,25 @@ export default function CustomerTable() {
     setStatus(s);
     setDate([from, to]);
 
-    setData(
-      await fetchCustomers({
-        page: currentPage.toString(),
-        limit: pageSize.toString(),
-        q: q,
-        status: s,
-        from: from ? from.format("YYYY-MM-DD") : "",
-        to: to ? to.format("YYYY-MM-DD") : "",
-      })
-    );
+
+    const result = await fetchCustomers({
+      page: currentPage.toString(),
+      limit: pageSize.toString(),
+      q: q,
+      status: s,
+      from: from ? from.format("YYYY-MM-DD") : "",
+      to: to ? to.format("YYYY-MM-DD") : "",
+    })
+    if (result.statusCode) {
+      message.error(
+          Array.isArray(result.message) ? result.message[0] : result.message
+      );
+    } else {
+      setData(
+          result
+      );
+    }
+
 
     setFilteredValue({
       searchText: q,

@@ -101,7 +101,36 @@ export class CustomersController extends BaseController<CustomersService> {
         gender: null,
         lastConnected: parse(item.lastConnected, 'dd/MM/yyyy HH:mm', new Date())
       }
-      this.customersService.create(data)
+      await this.customersService.create(data)
     }
   }
+
+    @Get('export')
+    async export(
+        @Query() options: QueryCustomertDto,
+        @Request() req
+    ) {
+        let where = {}
+        if (!['admin', 'marketing'].includes(req.user['role'])){
+            where['userInChargeId'] = req.user['userId']
+        }
+        options.limit = 9999
+        const data = await this.customersService.findPaginate(options, where);
+        const columns = [
+            { header: 'ID', key: 'id', width: 20 },
+            { header: 'Mã KH', key: 'code', width: 30 },
+            { header: 'Tên KH', key: 'fullName', width: 30 },
+            { header: 'Giới tính', key: 'gender', width: 30 },
+            { header: 'Điện thoại', key: 'phoneNumber', width: 30 },
+            { header: 'Địa chỉ', key: 'street', width: 60},
+            { header: 'Trạng thái', key: 'status', width: 30},
+            { header: 'Nhóm KH', key: 'group', width: 30},
+            { header: 'Nguồn KH', key: 'source', width: 30},
+            { header: 'Người phụ trách', key: 'userInCharge.name', width: 30},
+            { header: 'Ngày tạo', key: 'createdAt', width: 30},
+            { header: 'Ngày cập nhật', key: 'updatedAt', width: 30},
+        ]
+        const res = data.items
+        return this.customersService.export(columns, res, 'customer.xlsx')
+    }
 }

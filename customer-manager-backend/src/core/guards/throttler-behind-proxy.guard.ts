@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { ThrottlerGuard, ThrottlerException } from '@nestjs/throttler';
+import { HttpException, HttpStatus, Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { ThrottlerRequest } from '@nestjs/throttler/dist/throttler.guard.interface';
 
 @Injectable()
@@ -27,14 +27,15 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
             blockDuration,
             throttler.name,
         );
-        console.log('totalHits:', totalHits);
-        console.log('timeToExpire:', timeToExpire);
         const response = this.getRequestResponse(context).res;
         if (totalHits > limit) {
             response.header('X-RateLimit-Limit', limit);
             response.header('X-RateLimit-Remaining', 0);
             response.header('X-RateLimit-Reset', Math.ceil(timeToExpire / 1000));
-            throw new ThrottlerException(this.errorMessage);
+            throw new HttpException(
+                `${this.errorMessage} trong ${timeToExpire} giây`,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
 
         response.header('X-RateLimit-Limit', limit);
