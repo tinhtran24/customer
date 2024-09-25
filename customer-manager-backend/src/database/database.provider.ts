@@ -13,7 +13,8 @@ export const databaseProviders = [
         database: configService.get('POSTGRES_DB'),
         entities: [__dirname + '/../**/*.entity.{js,ts}'],
         synchronize: true,
-        logging: true
+        logger: 'debug',
+        poolSize: 10,
       }),
       inject: [ConfigService],
     }),

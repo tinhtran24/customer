@@ -22,7 +22,6 @@ async function bootstrap() {
     }),
   );
 
-  app.use(delay);
   app.use(helmet());
   useSwagger(app);
 
