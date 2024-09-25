@@ -45,7 +45,7 @@ export const LabelFilterOrder = ({
   handleFilterReset,
 }: LabelFilterProps) => {
   return (
-    <Flex style={{ marginBottom: 24 }}>
+    <Flex style={{ marginBottom: 24, marginTop: 12 }}>
       {filteredValue.from && (
         <ReusableTag
           label={`${moment(filteredValue.from).format("YYYY-MM-DD")} - ${moment(

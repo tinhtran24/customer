@@ -58,12 +58,14 @@ interface OrderProductProps {
     products: OrderData[];
     paymentInformation: PaymentInformation;
   };
+  refetch?: any;
 }
 export default function OrderProduct({
   products,
   customer,
   provinces,
   initData,
+  refetch
 }: OrderProductProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const { currentUser } = useAuthContext();
@@ -125,9 +127,10 @@ export default function OrderProduct({
             Array.isArray(result.message) ? result.message[0] : result.message
           );
         } else {
-          message.success("Tạo đơn thành công");
+          message.success("Cập nhật đơn thành công");
           form.resetFields();
           setData([]);
+          refetch && refetch();
         }
       } catch {}
     } else {
@@ -144,6 +147,7 @@ export default function OrderProduct({
           message.success("Tạo đơn thành công");
           form.resetFields();
           setData([]);
+          refetch && refetch();
         }
       } catch {}
     }
@@ -230,7 +234,12 @@ export default function OrderProduct({
 
   const onDeleteItem = (record: OrderData) => {
     setData((pre) => {
-      return pre.filter((order) => order.no !== record.no);
+      return pre
+        .filter((order) => order.no !== record.no)
+        .map((order, index) => ({
+          ...order,
+          no: index + 1,
+        }));
     });
     message.success("Đã xóa đơn hàng thành công");
   };

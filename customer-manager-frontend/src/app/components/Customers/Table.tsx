@@ -52,19 +52,12 @@ export default function CustomerTable() {
 
     const q = params?.isKwNull ? "" : searchText?.trim();
     const s = params?.isStatusNull ? "" : statusFilter || status;
-    const from =
-      params?.isDateNull || !date[0]
-        ? ""
-        : date[0].startOf("day").format("YYYY-MM-DD");
-    const to =
-      params?.isDateNull || !date[1]
-        ? ""
-        : date[1].endOf("day").format("YYYY-MM-DD");
+    const from = params?.isDateNull || !date[0] ? null : date[0];
+    const to = params?.isDateNull || !date[1] ? null : date[1];
 
     setSearchText(q);
     setStatus(s);
-    
-    if(params?.isDateNull) setDate([null, null])
+    setDate([from, to]);
 
     setData(
       await fetchCustomers({
@@ -72,15 +65,15 @@ export default function CustomerTable() {
         limit: pageSize.toString(),
         q: q,
         status: s,
-        from: from,
-        to: to,
+        from: from ? from.format("YYYY-MM-DD") : "",
+        to: to ? to.format("YYYY-MM-DD") : "",
       })
     );
 
     setFilteredValue({
       searchText: q,
       status: s,
-      date: date,
+      date: [from, to],
     });
 
     setIsLoading(false);
