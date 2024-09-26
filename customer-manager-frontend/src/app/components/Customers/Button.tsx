@@ -5,6 +5,7 @@ import { Button, Flex, Space, message } from "antd";
 import React, { useState } from "react";
 import { getToken, getURL } from "@/app/lib/actions";
 import { Dayjs } from "dayjs";
+import { useAuthContext } from "../auth";
 
 interface CreateCustomerProp {
   filteredValue: {
@@ -20,6 +21,7 @@ export function CreateCustomer({
   pageSize,
   currentPage,
 }: CreateCustomerProp) {
+  const { currentUser } = useAuthContext();
   const [isHandling, setIsHandling] = useState(false);
 
   const handleExport = async () => {
@@ -32,7 +34,7 @@ export function CreateCustomer({
     const formattedFrom = from ? from.format("YYYY-MM-DD") : "";
     const formattedTo = to ? to.format("YYYY-MM-DD") : "";
     try {
-      await getFileCustomerData2({
+      await getFileCustomerData({
         page: currentPage.toString(),
         limit: pageSize.toString(),
         q: filteredValue.searchText,
@@ -47,7 +49,7 @@ export function CreateCustomer({
     }
   };
 
-  const getFileCustomerData2 = async (queryParams: Record<string, string>) => {
+  const getFileCustomerData = async (queryParams: Record<string, string>) => {
     const accessToken: any = await getToken();
     const url = new URL(`${await getURL()}/customers/export`);
 
@@ -110,11 +112,13 @@ export function CreateCustomer({
         </Button>
       </Space>
 
-      <Space size={"middle"} style={{ marginLeft: 12 }}>
-        <Button type="primary" danger onClick={handleExport}>
-          <span style={{ marginRight: 10 }}>Export</span> <ExportOutlined />
-        </Button>
-      </Space>
+      {currentUser?.role === "admin" && (
+        <Space size={"middle"} style={{ marginLeft: 12 }}>
+          <Button type="primary" danger onClick={handleExport}>
+            <span style={{ marginRight: 10 }}>Export</span> <ExportOutlined />
+          </Button>
+        </Space>
+      )}
     </Flex>
   );
 }

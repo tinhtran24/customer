@@ -207,7 +207,7 @@ const StatisticsChart: React.FC = () => {
             value={filters.sale}
             onChange={handleSaleChange}
           >
-            {users?.map((user) => (
+            {Array.isArray(users) && users.map((user) => (
               <Option key={user.id} value={user.name}>
                 {`${user.name} - ${user.email}`}
               </Option>

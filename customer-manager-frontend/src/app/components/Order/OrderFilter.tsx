@@ -125,7 +125,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           onClear={() => removeFilter(handleFilterReset, OrderFilterKey.SALE)}
           loading={isLoadingUsers}
         >
-          {users?.map((user) => (
+          {Array.isArray(users) && users.map((user) => (
             <Option key={user.id} value={user.name}>
               {`${user.name} - ${user.email}`}
             </Option>
