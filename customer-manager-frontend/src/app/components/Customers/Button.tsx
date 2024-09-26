@@ -56,34 +56,49 @@ export function CreateCustomer({
       url.searchParams.append(key, queryParams[key]);
     });
 
-    const response = await axios.get(url.toString(), {
+    // const response = await axios.get(url.toString(), {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${accessToken?.value}`,
+    //   },
+    //   responseType: "blob",
+    // });
+
+    // const blob = new Blob([response.data], {
+    //   type: response.headers["content-type"],
+    // });
+
+    // const link = document.createElement("a");
+    // const url2 = window.URL.createObjectURL(blob);
+
+    // const contentDisposition = response.headers["content-disposition"];
+    // const filename = contentDisposition
+    //   ? contentDisposition.split("filename=")[1].replace(/"/g, "")
+    //   : "downloaded-file.csv";
+
+    // link.href = url2;
+    // link.download = filename;
+
+    // document.body.appendChild(link);
+    // link.click();
+
+    // document.body.removeChild(link);
+    // window.URL.revokeObjectURL(url2);
+
+    //
+    const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken?.value}`,
       },
-      responseType: "blob",
     });
-
-    const blob = new Blob([response.data], {
-      type: response.headers["content-type"],
-    });
-
-    const link = document.createElement("a");
-    const url2 = window.URL.createObjectURL(blob);
-
-    const contentDisposition = response.headers["content-disposition"];
-    const filename = contentDisposition
-      ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-      : "downloaded-file.csv";
-
-    link.href = url2;
-    link.download = filename;
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url2);
+    const blob = await response.blob();
+    const objectUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = "downloaded-file.xlsx";
+    a.click();
+    a.remove();
   };
 
   return (
