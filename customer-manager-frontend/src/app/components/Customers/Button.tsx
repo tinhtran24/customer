@@ -5,7 +5,6 @@ import { Button, Flex, Space, message } from "antd";
 import React, { useState } from "react";
 import { getToken, getURL } from "@/app/lib/actions";
 import { Dayjs } from "dayjs";
-import axios from "axios";
 
 interface CreateCustomerProp {
   filteredValue: {
