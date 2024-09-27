@@ -12,6 +12,7 @@ import { isNil } from 'lodash';
 import { BaseController } from '../base/base.controller';
 import { CrudItem, CrudOptions } from '../type/crud';
 import { DeleteDto, DeleteRestoreDto } from '../base/base.dto';
+import { getMetadataStorage } from 'class-validator';
 
 /**
  * 
@@ -19,6 +20,8 @@ import { DeleteDto, DeleteRestoreDto } from '../base/base.dto';
  * @param options
  */
 export const Crud = <T extends BaseController<any>>(options: CrudOptions) => {
+    const metaDataStorage = getMetadataStorage()
+
     return function (Target: Type<T>) {
         const { id, enabled, dtos } = options;
         const methods: CrudItem[] = [];
@@ -35,7 +38,6 @@ export const Crud = <T extends BaseController<any>>(options: CrudOptions) => {
         for (const { name, options = {} } of methods) {
             if (isNil(Object.getOwnPropertyDescriptor(Target.prototype, name))) {
                 const descriptor = Object.getOwnPropertyDescriptor(BaseController.prototype, name);
-
                 Object.defineProperty(Target.prototype, name, {
                     ...descriptor,
                     value: {

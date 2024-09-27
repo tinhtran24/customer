@@ -30,18 +30,18 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
   protected enable_generate_code = true;
   protected code_prefix = 'KH';
 
-    async export(columns: Partial<Column>[], data: Array<Record<string, any>>, filename: string) {
-        const workbook = new Workbook();
-        const worksheet = workbook.addWorksheet('customer');
-        worksheet.columns = columns;
-        worksheet.addRows(data);
-        const stream = new PassThrough();
-        await workbook.xlsx.write(stream);
-        return new StreamableFile(stream, {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            disposition: 'attachment; filename=' + filename
-        });
-    }
+  async export(columns: Partial<Column>[], data: Array<Record<string, any>>, filename: string) {
+      const workbook = new Workbook();
+      const worksheet = workbook.addWorksheet('customer');
+      worksheet.columns = columns;
+      worksheet.addRows(data);
+      const stream = new PassThrough();
+      await workbook.xlsx.write(stream);
+      return new StreamableFile(stream, {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          disposition: 'attachment; filename=' + filename
+      });
+  }
 
   async findPaginate(
     options: QueryCustomertDto,
@@ -235,8 +235,11 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
     return imports
   }
 
-  async customerStatus() {
+  async customerStatus(where: any) {
     const qb = this.repository.createQueryBuilder('Customer')
+    if(where.userInChargeId) {
+      qb.where(`"Customer"."userInCharge" = ${where.userInChargeId}`)
+    }
     qb.select(['"Customer"."status" as key' ,'COUNT("Customer"."status") as value']).groupBy(`"Customer"."status"`)
     const result = await qb.getRawMany();
     return {

@@ -97,8 +97,7 @@ export abstract class BaseService<
     async findPaginate(
         options: QueryTaskDto,
         where?: any
-    ){
-        
+    ): Promise<any> {
         return this.repository.findPaginate(options, where);
     }
     

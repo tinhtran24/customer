@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, StreamableFile } from '@nestjs/common';
 import { CustomerProduct } from "./entities/product-customer.entity";
 import { BaseService } from "../core/base/base.service";
 import { CustomerProductRepository } from './customer-product.repository';
@@ -9,6 +9,8 @@ import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/cus
 import { BetweenDates } from "../core/helper/filter-query.decorator.util";
 import { ILike, Not } from "typeorm";
 import { format } from 'date-fns';
+import { Column, Workbook } from 'exceljs';
+import { PassThrough } from 'stream';
 
 @Injectable()
 export class CustomerProductService extends BaseService<CustomerProduct, CustomerProductRepository> {
@@ -89,7 +91,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         if (options.source) {
             qb.andWhere(`"CustomerProductItems"."source" ILIKE '%${options.source}%'`)
         }
-        qb.andWhere(`"CustomerProduct"."code" !== 'ĐH_CŨ'`)
+        qb.andWhere(`"CustomerProduct"."code" != 'ĐH_CŨ'`)
         qb.addSelect('SUM("CustomerProduct"."price") as value').groupBy(groupBy)
         const result = await qb.getRawMany();
         return {
@@ -134,5 +136,18 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             await this.customerProductItemRepository.save(item, { reload: true })
         }
         return customerOrder
+    }
+
+    async export(columns: Partial<Column>[], data: Array<Record<string, any>>, filename: string) {
+        const workbook = new Workbook();
+        const worksheet = workbook.addWorksheet('donhang');
+        worksheet.columns = columns;
+        worksheet.addRows(data);
+        const stream = new PassThrough();
+        await workbook.xlsx.write(stream);
+        return new StreamableFile(stream, {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            disposition: 'attachment; filename=' + filename
+        });
     }
 }

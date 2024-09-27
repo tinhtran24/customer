@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { DtoValidation } from "../../core/decorator/validation.decorator";
 import { PaginateDto } from "../../core/base/base.dto";
 import { QueryTrashMode, TrashedDto } from "../../core/type/query";
-import { IsBoolean, IsDate, IsEnum, IsNumber, IsOptional, Min } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsBoolean, IsEnum, IsNumber, IsOptional, Min } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 
 @Injectable()
@@ -34,30 +34,37 @@ export class QueryCustomerProductDto implements PaginateDto, TrashedDto {
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     customerName: string;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     saleName: string;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     source: string;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     customerStatus: string;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     userId: string;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     from: Date;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     to: Date;
 }
 
@@ -70,21 +77,26 @@ export class QueryChartCustomerProductDto {
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     saleName: string;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     source: string;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     from: Date;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     to: Date;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     year: number;
 }

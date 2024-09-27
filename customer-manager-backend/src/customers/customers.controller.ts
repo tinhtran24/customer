@@ -20,6 +20,7 @@ import { UsersService } from 'src/users/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImportCustomerDto } from './dto/import-cusomter.dto';
 import { parse, toDate } from 'date-fns';
+import Role from 'src/roles/roles.entity';
 
 @Crud({
   id: 'post',
@@ -56,15 +57,25 @@ export class CustomersController extends BaseController<CustomersService> {
       @Request() req
   ) {
       let where = {}
-      if (!['admin', 'marketing'].includes(req.user['role'])){
+      const found = ['admin', 'marketing'].includes(req.user.role);
+      if (!found){
         where['userInChargeId'] = req.user['userId']
       }
       return this.customersService.findPaginate(options, where);
   }
 
   @Get('status')
-  async listCustomerStatus() {
-      return this.customersService.customerStatus();
+  async listCustomerStatus(
+    @Request() req
+  ) {
+    let where = {
+      userInChargeId: ""
+    }
+    const found = ['admin', 'marketing'].includes(req.user.role);
+    if (!found){
+      where['userInChargeId'] = req.user['userId']
+    }
+      return this.customersService.customerStatus(where);
   }
   
   @Post('upload')
@@ -111,7 +122,8 @@ export class CustomersController extends BaseController<CustomersService> {
         @Request() req
     ) {
         let where = {}
-        if (!['admin', 'marketing'].includes(req.user['role'])){
+        const found = ['admin', 'marketing'].includes(req.user.role);
+        if (!found){
             where['userInChargeId'] = req.user['userId']
         }
         options.limit = 9999
