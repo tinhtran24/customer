@@ -45,19 +45,6 @@ export function CustomersInfo({
     );
   };
 
-  const getAddress = () => {
-    const { street, ward } = customer;
-    if (!street ) return "_";
-    if(!ward) return street;
-    const wardName = ward ? ward.fullName : "";
-    const districtName = ward && ward.district ? ward.district.fullName : "";
-    const provinceName =
-      ward && ward.district && ward.district.province
-        ? ward.district.province.fullName
-        : "";
-    return `${street}, ${wardName}, ${districtName}, ${provinceName}`;
-  };
-
   const formatDate = (d: string) => {
     const date = new Date(d);
     const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
@@ -122,7 +109,7 @@ export function CustomersInfo({
               {customer.phoneNumber}
             </div>
             <div>
-              <span style={{ fontWeight: "600" }}>Địa chỉ:</span> {getAddress()}
+              <span style={{ fontWeight: "600" }}>Địa chỉ:</span> {customer.street}
             </div>
             <div>
               <span style={{ fontWeight: "600" }}>Giới tính:</span>{" "}

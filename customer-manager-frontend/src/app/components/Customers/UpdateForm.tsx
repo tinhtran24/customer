@@ -55,10 +55,10 @@ export default function UpdateCustomerForm({
         code: customer.code,
         gender: customer.gender,
         street: customer.street,
-        wardCode: customer.wardCode,
-        province: customer.ward?.district?.province?.name,
-        district: customer.ward?.district?.name,
-        ward: customer.ward?.name,
+        // wardCode: customer.wardCode,
+        // province: customer.ward?.district?.province?.name,
+        // district: customer.ward?.district?.name,
+        // ward: customer.ward?.name,
         status: customer.status,
         group: customer.group,
         source: customer.source,
@@ -106,7 +106,7 @@ export default function UpdateCustomerForm({
       status: values.status,
       userInChargeId: values.userInChargeId,
       street: values.street,
-      wardCode: customer.wardCode,
+      // wardCode: customer.wardCode,
       phoneNumber: values.phoneNumber,
       note: values.note,
     };
@@ -251,7 +251,7 @@ export default function UpdateCustomerForm({
                 </Form.Item>
               </Form.Item>
 
-              <Form.Item label="Tỉnh/TP">
+              {/* <Form.Item label="Tỉnh/TP">
                 <Form.Item name="province" noStyle rules={[rule]}>
                   <Select
                     loading={isProvincesLoading}
@@ -291,9 +291,9 @@ export default function UpdateCustomerForm({
                     options={wardOptions}
                   />
                 </Form.Item>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item label="Số nhà/đường">
+              <Form.Item label="Địa chỉ">
                 <Form.Item name="street" noStyle rules={[rule]}>
                   <Input />
                 </Form.Item>

@@ -52,7 +52,7 @@ export type NewCustomer = {
   userInChargeId: string;
   street: string;
   contacts: any;
-  wardCode: string;
+  wardCode?: string;
   phoneNumber: string;
   note?: string;
 };
