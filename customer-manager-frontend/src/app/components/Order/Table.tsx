@@ -60,22 +60,32 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
   );
 };
 
-const TableOrder: React.FC = () => {
-  const initFilter = {
-    from: null,
-    to: null,
-    customerName: null,
-    source: null,
-    sale: null,
-  };
+export const initFilterOrder = {
+  from: null,
+  to: null,
+  customerName: null,
+  source: null,
+  sale: null,
+};
+
+interface TableOrderProps {
+  filteredValues: FilterValues;
+  setFilteredValues: any;
+  pageSize: number;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}
+const TableOrder: React.FC<TableOrderProps> = ({
+  filteredValues,
+  setFilteredValues,
+  pageSize,
+  currentPage,
+  setCurrentPage,
+}) => {
   const [data, setData] = useState<Pagination<CustomerProduct>>();
 
-  const [filters, setFilters] = useState<FilterValues>(initFilter);
-  const [filteredValues, setFilteredValues] =
-    useState<FilterValues>(initFilter);
+  const [filters, setFilters] = useState<FilterValues>(initFilterOrder);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
@@ -128,12 +138,11 @@ const TableOrder: React.FC = () => {
     );
     if (data.statusCode == 500) {
       message.error(
-          Array.isArray(data.message) ? data.message[0] : data.message
+        Array.isArray(data.message) ? data.message[0] : data.message
       );
     } else {
       setData(data);
     }
-
 
     setIsLoading(false);
   };
