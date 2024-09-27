@@ -99,4 +99,9 @@ export class QueryChartCustomerProductDto {
     @ApiProperty()
     @ApiPropertyOptional()
     year: number;
+
+    @IsOptional()
+    @ApiProperty()
+    @ApiPropertyOptional()
+    userId: string;
 }

@@ -88,11 +88,14 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         if (options.saleName) {
             qb.andWhere(`"CreatedUser"."name" ILIKE '%${options.saleName}%'`)
         }
+        if (options.userId) {
+            qb.andWhere(`"CustomerProduct"."created_user" = '${options.userId}'`)
+        }
         if (options.source) {
             qb.andWhere(`"CustomerProductItems"."source" ILIKE '%${options.source}%'`)
         }
         qb.andWhere(`"CustomerProduct"."code" != 'ĐH_CŨ'`)
-        qb.addSelect('SUM("CustomerProduct"."price") as value').groupBy(groupBy)
+        qb.addSelect(`to_char(SUM("CustomerProduct"."price"), '99,999,999.99FM') as value`).groupBy(groupBy)
         const result = await qb.getRawMany();
         return {
             data: result

@@ -53,6 +53,9 @@ export class CustomerProductController extends BaseController<CustomerProductSer
         @Query() options: QueryChartCustomerProductDto,
         @Request() req
     ) {
+        if (req.user['role'] !== 'admin') {
+            options.userId = req.user['userId']
+        }
         return this.customerProductService.chart(options);
     }
 

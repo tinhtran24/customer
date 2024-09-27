@@ -13,6 +13,7 @@ import {
 import moment from "moment";
 import { LabelFilterDashboard } from "./LabelFilter";
 import Loading from "@/app/dashboard/loading";
+import { useAuthContext } from "../auth";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -37,7 +38,9 @@ const StatisticsChart: React.FC = () => {
 
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const { currentUser } = useAuthContext();
+  const isAdmin = currentUser?.role === "admin";
+  
   const getUsers = async () => {
     setIsLoadingUsers(true);
     const results = await fetchUsers();
@@ -197,23 +200,28 @@ const StatisticsChart: React.FC = () => {
             />
           </Col>
         )}
-
-        <Col span={5}>
-          <Select
-            placeholder="- Chọn tên nhân viên -"
-            style={{ width: "100%" }}
-            allowClear
-            loading={isLoadingUsers}
-            value={filters.sale}
-            onChange={handleSaleChange}
-          >
-            {Array.isArray(users) && users.map((user) => (
-              <Option key={user.id} value={user.name}>
-                {`${user.name} - ${user.email}`}
-              </Option>
-            ))}
-          </Select>
-        </Col>
+        {isAdmin && (
+          <>
+            <Col span={5}>
+              <Select
+                placeholder="- Chọn tên nhân viên -"
+                style={{ width: "100%" }}
+                allowClear
+                loading={isLoadingUsers}
+                value={filters.sale}
+                onChange={handleSaleChange}
+              >
+                {Array.isArray(users) && users.map((user) => (
+                  <Option key={user.id} value={user.name}>
+                    {`${user.name} - ${user.email}`}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+          </>
+        )
+        }
+      
 
         <Col span={5}>
           <SettingSelect
