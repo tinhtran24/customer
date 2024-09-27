@@ -112,26 +112,146 @@ export class CustomerProductController extends BaseController<CustomerProductSer
         options.limit = 9999
         const data = await this.customerProductService.dashboard(options);
         const columns = [
-            { header: 'ID', key: 'id', width: 20 },
+            { header: 'Ngày đặt hàng', key: 'ngayMua', width: 30},
+            { header: 'Ngày tạo', key: 'createdAt', width: 30},
             { header: 'Mã ĐH', key: 'code', width: 30 },
+            { header: 'Người thực hiện', key: 'nguoiThucHien', width: 30},
+            { header: 'Mã KH', key: 'customerCode', width: 30 },
             { header: 'Tên KH', key: 'customerFullname', width: 30 },
-            { header: 'Giá', key: 'price', width: 30 },
-            { header: 'PT giao hàng', key: 'shipMethod', width: 30 },
-            { header: 'PT thanh toán', key: 'paymentMethod', width: 60},
-            { header: 'Người tạo', key: 'createdUserName', width: 30},
-            { header: 'Ngày tạo', key: 'createdAt', width: 30}
+            { header: 'Số ĐT', key: 'customerPhoneNumber', width: 30 },
+            { header: 'Email', key: 'customerEmail', width: 30 },
+            { header: 'Người liên hệ', key: 'lhFullname', width: 30 },
+            { header: 'Điện thoại người liên hệ', key: 'lhPhoneNumber', width: 30 },
+            { header: 'Địa chỉ giao hàng', key: 'street', width: 60 },
+            { header: 'Tỉnh/ TP', key: 'province', width: 30 },
+            { header: 'Quận/ Huyện', key: 'ward', width: 30 },
+            { header: 'Nguồn khách hàng', key: 'customerSource', width: 30 },
+            { header: 'Mã vận đơn', key: 'zero', width: 30 },
+            { header: 'Trạng thái vận đơn', key: 'zero', width: 30 },
+            { header: 'Mã kho', key: 'zero', width: 30 },
+            { header: 'Mã SP', key: 'productCode', width: 30 },
+            { header: 'Tên sản phẩm', key: 'productName', width: 30 },
+            { header: 'Mô tả', key: 'productNameDescription', width: 30 },
+            { header: 'Đơn vị', key: 'zero', width: 30 },
+            { header: 'Nhóm sản phẩm', key: 'zero', width: 30 },
+            { header: 'Số lượng', key: 'quantity', width: 30 },
+            { header: 'Giá vốn', key: 'giaVon', width: 30 },
+            { header: 'Giá bán', key: 'unitPrice', width: 30 },
+            { header: 'CK(Đ)', key: 'zero', width: 30 },
+            { header: 'VAT(%)', key: 'zero', width: 30 },
+            { header: 'Thành tiền', key: 'thanhtien', width: 30 },
+            { header: 'Lợi nhuận SP', key: 'zero', width: 30 },
+            { header: 'Doanh số', key: 'doanhso', width: 30 },
+            { header: 'Chiết khấu (đ)', key: 'zero', width: 30 },
+            { header: 'Doanh thu sau CK', key: 'sauck', width: 30 },
+            { header: 'Phí vận chuyển (đ)', key: 'zero', width: 30 },
+            { header: 'Phí lắp đặt (đ)', key: 'zero', width: 30 },
+            { header: 'Doanh thu trước thuế', key: 'truocthue', width: 30 },
+            { header: 'VAT (đ)', key: 'zero', width: 30 },
+            { header: 'Doanh thu', key: 'doanhthu', width: 30 },
+            { header: 'Đã thanh toán', key: 'zero', width: 30 },
+            { header: 'Còn lại', key: 'conlai', width: 30 },
+            { header: 'Lợi nhuận', key: 'price', width: 30 },
+            { header: 'Điều khoản đơn hàng', key: 'zero', width: 30 },
+            { header: 'Hình thức thanh toán', key: 'paymentMethod', width: 30},
+            { header: 'Hình thức thanh toán từng lần', key: 'zero', width: 30 },
+            { header: 'Ngày thanh toán', key: 'zero', width: 30 },
+            { header: 'Nguồn đơn hàng', key: 'zero', width: 30 },
+            { header: 'Người tạo', key: 'createdUserName', width: 30 },
+            { header: 'Trạng thái', key: 'status', width: 30 },
+            { header: 'Kho hàng', key: 'source', width: 30 },
+            { header: 'Phương thức giao hàng', key: 'shipMethod', width: 30},
         ]
-        const res = data.data.map(e => {
-           return {
-            ...e,
-            price: e.price.toLocaleString('it-IT', {
-                style: 'currency',
-                currency: 'VND',
-            }),
-            customerFullname: e.customer?.fullName,
-            createdUserName: e.createdUser?.name,
-           }
-        })
+        let res = []
+        for (const item of data.data) {
+            let index = 0
+            for(const productItem of item.customerProductItems) {
+                if (index == 0) {
+                    res.push(
+                        {
+                            ...item,
+                            ...productItem,
+                            price: item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            ngayMua: item.createdAt.toLocaleDateString(),
+                            createdAt: item.createdAt.toLocaleDateString(),
+                            nguoiThucHien: item.createdUser?.name,
+                            customerFullname: item.customer?.fullName,
+                            lhFullname: item.customer?.fullName,
+                            customerEmail:'',
+                            customerPhoneNumber: item.customer?.phoneNumber,
+                            lhPhoneNumber: item.customer?.phoneNumber,
+                            customerCode:  item.customer?.code,
+                            customerSource: item.customer?.source,
+                            createdUserName: item.createdUser?.name,
+                            productCode: productItem.product.code,
+                            productName: productItem.product.title,
+                            productNameDescription: productItem.product.description,
+                            status: 'Chờ duyệt',
+                            zero: '',
+                            giaVon: productItem.unitPrice.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            thanhtien: item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            loinhuan: item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            doanhso: item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            doanhthu:item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            truocthue: item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            conlai: item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            sauck: item.price.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            unitPrice: productItem.unitPrice.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            })
+                        }
+                    )
+                    index++
+                } else {
+                    res.push(
+                        {
+                            ...productItem,
+                            productCode: productItem.product.code,
+                            productName: productItem.product.title,
+                            productNameDescription: productItem.product.description,
+                            status: 'Chờ duyệt',
+                            zero: '',
+                            giaVon: productItem.unitPrice.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                            unitPrice: productItem.unitPrice.toLocaleString('it-IT', {
+                                style: 'currency',
+                                currency: 'VND',
+                            }),
+                        }
+                    )
+                }
+            }
+        }
         return this.customerProductService.export(columns, res, 'donhang.xlsx')
     }
 }
