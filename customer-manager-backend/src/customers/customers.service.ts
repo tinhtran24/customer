@@ -238,7 +238,7 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
   async customerStatus(where: any) {
     const qb = this.repository.createQueryBuilder('Customer')
     if(where.userInChargeId) {
-      qb.where(`"Customer"."userInCharge" = ${where.userInChargeId}`)
+      qb.where(`"Customer"."user_in_charge" = '${where.userInChargeId}'`)
     }
     qb.select(['"Customer"."status" as key' ,'COUNT("Customer"."status") as value']).groupBy(`"Customer"."status"`)
     const result = await qb.getRawMany();
