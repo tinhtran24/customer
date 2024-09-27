@@ -109,11 +109,14 @@ const StatisticsChart: React.FC = () => {
     label: {
       position: "middle",
       style: { fill: "#FFFFFF", opacity: 0.6 },
-      formatter: (v: number) => `₫${v.toLocaleString("vi-VN")}`,
+      formatter: (v: number) => `${v.toLocaleString('it-IT', {
+        style: 'currency',
+        currency: 'VND',
+      })}`,
     },
     meta: {
       type: { alias: "Type" },
-      value: { alias: "Value" },
+      value: { alias: "Tổng giá trị" },
     },
   };
 
