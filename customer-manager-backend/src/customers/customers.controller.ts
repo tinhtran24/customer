@@ -118,7 +118,7 @@ export class CustomersController extends BaseController<CustomersService> {
     }
   }
 
-  @Patch()
+  @Patch('status')
   @ApiBody({ type: UpdateCustomerBulkDto })
   async bulkUpdateStatus(
     @Body()
