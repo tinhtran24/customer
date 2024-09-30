@@ -7,7 +7,7 @@ import { CreateCustomerOrderDto, UpdateCustomerOrderDto } from './dto/create-cus
 import { CustomerProductItemRepository } from './customer-product-items.repository';
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
 import { BetweenDates } from "../core/helper/filter-query.decorator.util";
-import { ILike, Not } from "typeorm";
+import { ILike, In, Not } from "typeorm";
 import { format } from 'date-fns';
 import { Column, Workbook } from 'exceljs';
 import { PassThrough } from 'stream';
@@ -33,6 +33,10 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 fullName: ILike(`%${options.customerName}%`)
             }
         }
+        if (options.ids && options.ids.length > 0) {
+            where.id = In(options.ids)
+        }
+
         if (options.customerStatus) {
             where.customer = {
                 status: ILike(`%${options.customerStatus}%`)

@@ -6,13 +6,13 @@ import {
     StreamableFile
 } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
-import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { UpdateCustomerBulkDto, UpdateCustomerDto } from './dto/update-customer.dto';
 import Customer from 'src/customers/entities/customer.entity';
 import { BaseService } from 'src/core/base/base.service';
 import { CustomerRepository } from './customer.repository';
 import { QueryHook } from 'src/core/type/query';
 import { QueryCustomertDto } from './dto/filter-customer.dto';
-import { Equal, Raw } from 'typeorm';
+import { Equal, In, Raw } from 'typeorm';
 import { BetweenDates } from 'src/core/helper/filter-query.decorator.util';
 import { PassThrough } from 'stream';
 import { Column, Workbook } from 'exceljs';
@@ -246,4 +246,15 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
         data: result
     }
   }
+
+  async updateBulk (data: UpdateCustomerBulkDto) {
+    const qb = this.repository.createQueryBuilder('Customer')
+    qb.update(Customer)
+    .set({
+      status: data.status
+    })
+    .where('id IN (:ids)', { ids: data.ids })
+    return qb.execute();
+  }
+
 }

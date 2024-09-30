@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateCustomerDto } from './create-customer.dto';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID, IsArray } from 'class-validator';
 import {
   FULLNAME_MUST_NOT_EMPTY, PHONE_NUMBER_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
@@ -75,4 +75,15 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
   @IsOptional()
   @ApiProperty()
   wardCode: string;
+}
+
+
+export class UpdateCustomerBulkDto {
+  @IsArray()
+  @ApiProperty()
+  ids: string[]
+
+  @IsString()
+  @ApiProperty()
+  status: string;
 }
