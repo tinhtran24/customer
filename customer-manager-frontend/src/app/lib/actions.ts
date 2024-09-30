@@ -299,6 +299,33 @@ export async function createAppointmentForCustomer(
   }
 }
 
+export async function updateCustomersStatus(
+  body: {ids: string[], status: string}
+) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/customers/status";
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/cutomers");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không tạo được sản phẩm mới",
+    };
+  }
+}
+
+
 //#region Product
 export async function fetchAllProducts() {
   try {

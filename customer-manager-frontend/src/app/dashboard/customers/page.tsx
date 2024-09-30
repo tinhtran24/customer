@@ -15,6 +15,9 @@ export default function CustomerPage() {
     status: "",
     date: [null, null] as [Dayjs | null, Dayjs | null],
   });
+  const [customerIds, setCustomerIds] = useState<
+    { page: number; ids: string[] }[]
+  >([]);
 
   return (
     <main>
@@ -36,6 +39,7 @@ export default function CustomerPage() {
               filteredValue={filteredValue}
               pageSize={pageSize}
               currentPage={currentPage}
+              customerIds={customerIds.map((c) => c.ids).flat()}
             />
           </Flex>
 
@@ -46,6 +50,8 @@ export default function CustomerPage() {
             pageSize={pageSize}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            customerIds={customerIds}
+            setCustomerIds={setCustomerIds}
           />
         </Flex>
       </AntdRegistry>

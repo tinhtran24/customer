@@ -11,11 +11,13 @@ interface ExportButtonProp {
   filteredValue: FilterValues;
   pageSize: number;
   currentPage: number;
+  orderIds: string[];
 }
 export function ExportButton({
   filteredValue,
   pageSize,
   currentPage,
+  orderIds,
 }: ExportButtonProp) {
   const { currentUser } = useAuthContext();
   const [isHandling, setIsHandling] = useState(false);
@@ -47,6 +49,7 @@ export function ExportButton({
         from: formattedFrom,
         to: formattedTo,
         customerStatus: customerStatus,
+        ids: `[${orderIds.join(',')}]`
       });
     } catch (error) {
       console.error("Error downloading the file:", error);
@@ -55,7 +58,7 @@ export function ExportButton({
     }
   };
 
-  const getFileOrderData = async (queryParams: Record<string, string>) => {
+  const getFileOrderData = async (queryParams: Record<string, any>) => {
     const accessToken: any = await getToken();
     const url = new URL(`${await getURL()}/customer-product/export`);
 

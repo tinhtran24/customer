@@ -74,6 +74,8 @@ interface TableOrderProps {
   pageSize: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  orderIds: { page: number; ids: string[] }[];
+  setOrderIds: any;
 }
 const TableOrder: React.FC<TableOrderProps> = ({
   filteredValues,
@@ -81,6 +83,8 @@ const TableOrder: React.FC<TableOrderProps> = ({
   pageSize,
   currentPage,
   setCurrentPage,
+  orderIds,
+  setOrderIds,
 }) => {
   const [data, setData] = useState<Pagination<CustomerProduct>>();
 
@@ -88,6 +92,28 @@ const TableOrder: React.FC<TableOrderProps> = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+
+  //checkbox to change status
+  const rowSelection = {
+    selectedRowKeys: orderIds.map((order) => order.ids).flat(),
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      setOrderIds((prev: any) => {
+        const existingPage = prev.find(
+          (order: any) => order.page === currentPage
+        );
+  
+        if (existingPage) {
+          return prev.map((order: any) =>
+            order.page === currentPage
+              ? { ...order, ids: newSelectedRowKeys }
+              : order
+          );
+        } else {
+          return [...prev, { page: currentPage, ids: newSelectedRowKeys }];
+        }
+      });
+    },
+  };
 
   const getData = async (params?: ParamsReset, statusFilter?: string) => {
     setIsLoading(true);
@@ -183,7 +209,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
   // };
 
   // useEffect(() => {
-    // getProductsAndProvinces();
+  // getProductsAndProvinces();
   // }, []);
   //#endregion
 
@@ -358,6 +384,8 @@ const TableOrder: React.FC<TableOrderProps> = ({
         <Loading />
       ) : (
         <Table
+          rowSelection={rowSelection}
+          rowKey={(record) => record.id}
           style={{ marginTop: "1rem" }}
           columns={columns}
           dataSource={data?.data}
@@ -368,7 +396,6 @@ const TableOrder: React.FC<TableOrderProps> = ({
             showSizeChanger: false,
           }}
           onChange={handleTableChange}
-          rowKey="id"
           expandedRowKeys={expandedRowKeys}
           onExpand={(expanded, record) => toggleExpand(record.id)}
           expandable={{

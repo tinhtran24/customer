@@ -12,6 +12,9 @@ export default function ProductPage() {
     useState<FilterValues>(initFilterOrder);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const [orderIds, setOrderIds] = useState<{ page: number; ids: string[] }[]>(
+    []
+  );
 
   return (
     <main>
@@ -33,6 +36,7 @@ export default function ProductPage() {
               filteredValue={filteredValues}
               currentPage={currentPage}
               pageSize={pageSize}
+              orderIds={orderIds.map((order) => order.ids).flat()}
             />
           </Flex>
           <Divider style={{ margin: 0 }} />
@@ -44,6 +48,8 @@ export default function ProductPage() {
               pageSize={pageSize}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
+              orderIds={orderIds}
+              setOrderIds={setOrderIds}
             />
           </Suspense>
         </Flex>

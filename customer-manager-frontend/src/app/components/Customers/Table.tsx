@@ -35,17 +35,29 @@ interface CustomerTableProps {
     status: string;
     date: [Dayjs | null, Dayjs | null];
   };
-  setFilteredValue: React.Dispatch<React.SetStateAction<{
-    searchText: string;
-    status: string;
-    date: [Dayjs | null, Dayjs | null];
-  }>>;
+  setFilteredValue: React.Dispatch<
+    React.SetStateAction<{
+      searchText: string;
+      status: string;
+      date: [Dayjs | null, Dayjs | null];
+    }>
+  >;
   pageSize: number;
-  currentPage: number,
-  setCurrentPage:  React.Dispatch<React.SetStateAction<number>>
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  customerIds:  { page: number; ids: string[] }[];
+  setCustomerIds: any;
 }
 
-export default function CustomerTable({filteredValue, setFilteredValue, pageSize, currentPage, setCurrentPage}: CustomerTableProps) {
+export default function CustomerTable({
+  filteredValue,
+  setFilteredValue,
+  pageSize,
+  currentPage,
+  setCurrentPage,
+  customerIds,
+  setCustomerIds,
+}: CustomerTableProps) {
   //#region hook
   const [data, setData] = useState<Pagination<Customer>>();
 
@@ -54,6 +66,29 @@ export default function CustomerTable({filteredValue, setFilteredValue, pageSize
   const [status, setStatus] = useState("");
   const [date, setDate] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
   const { currentUser } = useAuthContext();
+
+  //checkbox to change status
+  const rowSelection = {
+    selectedRowKeys: customerIds.map((c) => c.ids).flat(),
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      setCustomerIds((prev: any) => {
+        const existingPage = prev.find(
+          (c: any) => c.page === currentPage
+        );
+  
+        if (existingPage) {
+          return prev.map((c: any) =>
+            c.page === currentPage
+              ? { ...c, ids: newSelectedRowKeys }
+              : c
+          );
+        } else {
+          return [...prev, { page: currentPage, ids: newSelectedRowKeys }];
+        }
+      });
+    },
+  };
+
 
   const {
     token: { colorPrimary },
@@ -71,7 +106,6 @@ export default function CustomerTable({filteredValue, setFilteredValue, pageSize
     setStatus(s);
     setDate([from, to]);
 
-
     const result = await fetchCustomers({
       page: currentPage.toString(),
       limit: pageSize.toString(),
@@ -79,17 +113,14 @@ export default function CustomerTable({filteredValue, setFilteredValue, pageSize
       status: s,
       from: from ? from.format("YYYY-MM-DD") : "",
       to: to ? to.format("YYYY-MM-DD") : "",
-    })
+    });
     if (result.statusCode === 500) {
       message.error(
-          Array.isArray(result.message) ? result.message[0] : result.message
+        Array.isArray(result.message) ? result.message[0] : result.message
       );
     } else {
-      setData(
-          result
-      );
+      setData(result);
     }
-
 
     setFilteredValue({
       searchText: q,
@@ -361,7 +392,7 @@ export default function CustomerTable({filteredValue, setFilteredValue, pageSize
       <StatusFilter
         handleFilter={(status: string) => {
           if (isLoading) return;
-          
+
           setCurrentPage(1);
           if (!status) getData({ isStatusNull: true });
           else getData(undefined, status);
@@ -379,6 +410,8 @@ export default function CustomerTable({filteredValue, setFilteredValue, pageSize
         <Loading />
       ) : (
         <Table
+          rowSelection={rowSelection}
+          rowKey={(record) => record.id}
           loading={isLoading}
           pagination={{
             current: currentPage,
