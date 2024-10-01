@@ -6,12 +6,13 @@ import {
   Product,
   User,
 } from "@/app/lib/definitions";
-import { Table, Spin, TableColumnsType, Modal } from "antd";
-import { useEffect, useState } from "react";
+import { Table, Spin, TableColumnsType, Modal, message, Space } from "antd";
+import React, { useEffect, useState } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import OrderProduct, { OrderData, PaymentInformation } from "./Order";
-import { fetchCustomerProducts } from "@/app/lib/actions";
+import { deleteOrder, fetchCustomerProducts } from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
+import { MdDeleteOutline } from "react-icons/md";
 
 const cssButton: React.CSSProperties = {
   cursor: "pointer",
@@ -43,6 +44,30 @@ export function History({
     setIsLoading(true);
     setCustomerProducts(await fetchCustomerProducts(customer.id));
     setIsLoading(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    message.info("Đang xóa ...");
+    try {
+      const results = await deleteOrder(id);
+      if (results.id) {
+        message.success("Đã xóa thông tin thành công");
+      } else message.error("Vui lòng thử lại sau");
+    } catch (e) {}
+  };
+
+  const showDeleteConfirm = (s: CustomerProduct) => {
+    Modal.confirm({
+      title: "Bạn có chắc chắn muốn xóa thông tin này?",
+      content: `${s.code}`,
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: () => {
+        handleDelete(s.id);
+        window.location.reload();
+      },
+    });
   };
 
   useEffect(() => {
@@ -137,7 +162,17 @@ export function History({
       title: "",
       key: "edit",
       render: (s: any) => (
-        <FiEdit3 onClick={() => openModal(s)} size={20} style={cssButton} />
+          <Space size="middle">
+            <FiEdit3 onClick={() => openModal(s)} size={20} style={cssButton} />
+            <MdDeleteOutline
+                onClick={() => showDeleteConfirm(s)}
+                size={20}
+                style={{
+                  color: "red",
+                  cursor: "pointer",
+                }}
+            />
+          </Space>
       ),
     },
   ];

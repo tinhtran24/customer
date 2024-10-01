@@ -978,6 +978,28 @@ export async function updateCustomerProduct(params: {
   }
 }
 
+export async function deleteOrder(id: string) {
+  try {
+    const accessToken = await cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/customer-product/${id}`;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/order");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể xóa thông tin",
+    };
+  }
+}
+
 export async function getToken() {
     return cookies().get("accessToken");
 }

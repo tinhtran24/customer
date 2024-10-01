@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Table, TableColumnsType, Modal, message } from "antd";
+import { Table, TableColumnsType, Modal, message, Space } from "antd";
 import OrderFilter from "./OrderFilter";
 import moment from "moment";
 import {
+  deleteOrder,
+  deleteSetting,
   fetchAllProducts,
   fetchCustomerDashboard,
   fetchCustomerStatus,
@@ -14,7 +16,7 @@ import {
   CustomerProduct,
   CustomerProductItem,
   Pagination,
-  Product,
+  Product, Setting,
   User,
 } from "@/app/lib/definitions";
 import { Card, Col, Row, Statistic } from "antd";
@@ -22,6 +24,7 @@ import { LabelFilterOrder } from "./LabelFilter";
 import { FilterValues, ParamsReset } from "./order.interface";
 import { StatusFilter } from "../Customers/StatusFilter";
 import { ModalEdit } from "./ModalEdit";
+import { MdDeleteOutline } from "react-icons/md";
 
 interface DashboardStatsProps {
   totalOrders: string;
@@ -92,6 +95,30 @@ const TableOrder: React.FC<TableOrderProps> = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+
+  const handleDelete = async (id: string) => {
+    message.info("Đang xóa ...");
+    try {
+      const results = await deleteOrder(id);
+      if (results.id) {
+        message.success("Đã xóa thông tin thành công");
+        window.location.reload();
+      } else message.error("Vui lòng thử lại sau");
+    } catch (e) {}
+  };
+
+  const showDeleteConfirm = (s: CustomerProduct) => {
+    Modal.confirm({
+      title: "Bạn có chắc chắn muốn xóa thông tin này?",
+      content: `${s.code}`,
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: () => {
+        handleDelete(s.id);
+      },
+    });
+  };
 
   //checkbox to change status
   const rowSelection = {
@@ -336,16 +363,26 @@ const TableOrder: React.FC<TableOrderProps> = ({
       render: (text: string) => moment(text).format("YYYY-MM-DD"),
     },
     {
-      title: "",
+      title: "Tương tác ",
       key: "edit",
       render: (s: any) => (
-        <ModalEdit
-          customerProduct={s}
-          stateUtil={stateUtil}
-          refetch={() => {
-            getData();
-          }}
-        />
+          <Space size="middle">
+            <ModalEdit
+                customerProduct={s}
+                stateUtil={stateUtil}
+                refetch={() => {
+                  getData();
+                }}
+            />
+            <MdDeleteOutline
+                onClick={() => showDeleteConfirm(s)}
+                size={20}
+                style={{
+                  color: "red",
+                  cursor: "pointer",
+                }}
+            />
+          </Space>
       ),
     },
   ];
