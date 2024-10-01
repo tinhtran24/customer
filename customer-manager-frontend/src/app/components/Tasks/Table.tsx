@@ -22,6 +22,16 @@ const columns: ColumnsType<Task> = [
     key: "code",
   },
   {
+    title: "Mã KH",
+    dataIndex: ["appoinment", "customer", "code"],
+    key: "customerCode",
+  },
+  {
+    title: "Tên KH",
+    dataIndex: ["appoinment", "customer", "fullName"],
+    key: "CustomerFullname",
+  },
+  {
     title: "Chi tiết",
     dataIndex: "description",
     key: "description",
@@ -51,6 +61,7 @@ export default function TaskTable() {
     setLoading(true);
     const data = await fetchAllTask({ from, to });
     setTasks(data);
+    console.log(data)
     setLoading(false);
   };
 

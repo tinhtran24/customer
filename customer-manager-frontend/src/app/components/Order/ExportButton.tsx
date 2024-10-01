@@ -49,7 +49,7 @@ export function ExportButton({
         from: formattedFrom,
         to: formattedTo,
         customerStatus: customerStatus,
-        ids: `[${orderIds.join(',')}]`
+        ids: `${orderIds.join(',')}`
       });
     } catch (error) {
       console.error("Error downloading the file:", error);

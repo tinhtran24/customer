@@ -1,5 +1,17 @@
 import { BaseController } from "../core/base/base.controller";
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Put, Query, Request } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseArrayPipe,
+    ParseUUIDPipe,
+    Patch,
+    Post,
+    Put,
+    Query,
+    Request
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CustomerProductService } from "./customer-product.service";
 import { Crud } from "src/core/decorator/crud.decorator";
@@ -132,29 +144,22 @@ export class CustomerProductController extends BaseController<CustomerProductSer
             { header: 'Mã SP', key: 'productCode', width: 30 },
             { header: 'Tên sản phẩm', key: 'productName', width: 30 },
             { header: 'Mô tả', key: 'productNameDescription', width: 30 },
-            { header: 'Đơn vị', key: 'zero', width: 30 },
             { header: 'Nhóm sản phẩm', key: 'zero', width: 30 },
             { header: 'Số lượng', key: 'quantity', width: 30 },
             { header: 'Giá vốn', key: 'giaVon', width: 30 },
             { header: 'Giá bán', key: 'unitPrice', width: 30 },
-            { header: 'CK(Đ)', key: 'zero', width: 30 },
-            { header: 'VAT(%)', key: 'zero', width: 30 },
             { header: 'Thành tiền', key: 'thanhtien', width: 30 },
             { header: 'Lợi nhuận SP', key: 'zero', width: 30 },
             { header: 'Doanh số', key: 'doanhso', width: 30 },
             { header: 'Chiết khấu (đ)', key: 'zero', width: 30 },
             { header: 'Doanh thu sau CK', key: 'sauck', width: 30 },
-            { header: 'Phí vận chuyển (đ)', key: 'zero', width: 30 },
-            { header: 'Phí lắp đặt (đ)', key: 'zero', width: 30 },
             { header: 'Doanh thu trước thuế', key: 'truocthue', width: 30 },
             { header: 'VAT (đ)', key: 'zero', width: 30 },
             { header: 'Doanh thu', key: 'doanhthu', width: 30 },
             { header: 'Đã thanh toán', key: 'zero', width: 30 },
             { header: 'Còn lại', key: 'conlai', width: 30 },
             { header: 'Lợi nhuận', key: 'price', width: 30 },
-            { header: 'Điều khoản đơn hàng', key: 'zero', width: 30 },
             { header: 'Hình thức thanh toán', key: 'paymentMethod', width: 30},
-            { header: 'Hình thức thanh toán từng lần', key: 'zero', width: 30 },
             { header: 'Ngày thanh toán', key: 'zero', width: 30 },
             { header: 'Nguồn đơn hàng', key: 'zero', width: 30 },
             { header: 'Người tạo', key: 'createdUserName', width: 30 },
@@ -247,6 +252,8 @@ export class CustomerProductController extends BaseController<CustomerProductSer
                                 style: 'currency',
                                 currency: 'VND',
                             }),
+                            ngayMua: item.createdAt.toLocaleDateString(),
+                            createdAt: item.createdAt.toLocaleDateString()
                         }
                     )
                 }
