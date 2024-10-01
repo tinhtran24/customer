@@ -313,14 +313,12 @@ export async function updateCustomersStatus(
         Authorization: `Bearer ${accessToken?.value}`,
       },
     });
-
     revalidatePath("/dashboard/cutomers");
-
     return res.json();
   } catch {
     return {
       statusCode: 500,
-      message: "Có lỗi xảy ra. Không tạo được sản phẩm mới",
+      message: "Có lỗi xảy ra. không thay đổi được status",
     };
   }
 }

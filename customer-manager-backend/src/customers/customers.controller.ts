@@ -124,8 +124,8 @@ export class CustomersController extends BaseController<CustomersService> {
     @Body()
     data: any,
     ...args: any[]
-) {
-    return this.customersService.updateBulk(data)
+    ) {
+      return this.customersService.updateBulk(data)
   }
 
   @Get('export')

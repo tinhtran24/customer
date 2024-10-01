@@ -88,24 +88,23 @@ export function CreateCustomer({
   const handleChangeStatus = async () => {
     formModal.validateFields().then(async (values) => {
       try {
+        console.log(customerIds);
         const result = await updateCustomersStatus({
           ids: customerIds,
           status: values.status,
         });
-        if (result.statusCode) {
+        if (result.statusCode === 500) {
           message.error(
             Array.isArray(result.message) ? result.message[0] : result.message
           );
         } else {
           message.success("Cập nhật trạng thái khách hàng thành công");
-          // router.refresh();
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
+          formModal.resetFields();
+          setIsModalVisible(false);
         }
+        setIsModalVisible(false);
       } catch (error) {
         message.error("Đã có lỗi xảy ra.");
-      } finally {
         setIsModalVisible(false);
       }
     });
@@ -129,13 +128,23 @@ export function CreateCustomer({
           <Modal
             title="Thay đối trạng thái khách hàng"
             open={isModalVisible}
-            footer={[]}
+            footer={[
+              <Button key="back" onClick={() => setIsModalVisible(false)}>
+                Thoát
+              </Button>,
+              <Button
+                  key="submit"
+                  type="primary"
+                  htmlType="submit"
+                  onClick={handleChangeStatus}
+              >
+                Cập nhật
+              </Button>,
+            ]}
           >
             <Form
-              id="productForm"
               form={formModal}
               layout="vertical"
-              onFinish={handleChangeStatus}
               style={{ marginTop: 24 }}
             >
               <Form.Item
@@ -150,19 +159,6 @@ export function CreateCustomer({
                   placeholder="- Chọn -"
                 />
               </Form.Item>
-              <div style={{ textAlign: "right" }}>
-                <Button key="cancel" onClick={() => setIsModalVisible(false)}>
-                  Hủy
-                </Button>
-                <Button
-                  key="submit"
-                  htmlType="submit"
-                  type="primary"
-                  style={{ marginLeft: 8 }}
-                >
-                  Xác nhận
-                </Button>
-              </div>
             </Form>
           </Modal>
         </>

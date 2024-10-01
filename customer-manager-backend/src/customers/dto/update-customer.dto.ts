@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString, IsOptional, IsNumber, IsDate, IsUUID, IsArray } f
 import {
   FULLNAME_MUST_NOT_EMPTY, PHONE_NUMBER_MUST_NOT_EMPTY, USER_INCHARGE_MUST_NOT_EMPTY,
 } from 'src/utils/messageConstants';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { stringCleaner } from 'src/utils/stringCleaner';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -79,8 +79,10 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
 
 
 export class UpdateCustomerBulkDto {
+  @IsOptional()
   @IsArray()
-  @ApiProperty()
+  @IsString({ each: true })
+  @Type(() => String)
   ids: string[]
 
   @IsString()
