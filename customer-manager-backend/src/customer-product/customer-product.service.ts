@@ -33,7 +33,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 fullName: ILike(`%${options.customerName}%`)
             }
         }
-        if (options.ids && options.ids.length > 0) {
+        if (options.ids && options.ids.length > 0 && options.ids[0] !== "") {
             where.id = In(options.ids)
         }
 
