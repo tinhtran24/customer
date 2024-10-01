@@ -25,6 +25,7 @@ import { FilterValues, ParamsReset } from "./order.interface";
 import { StatusFilter } from "../Customers/StatusFilter";
 import { ModalEdit } from "./ModalEdit";
 import { MdDeleteOutline } from "react-icons/md";
+import { useAuthContext } from "../auth";
 
 interface DashboardStatsProps {
   totalOrders: string;
@@ -90,11 +91,11 @@ const TableOrder: React.FC<TableOrderProps> = ({
   setOrderIds,
 }) => {
   const [data, setData] = useState<Pagination<CustomerProduct>>();
-
   const [filters, setFilters] = useState<FilterValues>(initFilterOrder);
-
   const [isLoading, setIsLoading] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+  const { currentUser } = useAuthContext();
+  const isAdmin = currentUser?.role === "admin";
 
   const handleDelete = async (id: string) => {
     message.info("Đang xóa ...");
@@ -374,7 +375,8 @@ const TableOrder: React.FC<TableOrderProps> = ({
                   getData();
                 }}
             />
-            <MdDeleteOutline
+            {isAdmin && (
+              <MdDeleteOutline
                 onClick={() => showDeleteConfirm(s)}
                 size={20}
                 style={{
@@ -382,6 +384,8 @@ const TableOrder: React.FC<TableOrderProps> = ({
                   cursor: "pointer",
                 }}
             />
+            )}
+          
           </Space>
       ),
     },

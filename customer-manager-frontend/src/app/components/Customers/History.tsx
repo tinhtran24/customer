@@ -13,6 +13,7 @@ import OrderProduct, { OrderData, PaymentInformation } from "./Order";
 import { deleteOrder, fetchCustomerProducts } from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
 import { MdDeleteOutline } from "react-icons/md";
+import { useAuthContext } from "../auth";
 
 const cssButton: React.CSSProperties = {
   cursor: "pointer",
@@ -39,7 +40,9 @@ export function History({
     products: OrderData[];
     paymentInformation: PaymentInformation;
   }>();
-
+  const { currentUser } = useAuthContext();
+  const isAdmin = currentUser?.role === "admin";
+  
   const getData = async () => {
     setIsLoading(true);
     setCustomerProducts(await fetchCustomerProducts(customer.id));
@@ -164,7 +167,8 @@ export function History({
       render: (s: any) => (
           <Space size="middle">
             <FiEdit3 onClick={() => openModal(s)} size={20} style={cssButton} />
-            <MdDeleteOutline
+            {isAdmin && (
+              <MdDeleteOutline
                 onClick={() => showDeleteConfirm(s)}
                 size={20}
                 style={{
@@ -172,6 +176,7 @@ export function History({
                   cursor: "pointer",
                 }}
             />
+            )}
           </Space>
       ),
     },
