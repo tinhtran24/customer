@@ -7,7 +7,7 @@ import { BaseRepository } from "src/core/base/base.repository";
 export class CustomerRepository extends BaseRepository<Customer> {
     protected qbName = 'Customer';
 
-    protected orderBy = { name: 'lastConnected', order: OrderType.DESC };
+    protected orderBy = { name: 'updatedAt', order: OrderType.DESC };
 
     protected relations = ['ward.district.province', 'userInCharge']
 }

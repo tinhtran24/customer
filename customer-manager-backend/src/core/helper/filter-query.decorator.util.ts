@@ -1,8 +1,9 @@
 import { getMetadataStorage } from 'class-validator'
 import { ApiQuery } from '@nestjs/swagger'
 import { ValidationMetadata } from 'class-validator/types/metadata/ValidationMetadata'
-import { Between } from "typeorm";
-import { format } from "date-fns";
+import { Between, FindOperator, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { format, parseISO } from "date-fns";
+import { DateUtil } from 'src/utils/date';
 
 const metaDataStorage = getMetadataStorage()
 
@@ -54,9 +55,23 @@ export const FilterQueries = (readFilterDto?: Function): MethodDecorator[] =>
         .filter(Boolean) as MethodDecorator[])
     : []
 
+const dateFormat = 'yyyy-MM-dd HH:mm:ss.SSS'
 
-export const BetweenDates = (from: Date | string, to: Date | string) =>
-    Between(
-        format(typeof from === 'string' ? new Date(from) : from, 'yyyy-MM-dd HH:MM:SS'),
-        format(typeof to === 'string' ? new Date(to) : to, 'yyyy-MM-dd HH:MM:SS'),
-    );
+export const BetweenDates = (from?: Date, to?: Date): FindOperator<string> => {
+    if (from && to) {
+        return Between(
+            format(parseISO(DateUtil.beginOfTheDay(from).toISOString()), dateFormat),
+            format(parseISO(DateUtil.endOfTheDay(to).toISOString()), dateFormat),
+        )
+    }
+
+    if (!from && to) {
+        return LessThanOrEqual(format(parseISO(to.toISOString()), dateFormat))
+    }
+
+    if (from && !to) {
+        return MoreThanOrEqual(format(parseISO(from.toISOString()), dateFormat))
+    }
+
+    throw new Error('`from` and `to` are both null')
+}
