@@ -30,7 +30,7 @@ export class TaskService extends BaseService<Task, TaskRepository> {
 
     async find(options: QueryTaskDto, where) {
         if (options.from && options.to) {
-            where.createdAt = BetweenDates(options.from, options.to)
+            where.date = BetweenDates(options.from, options.to)
         }
         return this.findPaginate(options, where);
     }
