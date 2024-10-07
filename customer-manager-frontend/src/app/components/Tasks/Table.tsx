@@ -2,10 +2,11 @@
 import Loading from "@/app/dashboard/loading";
 import { fetchAllTask } from "@/app/lib/actions";
 import { Task } from "@/app/lib/definitions";
-import { DatePicker, Button, Row, Col, Table } from "antd";
+import { Button, Col, DatePicker, Row, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+
 const { RangePicker } = DatePicker;
 
 const columns: ColumnsType<Task> = [
@@ -40,7 +41,12 @@ const columns: ColumnsType<Task> = [
     title: "Ngày hẹn",
     dataIndex: "date",
     key: "date",
-    render: (date: string) => new Date(date).toLocaleString(),
+    render: (d: string) => {
+      const date = new Date(d);
+      return `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")} ${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+      ).toString().padStart(2, "0")}/${date.getFullYear()}`;
+    },
   },
   {
     title: "Người phụ trách",
