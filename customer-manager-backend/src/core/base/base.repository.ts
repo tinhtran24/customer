@@ -67,10 +67,10 @@ export abstract class BaseRepository<E extends ObjectLiteral> extends Repository
         const perPage = Number(paginate?.limit || 10) || 10;
     
         const skip = page > 0 ? perPage * (page - 1) : 0;
-        let orderby = {}
+        let orderBy
         if (!isNil(this.orderBy)){
           if (isObject(this.orderBy)) {
-            orderby = {
+            orderBy = {
               [this.orderBy.name]: this.orderBy.order
             }
           }
@@ -80,7 +80,7 @@ export abstract class BaseRepository<E extends ObjectLiteral> extends Repository
             relations: this.relations,
             take: perPage,
             skip,
-            order: orderby,
+            order: orderBy,
         });
         const lastPage = Math.ceil(total / perPage);
         return {
