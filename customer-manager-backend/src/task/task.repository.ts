@@ -7,7 +7,7 @@ import { BaseRepository } from "src/core/base/base.repository";
 export class TaskRepository extends BaseRepository<Task> {
     protected qbName = 'task';
 
-    protected orderBy = { name: 'updatedAt', order: OrderType.DESC };
+    protected orderBy = { name: 'date', order: OrderType.DESC };
 
     protected relations = ['appoinment.customer', 'userInCharge'];
 
