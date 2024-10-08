@@ -126,13 +126,19 @@ export class UsersService {
       });
 
       if (existedUser) {
-        const updatedUser = await this.usersRepository.create({
+        let updateUserObject: {} = {
           name: updateUserDto.name,
           roleId: updateUserDto.roleId,
-        });
-
+        }
+        if(updateUserDto.password) {
+          const hashedPassword = await bcrypt.hash(updateUserDto.password, 10);
+          updateUserObject = {
+            ...updateUserObject,
+            password: hashedPassword
+          }
+        }
+        const updatedUser = await this.usersRepository.create(updateUserObject);
         await this.usersRepository.update(existedUser.id, updatedUser);
-
         return updatedUser;
       }
     } catch (error) {

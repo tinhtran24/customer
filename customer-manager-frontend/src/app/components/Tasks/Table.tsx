@@ -41,7 +41,7 @@ const columns: ColumnsType<Task> = [
     title: "Ngày hẹn",
     dataIndex: "date",
     key: "date",
-    render: (date: string) =>  dayjs(date).format('DD/MM/YYYY HH:ss'),
+    render: (date: string) =>  dayjs(date).format('DD/MM/YYYY'),
   },
   {
     title: "Người phụ trách",

@@ -5,6 +5,7 @@ import { Form, Input, Button, Space, message, Modal, Select } from "antd";
 import { useRouter } from "next/navigation";
 import { UpdateUser, User, UserRole } from "@/app/lib/definitions";
 import { deleteUser, updateUser } from "@/app/lib/actions";
+import { LockOutlined } from "@ant-design/icons";
 
 export default function EditUserForm({ user }: { user: User }) {
   //#region hook
@@ -18,7 +19,8 @@ export default function EditUserForm({ user }: { user: User }) {
   const initialValues = {
     name: user.name,
     email: user.email,
-    roleId: user.roleId
+    roleId: user.roleId,
+    password: undefined
   };
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function EditUserForm({ user }: { user: User }) {
     const updatingUser: UpdateUser = {
       name: values.name,
       roleId: values.roleId,
+      password: values.password
     };
 
     const result = await updateUser(user.id, updatingUser);
@@ -116,6 +119,19 @@ export default function EditUserForm({ user }: { user: User }) {
                 { value: UserRole.User, label: "User" },
                 { value: UserRole.Marketing, label: "Marketing" },
               ]}
+          />
+        </Form.Item>
+      </Form.Item>
+
+      <Form.Item label="Mật khẩu">
+        <Form.Item
+            name="password"
+            noStyle
+        >
+          <Input.Password
+              prefix={<LockOutlined />}
+              type="password"
+              placeholder="Mật khẩu"
           />
         </Form.Item>
       </Form.Item>

@@ -116,6 +116,7 @@ export type NewUser = {
 export type UpdateUser = {
   name: string;
   roleId: number;
+  password?: string;
 };
 
 export type CreateCustomerAppointmentBody = {
