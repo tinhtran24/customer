@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { IsBoolean, IsEnum, IsNumber, IsOptional, Min } from "class-validator";
 import { PaginateDto } from "src/core/base/base.dto";
@@ -34,9 +34,16 @@ export class QueryTaskDto implements PaginateDto, TrashedDto {
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     from: Date;
 
     @IsOptional()
     @ApiProperty()
+    @ApiPropertyOptional()
     to: Date;
+
+    @IsOptional()
+    @ApiProperty()
+    @ApiPropertyOptional()
+    status: string;
 }

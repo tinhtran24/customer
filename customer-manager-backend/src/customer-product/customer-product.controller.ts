@@ -183,7 +183,6 @@ export class CustomerProductController extends BaseController<CustomerProductSer
                             productCode: productItem.product.code,
                             productName: productItem.product.title,
                             productNameDescription: productItem.product.description,
-                            status: 'Chờ duyệt',
                             zero: '',
                             giaVon: productItem.unitPrice.toLocaleString('it-IT', {
                                 style: 'currency',
@@ -231,7 +230,7 @@ export class CustomerProductController extends BaseController<CustomerProductSer
                             productCode: productItem.product.code,
                             productName: productItem.product.title,
                             productNameDescription: productItem.product.description,
-                            status: 'Chờ duyệt',
+                            status: item.status,
                             zero: '',
                             giaVon: productItem.unitPrice.toLocaleString('it-IT', {
                                 style: 'currency',

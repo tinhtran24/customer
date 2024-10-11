@@ -54,6 +54,10 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             where.customerProductItems = { source : options.source}
         }
 
+        if (options.status) {
+            where.status = ILike(`%${options.status}%`)
+        }
+
         if (options.from && options.to) {
             where.createdAt = BetweenDates(options.from, options.to)
         }
@@ -97,6 +101,9 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         }
         if (options.source) {
             qb.andWhere(`"CustomerProductItems"."source" ILIKE '%${options.source}%'`)
+        }
+        if (options.status) {
+            qb.andWhere(`"CustomerProduct"."status" ILIKE '%${options.status}%'`)
         }
         qb.andWhere(`"CustomerProduct"."code" != 'ĐH_CŨ'`)
         qb.addSelect(`SUM("CustomerProduct"."price") as value`).groupBy(groupBy)

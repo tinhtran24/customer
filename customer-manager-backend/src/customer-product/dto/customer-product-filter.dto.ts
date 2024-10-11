@@ -73,6 +73,11 @@ export class QueryCustomerProductDto implements PaginateDto, TrashedDto {
     @ApiProperty()
     @ApiPropertyOptional()
     to: Date;
+
+    @IsOptional()
+    @ApiProperty()
+    @ApiPropertyOptional()
+    status: string;
 }
 
 @Injectable()
@@ -111,4 +116,9 @@ export class QueryChartCustomerProductDto {
     @ApiProperty()
     @ApiPropertyOptional()
     userId: string;
+
+    @IsOptional()
+    @ApiProperty()
+    @ApiPropertyOptional()
+    status: string;
 }

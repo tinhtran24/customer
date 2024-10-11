@@ -5,7 +5,7 @@ import { TaskRepository } from "./task.repository";
 import { PaginateDto } from "src/core/base/base.dto";
 import { BetweenDates } from "src/core/helper/filter-query.decorator.util";
 import { QueryTaskDto } from "./dto/filter.dto";
-import { In } from "typeorm";
+import { In, ILike } from "typeorm";
 
 @Injectable()
 export class TaskService extends BaseService<Task, TaskRepository> {
@@ -33,6 +33,11 @@ export class TaskService extends BaseService<Task, TaskRepository> {
         if (options.from && options.to) {
             where.date = BetweenDates(options.from, options.to)
         }
+
+        if (options.status) {
+            where.status = ILike(`%${options.status}%`)
+        }
+        
         return this.findPaginateWithOutDis(options, where)
     }
 

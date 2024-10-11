@@ -28,4 +28,7 @@ export class Task extends BaseEntity {
   @ManyToOne(() => User, { cascade: false })
   @JoinColumn({ name: 'user_in_charge' })
   userInCharge: User;
+
+  @Column({ name: 'status', nullable: false, default: "Mới" })
+  status: string
 }

@@ -65,6 +65,9 @@ export class CustomerProduct extends BaseEntity {
   @Column({ name: 'month', nullable: true })
   month: number
 
+  @Column({ name: 'status', nullable: false, default: "Chờ duyệt" })
+  status: string
+  
   @BeforeInsert()
   updateDates() {
       const dateObj = new Date();
