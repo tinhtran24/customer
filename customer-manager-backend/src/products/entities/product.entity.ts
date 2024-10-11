@@ -17,7 +17,7 @@ export class Product extends BaseEntity {
     @Column()
     description: string;
 
-    @Column()
+    @Column({ default: 0 })
     price: number;
 
     @OneToOne(
