@@ -257,4 +257,16 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
           .execute();
       return updatedData.raw[0];
   }
+
+  async updateBulkUserIncharge (data: UpdateCustomerBulkDto) {
+    const updatedData = await this.repository.createQueryBuilder('Customer')
+        .update(Customer)
+        .set({ userInChargeId: data.userInChargeId })
+        .where('"customer"."id" IN (:...ids)', { ids: data.ids })
+        .returning("*") // returns all the column values
+        .updateEntity(true)
+        .execute();
+        
+    return updatedData.raw[0];
+}
 }

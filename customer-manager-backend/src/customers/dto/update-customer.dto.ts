@@ -87,5 +87,9 @@ export class UpdateCustomerBulkDto {
 
   @IsString()
   @ApiProperty()
-  status: string;
+  status?: string;
+
+  @IsUUID()
+  @ApiProperty()
+  userInChargeId?: string;
 }

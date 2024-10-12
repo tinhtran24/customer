@@ -128,6 +128,16 @@ export class CustomersController extends BaseController<CustomersService> {
       return this.customersService.updateBulk(data)
   }
 
+  @Patch('userIncharge')
+  @ApiBody({ type: UpdateCustomerBulkDto })
+  async bulkUpdateUserInCharge(
+    @Body()
+    data: any,
+    ...args: any[]
+    ) {
+      return this.customersService.updateBulkUserIncharge(data)
+  }
+
   @Get('export')
   async export(
       @Query() options: QueryCustomertDto,
