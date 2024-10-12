@@ -26,4 +26,9 @@ export class CreateTaskDto {
     @IsNotEmpty()
     @ApiProperty()
     date: Date
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    status: string
   }

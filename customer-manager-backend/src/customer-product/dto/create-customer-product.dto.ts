@@ -36,6 +36,11 @@ export class CreateCustomerProductDto {
     @IsNotEmpty()
     @ApiProperty()
     shipMethod: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    status: string
 }
 
 export class UpdateCustomerProductDto {

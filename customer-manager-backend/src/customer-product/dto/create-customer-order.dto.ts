@@ -8,7 +8,7 @@ export class CreateCustomerOrderDto {
    items: CreateCustomerProductItemDto[]
 
    @ApiProperty()
-   createCustomerProduct: CreateCustomerProductDto 
+   createCustomerProduct: CreateCustomerProductDto
 }
 
 export class UpdateCustomerOrderDto {

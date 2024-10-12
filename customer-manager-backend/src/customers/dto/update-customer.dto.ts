@@ -83,6 +83,7 @@ export class UpdateCustomerBulkDto {
   @IsArray()
   @IsString({ each: true })
   @Type(() => String)
+  @ApiProperty()
   ids: string[]
 
   @IsString()

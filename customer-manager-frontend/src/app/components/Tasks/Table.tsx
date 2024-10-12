@@ -6,7 +6,6 @@ import { DatePicker, Button, Row, Col, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import moment from "moment";
 const { RangePicker } = DatePicker;
 
 const columns: ColumnsType<Task> = [

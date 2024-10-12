@@ -6,6 +6,7 @@ import { getNoteByCutomerId } from "@/app/lib/actions";
 import { Note } from "@/app/lib/definitions";
 import { List, Typography, Spin } from "antd";
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -20,13 +21,9 @@ function NoteList({ isLoading, data }: NoteListProps) {
 
     return dataArray?.map((item) => {
       const date = new Date(item.createdAt);
-      const formattedDate = date.toLocaleDateString("en-GB");
-      const formattedTime = date.toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const formattedDate = dayjs(date).format('DD/MM/YYY HH:ss')
 
-      return `${formattedDate} ${formattedTime}: ${item.description}`;
+      return `${formattedDate} : ${item.description}`;
     });
   };
 
