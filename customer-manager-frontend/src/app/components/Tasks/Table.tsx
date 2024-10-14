@@ -1,26 +1,30 @@
 "use client";
 import Loading from "@/app/dashboard/loading";
 import { fetchAllTask } from "@/app/lib/actions";
-import { Customer, Task } from "@/app/lib/definitions";
+import { Customer, SETTINGS_TYPE, Task } from "@/app/lib/definitions";
 import { DatePicker, Button, Row, Col, Table, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { ModalEdit } from "./ModalEdit";
 import Link from "next/link";
+import { SettingSelect } from "../Common/Select";
 const { RangePicker } = DatePicker;
+
+const initFilter = {
+  from: null as Dayjs | null,
+  to: null as Dayjs | null,
+  status: "",
+};
 
 export default function TaskTable() {
   const [tasks, setTasks] = useState<Task[]>();
   const [isLoading, setLoading] = useState(false);
-  const [filtersValue, setFiltersValue] = useState({
-    from: null as Dayjs | null,
-    to: null as Dayjs | null,
-  });
+  const [filtersValue, setFiltersValue] = useState(initFilter);
 
-  const getData = async (from?: string, to?: string) => {
+  const getData = async (from?: string, to?: string, status?: string) => {
     setLoading(true);
-    const data = await fetchAllTask({ from, to });
+    const data = await fetchAllTask({ from, to, status });
     setTasks(data);
     setLoading(false);
   };
@@ -30,7 +34,7 @@ export default function TaskTable() {
   }, []);
 
   const handleResetAll = () => {
-    setFiltersValue({ from: null, to: null });
+    setFiltersValue({ from: null, to: null, status: "" });
     getData();
   };
 
@@ -39,30 +43,38 @@ export default function TaskTable() {
     dateStrings: [string, string]
   ) => {
     if (dates) {
-      setFiltersValue({
+      setFiltersValue((prevState) => ({
+        ...prevState,
         from: dates[0],
         to: dates[1],
-      });
+      }));
     } else {
-      setFiltersValue({
+      setFiltersValue((prevState) => ({
+        ...prevState,
         from: null,
         to: null,
-      });
+      }));
     }
+  };
+
+  const handleChangeStatus = (status: string) => {
+    setFiltersValue((prevState) => ({
+      ...prevState,
+      status: status,
+    }));
   };
 
   const onSearch = () => {
-    if (filtersValue.from && filtersValue.to) {
-      getData(
-        dayjs(filtersValue.from).startOf("day").format("YYYY-MM-DD HH:mm:ss"),
-        dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
-      );
-    } else {
-      getData();
-    }
+    getData(
+      filtersValue.from
+        ? dayjs(filtersValue.from).startOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : "",
+      filtersValue.to
+        ? dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : "",
+      filtersValue.status
+    );
   };
-
-  if (isLoading) return <Loading />;
 
   const columns: ColumnsType<Task> = [
     {
@@ -87,9 +99,9 @@ export default function TaskTable() {
       dataIndex: ["appoinment", "customer"],
       key: "CustomerFullname",
       render: (customer: Customer) => (
-          <Link href={`/dashboard/customers/${customer.id}`}>
-            {customer.fullName}
-          </Link>
+        <Link href={`/dashboard/customers/${customer.id}`}>
+          {customer.fullName}
+        </Link>
       ),
     },
     {
@@ -102,11 +114,6 @@ export default function TaskTable() {
       dataIndex: "date",
       key: "date",
       render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
     },
     {
       title: "Người phụ trách",
@@ -148,6 +155,17 @@ export default function TaskTable() {
             }
           />
         </Col>
+        <Col span={6}>
+          <SettingSelect
+            type={SETTINGS_TYPE.TASK_STATUS}
+            style={{ width: "100%" }}
+            placeholder="- Chọn trạng thái công việc-"
+            onChange={handleChangeStatus}
+            value={filtersValue.status || null}
+            allowClear
+            onClear={() => handleChangeStatus("")}
+          />
+        </Col>
         <Col span={4}>
           <Button type="primary" onClick={onSearch}>
             Lọc
@@ -166,11 +184,15 @@ export default function TaskTable() {
           </Button>
         </Col>
       </Row>
-      <Table
-        dataSource={tasks}
-        columns={columns}
-        rowKey={(record) => record.id}
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Table
+          dataSource={tasks}
+          columns={columns}
+          rowKey={(record) => record.id}
+        />
+      )}
     </>
   );
 }
