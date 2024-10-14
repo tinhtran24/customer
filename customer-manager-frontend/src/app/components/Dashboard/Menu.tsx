@@ -12,12 +12,14 @@ import "./DashboardMenu.css";
 import { HiOutlineStatusOnline } from "react-icons/hi";
 import { AiOutlineProduct } from "react-icons/ai";
 import {
+  MdAddTask,
   MdOutlineDashboard,
   MdOutlineSource,
   MdPayment,
   MdProductionQuantityLimits,
 } from "react-icons/md";
 import { RiCustomerServiceLine } from "react-icons/ri";
+import { TbShoppingCartSearch } from "react-icons/tb";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
 
@@ -90,6 +92,24 @@ export const DashboardMenu = () => {
               icon: (
                 <span style={{ marginLeft: "10px" }}>
                   <AiOutlineProduct style={{ fontSize: "16px" }} />
+                </span>
+              ),
+            },
+            {
+              key: "/dashboard/order-status",
+              label: "Trạng thái ĐH",
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <TbShoppingCartSearch style={{ fontSize: "16px" }} />
+                </span>
+              ),
+            },
+            {
+              key: "/dashboard/task-status",
+              label: "Trạng thái CV",
+              icon: (
+                <span style={{ marginLeft: "10px" }}>
+                  <MdAddTask style={{ fontSize: "16px" }} />
                 </span>
               ),
             },

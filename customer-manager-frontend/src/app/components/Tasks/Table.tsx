@@ -43,6 +43,11 @@ const columns: ColumnsType<Task> = [
     render: (date: string) =>  dayjs(date).format('DD/MM/YYYY'),
   },
   {
+    title: "Trạng thái",
+    dataIndex: "status",
+    key: "status",
+  },
+  {
     title: "Người phụ trách",
     dataIndex: ["userInCharge", "name"],
     key: "userInCharge",

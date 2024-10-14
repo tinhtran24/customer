@@ -323,6 +323,29 @@ export async function updateCustomersStatus(
   }
 }
 
+export async function updateUserIncharge(
+  body: {ids: string[], userInChargeId: string}
+) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + "/customers/userIncharge";
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+    revalidatePath("/dashboard/cutomers");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. không thay đổi được status",
+    };
+  }
+}
 
 //#region Product
 export async function fetchAllProducts() {

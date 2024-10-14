@@ -129,6 +129,7 @@ export type CreateCustomerAppointmentBody = {
     userInChargeId: string;
     description: string;
     date: string;
+    status?: string;
   }[];
 };
 
@@ -189,6 +190,7 @@ export type NewCustomerProduct = {
     price: number;
     paymentMethod: string;
     shipMethod: string;
+    status?: string;
   };
 };
 //#endregion
@@ -258,6 +260,8 @@ export enum SETTINGS_TYPE {
   CUSTOMER_SOURCE = "CUSTOMER_SOURCE",
   CUSTOMER_GROUP = "CUSTOMER_GROUP",
   SOURCE_OF_GOODS = "SOURCE_OF_GOODS",
+  TASK_STATUS = "TASK_STATUS",
+  ORDER_STATUS = "ORDER_STATUS",
 }
 
 export type Setting = {

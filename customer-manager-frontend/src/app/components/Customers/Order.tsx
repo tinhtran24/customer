@@ -65,7 +65,7 @@ export default function OrderProduct({
   customer,
   provinces,
   initData,
-  refetch
+  refetch,
 }: OrderProductProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const { currentUser } = useAuthContext();
@@ -112,6 +112,7 @@ export default function OrderProduct({
         price: data.reduce((acc, item) => acc + item.totalPrice, 0),
         paymentMethod: values.PaymentMethod,
         shipMethod: values.ShipMethod,
+        status: values.orderStatus
       },
     };
     if (initData) {
@@ -229,7 +230,12 @@ export default function OrderProduct({
 
   const handleSelectChange = (value: string) => {
     const product = products.find((p) => p.id === value);
-    setSelectedProduct(product);
+    if (product) {
+      setSelectedProduct(product);
+      formModal.setFieldsValue({
+        price: product!.price, /// check it
+      });
+    }
   };
 
   const onDeleteItem = (record: OrderData) => {
@@ -293,6 +299,16 @@ export default function OrderProduct({
           onFinish={handleOk}
           initialValues={{ quantity: 1 }}
         >
+          <Form.Item name="source" label="Nguồn hàng">
+            <SettingSelect
+              notFoundContent="Không tìm thấy"
+              showSearch
+              placeholder="- Chọn -"
+              optionFilterProp="children"
+              type={SETTINGS_TYPE.SOURCE_OF_GOODS}
+            />
+          </Form.Item>
+
           <Form.Item
             name="product"
             label="Sản phẩm"
@@ -313,16 +329,6 @@ export default function OrderProduct({
                 </Option>
               ))}
             </Select>
-          </Form.Item>
-
-          <Form.Item name="source" label="Nguồn hàng">
-            <SettingSelect
-              notFoundContent="Không tìm thấy"
-              showSearch
-              placeholder="- Chọn -"
-              optionFilterProp="children"
-              type={SETTINGS_TYPE.SOURCE_OF_GOODS}
-            />
           </Form.Item>
 
           <Form.Item
@@ -390,7 +396,7 @@ export default function OrderProduct({
         form={form}
         layout="vertical"
         onFinish={handleFinish}
-        initialValues={{ street: getAddress() }}
+        initialValues={{ street: getAddress(), orderStatus: "Mới" }}
       >
         <Form.Item
           name="ShipMethod"
@@ -434,6 +440,23 @@ export default function OrderProduct({
             placeholder="- Chọn -"
             optionFilterProp="children"
             type={SETTINGS_TYPE.PAYMENT_METHOD}
+            disabled={data.length === 0}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="orderStatus"
+          label="Trạng thái đơn hàng"
+          rules={[
+            { required: true, message: "Vui lòng thêm trạng thái đơn hàng" },
+          ]}
+        >
+          <SettingSelect
+            notFoundContent="Không tìm thấy"
+            showSearch
+            placeholder="- Chọn -"
+            optionFilterProp="children"
+            type={SETTINGS_TYPE.ORDER_STATUS}
             disabled={data.length === 0}
           />
         </Form.Item>
