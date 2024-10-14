@@ -227,6 +227,7 @@ export type Task = {
   userInChargeId: string;
   appoinment: Appointment;
   userInCharge: User;
+  status: string
 };
 //#endregion
 

@@ -77,7 +77,6 @@ export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
   wardCode: string;
 }
 
-
 export class UpdateCustomerBulkDto {
   @IsOptional()
   @IsArray()

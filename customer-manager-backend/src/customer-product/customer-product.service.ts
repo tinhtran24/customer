@@ -11,6 +11,8 @@ import { ILike, In, Not } from "typeorm";
 import { format } from 'date-fns';
 import { Column, Workbook } from 'exceljs';
 import { PassThrough } from 'stream';
+import Customer from "../customers/entities/customer.entity";
+import { UpdateCustomerProductBulkDto } from "./dto/update-customer-order-status.dto";
 
 @Injectable()
 export class CustomerProductService extends BaseService<CustomerProduct, CustomerProductRepository> {
@@ -36,7 +38,6 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         if (options.ids && options.ids.length > 0 && options.ids[0] !== "") {
             where.id = In(options.ids)
         }
-
         if (options.customerStatus) {
             where.customer = {
                 status: ILike(`%${options.customerStatus}%`)
@@ -64,8 +65,15 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         where.code = Not("ĐH_CŨ")
         const data = await this.repository.findPaginate(options, where);
 
-        let totalPrice = await this.repository.sum('price', where)
-       
+        const orders = await this.repository.find( {
+            where: where,
+            select : ["id", "price"]
+        });
+        let totalPrice = 0
+        for (const  order of orders) {
+            totalPrice += order.price
+        }
+
         return {
             data: data.items,
             totalPrice: totalPrice,
@@ -163,5 +171,16 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             disposition: 'attachment; filename=' + filename
         });
+    }
+
+    async updateBulk (data: UpdateCustomerProductBulkDto) {
+        const updatedData = await this.repository.createQueryBuilder('CustomerProduct')
+            .update(Customer)
+            .set({ status: data.status })
+            .where('"CustomerProduct"."id" IN (:...ids)', { ids: data.ids })
+            .returning("*") // returns all the column values
+            .updateEntity(true)
+            .execute();
+        return updatedData.raw[0];
     }
 }

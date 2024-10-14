@@ -364,6 +364,11 @@ const TableOrder: React.FC<TableOrderProps> = ({
       render: (text: string) => moment(text).format("YYYY-MM-DD"),
     },
     {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
       title: "Tương tác ",
       key: "edit",
       render: (s: any) => (

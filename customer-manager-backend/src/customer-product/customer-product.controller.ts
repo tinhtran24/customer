@@ -22,6 +22,8 @@ import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/cus
 import { Roles } from "src/roles/roles.decorator";
 import { RoleEnum } from "src/roles/role.enum";
 import e from "express";
+import { UpdateCustomerBulkDto } from "../customers/dto/update-customer.dto";
+import { UpdateCustomerProductBulkDto } from "./dto/update-customer-order-status.dto";
 
 @Crud({
     id: 'customer-product',
@@ -110,6 +112,17 @@ export class CustomerProductController extends BaseController<CustomerProductSer
         } catch (e) {
             throw e
         }
+    }
+
+    @Patch('status')
+    @Roles(RoleEnum.Admin)
+    @ApiBody({ type: UpdateCustomerProductBulkDto })
+    async bulkUpdateUserInCharge(
+        @Body()
+            data: any,
+        ...args: any[]
+    ) {
+        return this.customerProductService.updateBulk(data)
     }
 
     @Get('export')

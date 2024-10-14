@@ -47,6 +47,11 @@ const columns: ColumnsType<Task> = [
     dataIndex: ["userInCharge", "name"],
     key: "userInCharge",
   },
+  {
+    title: "Trạng thái",
+    dataIndex: "status",
+    key: "status",
+  },
 ];
 
 export default function TaskTable() {

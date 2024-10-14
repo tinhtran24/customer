@@ -31,4 +31,4 @@ export class CreateTaskDto {
     @IsNotEmpty()
     @ApiProperty()
     status: string
-  }
+}
