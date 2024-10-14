@@ -299,9 +299,10 @@ export async function createAppointmentForCustomer(
   }
 }
 
-export async function updateCustomersStatus(
-  body: {ids: string[], status: string}
-) {
+export async function updateCustomersStatus(body: {
+  ids: string[];
+  status: string;
+}) {
   const accessToken = cookies().get("accessToken");
   try {
     const url = process.env.BACKEND_URL + "/customers/status";
@@ -323,9 +324,10 @@ export async function updateCustomersStatus(
   }
 }
 
-export async function updateUserIncharge(
-  body: {ids: string[], userInChargeId: string}
-) {
+export async function updateUserIncharge(body: {
+  ids: string[];
+  userInChargeId: string;
+}) {
   const accessToken = cookies().get("accessToken");
   try {
     const url = process.env.BACKEND_URL + "/customers/userIncharge";
@@ -1027,10 +1029,37 @@ export async function deleteOrder(id: string) {
   }
 }
 
+export async function updateCustomerProductStatus(body: {
+  ids: string[];
+  status: string;
+}) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + `/customer-product/status`;
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/admin");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra.",
+    };
+  }
+}
+
 export async function getToken() {
-    return cookies().get("accessToken");
+  return cookies().get("accessToken");
 }
 
 export async function getURL() {
-  return process.env.BACKEND_URL
+  return process.env.BACKEND_URL;
 }
