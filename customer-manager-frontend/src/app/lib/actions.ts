@@ -607,7 +607,7 @@ export async function deleteAppointment(id: string) {
 //#endregion
 
 //#region Task
-export async function fetchAllTask(params?: { from?: string; to?: string }) {
+export async function fetchAllTask(params?: { from?: string; to?: string, status?: string }) {
   try {
     const accessToken = cookies().get("accessToken");
     const url = new URL(`${process.env.BACKEND_URL}/task`);
@@ -620,6 +620,9 @@ export async function fetchAllTask(params?: { from?: string; to?: string }) {
     }
     if (params?.to) {
       url.searchParams.set("to", params.to);
+    }
+    if (params?.status) {
+      url.searchParams.set("status", params.status);
     }
 
     const res = await fetch(url.toString(), {
