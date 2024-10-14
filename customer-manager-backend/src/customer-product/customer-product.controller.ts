@@ -155,14 +155,14 @@ export class CustomerProductController extends BaseController<CustomerProductSer
             { header: 'Tên sản phẩm', key: 'productName', width: 30 },
             { header: 'Mô tả', key: 'productNameDescription', width: 30 },
             { header: 'Số lượng', key: 'quantity', width: 30 },
-            { header: 'Giá vốn', key: 'giaVon', width: 30 },
-            { header: 'Giá bán', key: 'unitPrice', width: 30 },
-            { header: 'Thành tiền', key: 'thanhtien', width: 30 },
-            { header: 'Doanh số', key: 'doanhso', width: 30 },
-            { header: 'Doanh thu sau CK', key: 'sauck', width: 30 },
-            { header: 'Doanh thu trước thuế', key: 'truocthue', width: 30 },
-            { header: 'Doanh thu', key: 'doanhthu', width: 30 },
-            { header: 'Lợi nhuận', key: 'price', width: 30 },
+            { header: 'Giá vốn', key: 'giaVon', width: 30, style : { numFmt : '#,##0.00' } },
+            { header: 'Giá bán', key: 'unitPrice', width: 30, style : { numFmt : '#,##0.00' } },
+            { header: 'Thành tiền', key: 'thanhtien', width: 30, style : { numFmt : '#,##0.00' } },
+            { header: 'Doanh số', key: 'doanhso', width: 30, style : { numFmt : '#,##0.00' } },
+            { header: 'Doanh thu sau CK', key: 'sauck', width: 30, style : { numFmt : '#,##0.00' } },
+            { header: 'Doanh thu trước thuế', key: 'truocthue', width: 30, style : { numFmt : '#,##0.00' } },
+            { header: 'Doanh thu', key: 'doanhthu', width: 30, style : { numFmt : '#,##0.00' } },
+            { header: 'Lợi nhuận', key: 'price', width: 30, style : { numFmt : '#,##0.00' } },
             { header: 'Hình thức thanh toán', key: 'paymentMethod', width: 30},
             { header: 'Người tạo', key: 'createdUserName', width: 30 },
             { header: 'Trạng thái', key: 'status', width: 30 },
@@ -177,10 +177,7 @@ export class CustomerProductController extends BaseController<CustomerProductSer
                         {
                             ...item,
                             ...productItem,
-                            price: item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
+                            price: item.price,
                             ngayMua: item.createdAt.toLocaleDateString(),
                             createdAt: item.createdAt.toLocaleDateString(),
                             nguoiThucHien: item.createdUser?.name,
@@ -197,42 +194,15 @@ export class CustomerProductController extends BaseController<CustomerProductSer
                             productName: productItem.product.title,
                             productNameDescription: productItem.product.description,
                             zero: '',
-                            giaVon: productItem.unitPrice.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            thanhtien: item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            loinhuan: item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            doanhso: item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            doanhthu:item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            truocthue: item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            conlai: item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            sauck: item.price.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            unitPrice: productItem.unitPrice.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            })
+                            giaVon: productItem.unitPrice,
+                            thanhtien: item.price,
+                            loinhuan: item.price,
+                            doanhso: item.price,
+                            doanhthu:item.price,
+                            truocthue: item.price,
+                            conlai: item.price,
+                            sauck: item.price,
+                            unitPrice: productItem.unitPrice
                         }
                     )
                     index++
@@ -243,16 +213,10 @@ export class CustomerProductController extends BaseController<CustomerProductSer
                             productCode: productItem.product.code,
                             productName: productItem.product.title,
                             productNameDescription: productItem.product.description,
-                            status: item.status,
+                            status: '',
                             zero: '',
-                            giaVon: productItem.unitPrice.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
-                            unitPrice: productItem.unitPrice.toLocaleString('it-IT', {
-                                style: 'currency',
-                                currency: 'VND',
-                            }),
+                            giaVon: productItem.unitPrice,
+                            unitPrice: productItem.unitPrice,
                             ngayMua: item.createdAt.toLocaleDateString(),
                             createdAt: item.createdAt.toLocaleDateString()
                         }

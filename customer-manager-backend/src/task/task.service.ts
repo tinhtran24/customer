@@ -6,6 +6,9 @@ import { PaginateDto } from "src/core/base/base.dto";
 import { BetweenDates } from "src/core/helper/filter-query.decorator.util";
 import { QueryTaskDto } from "./dto/filter.dto";
 import { In, ILike } from "typeorm";
+import { DateUtil } from "../utils/date";
+import { UpdateCustomerProductBulkDto } from "../customer-product/dto/update-customer-order-status.dto";
+import { CustomerProduct } from "../customer-product/entities/product-customer.entity";
 
 @Injectable()
 export class TaskService extends BaseService<Task, TaskRepository> {
@@ -21,7 +24,8 @@ export class TaskService extends BaseService<Task, TaskRepository> {
         let where = {
             appoinment: {
                 customerId
-            }
+            },
+            date: BetweenDates(new Date())
         }
         if (user['role'] !== 'admin') {
             where['userInChargeId'] = user['userId']
@@ -32,12 +36,12 @@ export class TaskService extends BaseService<Task, TaskRepository> {
     async find(options: QueryTaskDto, where) {
         if (options.from && options.to) {
             where.date = BetweenDates(options.from, options.to)
+        } else {
+            where.date = BetweenDates(new Date())
         }
-
         if (options.status) {
             where.status = ILike(`%${options.status}%`)
         }
-        
         return this.findPaginateWithOutDis(options, where)
     }
 
@@ -54,7 +58,7 @@ export class TaskService extends BaseService<Task, TaskRepository> {
             take : perPage,
             order : { date : "DESC" },
             select : ["id"]
-        } );
+        });
         const [data, total] = await this.repository.findAndCount({
             where : { id : In( taskIds.map( task => task.id ) ) },
             relations: ['appoinment.customer', 'userInCharge'],
@@ -75,5 +79,17 @@ export class TaskService extends BaseService<Task, TaskRepository> {
                 next: page < lastPage ? page + 1 : null,
             },
         };
+    }
+
+
+    async updateBulk (data: UpdateCustomerProductBulkDto) {
+        const updatedData = await this.repository.createQueryBuilder('Task')
+            .update(CustomerProduct)
+            .set({ status: data.status })
+            .where('"task"."id" IN (:...ids)', { ids: data.ids })
+            .returning("*") // returns all the column values
+            .updateEntity(true)
+            .execute();
+        return updatedData.raw[0];
     }
 }

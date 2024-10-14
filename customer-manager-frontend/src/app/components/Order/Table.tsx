@@ -26,6 +26,7 @@ import { StatusFilter } from "../Customers/StatusFilter";
 import { ModalEdit } from "./ModalEdit";
 import { MdDeleteOutline } from "react-icons/md";
 import { useAuthContext } from "../auth";
+import Link from "next/link";
 
 interface DashboardStatsProps {
   totalOrders: string;
@@ -326,10 +327,14 @@ const TableOrder: React.FC<TableOrderProps> = ({
       key: "code",
     },
     {
-      title: "Tên khách hàng",
+      title: "Tên KH",
       dataIndex: "customer",
       key: "customer",
-      render: (customer: Customer) => customer.fullName,
+      render: (customer: Customer) => (
+          <Link href={`/dashboard/customers/${customer.id}`}>
+            {customer.fullName}
+          </Link>
+      ),
     },
     {
       title: "Giá",

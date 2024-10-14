@@ -57,7 +57,6 @@ export class AppoinmentController  extends BaseController<AppoinmentService> {
         ...args: any[]
     ) {
         try {
-            console.log(data.createScheduleDto);
             const appointment = await this.appoinmentService.create(data.createScheduleDto);
             for (const reqTask of data.createTaskDto) {
                 reqTask.appoinmentId = appointment.id 

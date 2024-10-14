@@ -1,5 +1,5 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query, Request} from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Query, Request } from "@nestjs/common";
+import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { BaseController } from "src/core/base/base.controller";
 import { TaskService } from "./task.service";
 import { Crud } from "src/core/decorator/crud.decorator";
@@ -7,6 +7,9 @@ import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { PaginateDto } from "src/core/base/base.dto";
 import { QueryTaskDto } from "./dto/filter.dto";
+import { Roles } from "../roles/roles.decorator";
+import { RoleEnum } from "../roles/role.enum";
+import { UpdateCustomerProductBulkDto } from "../customer-product/dto/update-customer-order-status.dto";
 
 @Crud({
     id: 'task',
@@ -54,5 +57,16 @@ export class TaskController  extends BaseController<TaskService> {
             where['userInChargeId'] = req.user['userId']
         }
         return this.taskService.find(options, where);
+    }
+
+    @Patch('status')
+    @Roles(RoleEnum.Admin)
+    @ApiBody({ type: UpdateCustomerProductBulkDto })
+    async bulkUpdateUserInCharge(
+        @Body()
+            data: any,
+        ...args: any[]
+    ) {
+        return this.taskService.updateBulk(data)
     }
 }

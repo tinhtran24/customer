@@ -11,7 +11,6 @@ import { ILike, In, Not } from "typeorm";
 import { format } from 'date-fns';
 import { Column, Workbook } from 'exceljs';
 import { PassThrough } from 'stream';
-import Customer from "../customers/entities/customer.entity";
 import { UpdateCustomerProductBulkDto } from "./dto/update-customer-order-status.dto";
 
 @Injectable()

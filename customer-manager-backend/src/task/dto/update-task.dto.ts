@@ -20,4 +20,9 @@ export class UpdateTaskDto {
     @IsDate()
     @IsNotEmpty()
     date: Date
-  }
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    status: string
+}
