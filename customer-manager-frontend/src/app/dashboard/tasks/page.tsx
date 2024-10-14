@@ -2,7 +2,6 @@ import { Flex, Divider, Spin } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense } from "react";
 import { shantell } from "@/app/utils/fontSetting";
-import { fetchAllTask } from "@/app/lib/actions";
 import TaskTable from "@/app/components/Tasks/Table";
 
 export default async function ProductPage() {

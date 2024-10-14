@@ -671,6 +671,33 @@ export async function fetchTaskByCustomerId(id: string) {
     return [];
   }
 }
+
+export async function updateTask(params: {
+  id: string;
+  body: {status: string;}
+}) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = process.env.BACKEND_URL + `/task/${params.id}/status`;
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(params.body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/tasks");
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không thể cập nhật thông tin",
+    };
+  }
+}
+
 //#endregion
 
 //#region Note
@@ -856,8 +883,7 @@ export async function fetchCustomerDashboard(
     if (customerStatus)
       url.searchParams.append("customerStatus", customerStatus);
 
-    if (status)
-      url.searchParams.append("status", status);
+    if (status) url.searchParams.append("status", status);
 
     const res = await fetch(url.toString(), {
       cache: "no-store",

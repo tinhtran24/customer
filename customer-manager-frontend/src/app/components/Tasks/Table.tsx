@@ -2,62 +2,12 @@
 import Loading from "@/app/dashboard/loading";
 import { fetchAllTask } from "@/app/lib/actions";
 import { Task } from "@/app/lib/definitions";
-import { DatePicker, Button, Row, Col, Table } from "antd";
+import { DatePicker, Button, Row, Col, Table, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import { ModalEdit } from "./ModalEdit";
 const { RangePicker } = DatePicker;
-
-const columns: ColumnsType<Task> = [
-  {
-    title: "STT",
-    key: "index",
-    render: (_: any, __: any, index: number) => (
-      <div style={{ textAlign: "center" }}>{index + 1}</div>
-    ),
-  },
-  {
-    title: "Mã số",
-    dataIndex: "code",
-    key: "code",
-  },
-  {
-    title: "Mã KH",
-    dataIndex: ["appoinment", "customer", "code"],
-    key: "customerCode",
-  },
-  {
-    title: "Tên KH",
-    dataIndex: ["appoinment", "customer", "fullName"],
-    key: "CustomerFullname",
-  },
-  {
-    title: "Chi tiết",
-    dataIndex: "description",
-    key: "description",
-  },
-  {
-    title: "Ngày hẹn",
-    dataIndex: "date",
-    key: "date",
-    render: (date: string) =>  dayjs(date).format('DD/MM/YYYY'),
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "status",
-    key: "status",
-  },
-  {
-    title: "Người phụ trách",
-    dataIndex: ["userInCharge", "name"],
-    key: "userInCharge",
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "status",
-    key: "status",
-  },
-];
 
 export default function TaskTable() {
   const [tasks, setTasks] = useState<Task[]>();
@@ -112,6 +62,71 @@ export default function TaskTable() {
   };
 
   if (isLoading) return <Loading />;
+
+  const columns: ColumnsType<Task> = [
+    {
+      title: "STT",
+      key: "index",
+      render: (_: any, __: any, index: number) => (
+        <div style={{ textAlign: "center" }}>{index + 1}</div>
+      ),
+    },
+    {
+      title: "Mã số",
+      dataIndex: "code",
+      key: "code",
+    },
+    {
+      title: "Mã KH",
+      dataIndex: ["appoinment", "customer", "code"],
+      key: "customerCode",
+    },
+    {
+      title: "Tên KH",
+      dataIndex: ["appoinment", "customer", "fullName"],
+      key: "CustomerFullname",
+    },
+    {
+      title: "Chi tiết",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Ngày hẹn",
+      dataIndex: "date",
+      key: "date",
+      render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "Người phụ trách",
+      dataIndex: ["userInCharge", "name"],
+      key: "userInCharge",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "",
+      key: "action",
+      render: (task) => (
+        <Space size="middle">
+          <ModalEdit
+            task={task}
+            refetch={() => {
+              getData();
+            }}
+          />
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <>

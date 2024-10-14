@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Công việc",
 };
 
-export default function CustomerListLayout({
+export default function TaskListLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
