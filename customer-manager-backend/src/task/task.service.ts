@@ -9,6 +9,7 @@ import { In, ILike } from "typeorm";
 import { DateUtil } from "../utils/date";
 import { UpdateCustomerProductBulkDto } from "../customer-product/dto/update-customer-order-status.dto";
 import { CustomerProduct } from "../customer-product/entities/product-customer.entity";
+import { UpdateTaskDto, UpdateTaskStatusDto } from "./dto/update-task.dto";
 
 @Injectable()
 export class TaskService extends BaseService<Task, TaskRepository> {
@@ -87,6 +88,17 @@ export class TaskService extends BaseService<Task, TaskRepository> {
             .update(CustomerProduct)
             .set({ status: data.status })
             .where('"task"."id" IN (:...ids)', { ids: data.ids })
+            .returning("*") // returns all the column values
+            .updateEntity(true)
+            .execute();
+        return updatedData.raw[0];
+    }
+
+    async updateStatus (id: string, data: UpdateTaskStatusDto) {
+        const updatedData = await this.repository.createQueryBuilder('Task')
+            .update(CustomerProduct)
+            .set({ status: data.status })
+            .where('"task"."id" IN (:...ids)', { ids: id })
             .returning("*") // returns all the column values
             .updateEntity(true)
             .execute();

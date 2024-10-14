@@ -4,7 +4,7 @@ import { BaseController } from "src/core/base/base.controller";
 import { TaskService } from "./task.service";
 import { Crud } from "src/core/decorator/crud.decorator";
 import { CreateTaskDto } from "./dto/create-task.dto";
-import { UpdateTaskDto } from "./dto/update-task.dto";
+import { UpdateTaskDto, UpdateTaskStatusDto } from "./dto/update-task.dto";
 import { PaginateDto } from "src/core/base/base.dto";
 import { QueryTaskDto } from "./dto/filter.dto";
 import { Roles } from "../roles/roles.decorator";
@@ -57,6 +57,18 @@ export class TaskController  extends BaseController<TaskService> {
             where['userInChargeId'] = req.user['userId']
         }
         return this.taskService.find(options, where);
+    }
+
+    @Patch('/:id/status')
+    @ApiBody({ type: UpdateTaskStatusDto })
+    async updateStatus(
+        @Param('id', new ParseUUIDPipe())
+            item: string,
+        @Body()
+            data: any,
+        ...args: any[]
+    ) {
+        return this.taskService.updateStatus(item, data)
     }
 
     @Patch('status')

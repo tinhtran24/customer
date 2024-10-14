@@ -109,6 +109,7 @@ export function ExportButton({
           message.success("Cập nhật trạng thái đơn hàng thành công");
           formModal.resetFields();
           setIsModalVisible(false);
+          window.location.reload();
         }
         setIsModalVisible(false);
       } catch (error) {

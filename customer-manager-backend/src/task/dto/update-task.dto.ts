@@ -26,3 +26,11 @@ export class UpdateTaskDto {
     @ApiProperty()
     status: string
 }
+
+
+export class UpdateTaskStatusDto {
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    status: string
+}
