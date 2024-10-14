@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../auth";
 import { generateCode } from "@/app/utils/generateString";
+import { SettingSelect } from "../Common/Select";
 // import { SettingSelect } from "../Common/Select";
 
 // const { Option } = Select;
@@ -80,6 +81,7 @@ export function CreateCustomerAppointment({
                 code: generateCode("LH", new Date(), Date.now().valueOf()),
                 description: values.content,
                 date: values.date,
+                status: values.taskStatus,
                 // label: values.label,
                 userInChargeId: (currentUser as any).sub,
               },
@@ -175,6 +177,7 @@ export function CreateCustomerAppointment({
           id="LHForm"
           layout="vertical"
           onFinish={handleOk}
+          initialValues={{ taskStatus: "Mới" }}
         >
           <Form.Item
             name="date"
@@ -205,6 +208,22 @@ export function CreateCustomerAppointment({
             rules={[{ required: true, message: "Vui lòng thêm chi tiết" }]}
           >
             <Input.TextArea placeholder="Chi tiết..." />
+          </Form.Item>
+
+          <Form.Item
+            name="taskStatus"
+            label="Trạng thái công việc"
+            rules={[
+              { required: true, message: "Vui lòng trạng thái công việc" },
+            ]}
+          >
+            <SettingSelect
+              notFoundContent="Không tìm thấy"
+              showSearch
+              placeholder="- Chọn -"
+              optionFilterProp="children"
+              type={SETTINGS_TYPE.TASK_STATUS}
+            />
           </Form.Item>
         </Form>
       </Modal>

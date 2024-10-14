@@ -5,14 +5,21 @@ import {
   ExportOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
-import { Button, Flex, Space, Modal, Form, message } from "antd";
-import React, { useState } from "react";
-import { getToken, getURL, updateCustomersStatus } from "@/app/lib/actions";
+import { Button, Flex, Space, Modal, Form, message, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  fetchUsers,
+  getToken,
+  getURL,
+  updateCustomersStatus,
+  updateUserIncharge,
+} from "@/app/lib/actions";
 import { Dayjs } from "dayjs";
 import { useAuthContext } from "../auth";
 import { SettingSelect } from "../Common/Select";
-import { SETTINGS_TYPE } from "@/app/lib/definitions";
+import { SETTINGS_TYPE, User } from "@/app/lib/definitions";
 import { useRouter } from "next/navigation";
+const { Option } = Select;
 
 interface CreateCustomerProp {
   filteredValue: {
@@ -35,7 +42,20 @@ export function CreateCustomer({
   const [isHandling, setIsHandling] = useState(false);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isUserInchargeModalVisible, setUserInchargeModalVisible] =
+    useState(false);
+  const [users, setUSers] = useState<User[]>([]);
   const [formModal] = Form.useForm();
+  const [formUserInChargeModal] = Form.useForm();
+
+  const getUsers = async () => {
+    var results = await fetchUsers();
+    setUSers(results);
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   const handleExport = async () => {
     if (isHandling) return;
@@ -110,10 +130,92 @@ export function CreateCustomer({
     });
   };
 
+  const handleChangeUserIncharge = async () => {
+    formUserInChargeModal.validateFields().then(async (values) => {
+      try {
+        const result = await updateUserIncharge({
+          ids: customerIds,
+          userInChargeId: values.userInChargeId,
+        });
+        if (result.statusCode === 500) {
+          message.error(
+            Array.isArray(result.message) ? result.message[0] : result.message
+          );
+        } else {
+          message.success("Cập nhật người phụ trách thành công");
+          formUserInChargeModal.resetFields();
+          setIsModalVisible(false);
+          router.refresh();
+        }
+        setUserInchargeModalVisible(false);
+      } catch (error) {
+        message.error("Đã có lỗi xảy ra.");
+        setIsModalVisible(false);
+      }
+    });
+  };
+
   return (
     <Flex align="flex-end">
-      {customerIds?.length > 0 && (
+      {currentUser?.role === "admin" && customerIds?.length > 0 && (
         <>
+          {/* Trạng thái người phụ trách */}
+          <Space size={"middle"} style={{ marginLeft: 12 }}>
+            <Button
+              type="primary"
+              onClick={() => setUserInchargeModalVisible(true)}
+              style={{ backgroundColor: "#faad14", borderColor: "#faad14" }}
+            >
+              <span style={{ marginRight: 10 }}>Thay đổi người phụ trách</span>
+              <InfoCircleOutlined />
+            </Button>
+          </Space>
+
+          <Modal
+            title="Thay đối người phụ trách"
+            open={isUserInchargeModalVisible}
+            onCancel={() => setUserInchargeModalVisible(false)}
+            footer={[
+              <Button
+                key="back"
+                onClick={() => setUserInchargeModalVisible(false)}
+              >
+                Thoát
+              </Button>,
+              <Button
+                key="submit"
+                type="primary"
+                htmlType="submit"
+                onClick={handleChangeUserIncharge}
+              >
+                Cập nhật
+              </Button>,
+            ]}
+          >
+            <Form
+              form={formUserInChargeModal}
+              layout="vertical"
+              style={{ marginTop: 24 }}
+            >
+              <Form.Item
+                label="Người phụ trách"
+                name="userInChargeId"
+                rules={[
+                  { required: true, message: "Vui lòng chọn người phụ trách" },
+                ]}
+              >
+                <Select placeholder="- Chọn -" style={{ width: "100%" }}>
+                  {users?.map((user) => (
+                    <Option key={user.id} value={user.id}>
+                      {`${user.name} - ${user.email}`}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Form>
+          </Modal>
+
+          {/* Trạng thái KH */}
           <Space size={"middle"} style={{ marginLeft: 12 }}>
             <Button
               type="primary"
@@ -128,25 +230,22 @@ export function CreateCustomer({
           <Modal
             title="Thay đối trạng thái khách hàng"
             open={isModalVisible}
+            onCancel={() => setIsModalVisible(false)}
             footer={[
               <Button key="back" onClick={() => setIsModalVisible(false)}>
                 Thoát
               </Button>,
               <Button
-                  key="submit"
-                  type="primary"
-                  htmlType="submit"
-                  onClick={handleChangeStatus}
+                key="submit"
+                type="primary"
+                htmlType="submit"
+                onClick={handleChangeStatus}
               >
                 Cập nhật
               </Button>,
             ]}
           >
-            <Form
-              form={formModal}
-              layout="vertical"
-              style={{ marginTop: 24 }}
-            >
+            <Form form={formModal} layout="vertical" style={{ marginTop: 24 }}>
               <Form.Item
                 label="Trạng thái mới"
                 name="status"

@@ -214,31 +214,19 @@ const TableOrder: React.FC<TableOrderProps> = ({
     provinces: [],
   });
 
-  //get customer status to filter
-  // const [customerStatus, setCustomerStatus] = useState<
-  //   { key: string; value: string }[]
-  // >([]);
-  // const [isLoadingStatus, setIsLoadingStatus] = useState(false);
+  const getProductsAndProvinces = async () => {
+    const [products] = await Promise.all([
+      fetchAllProducts(),
+    ]);
+    setStateUtil((prevState) => ({
+      ...prevState,
+      products: products,
+    }));
+  };
 
-  // const getProductsAndProvinces = async () => {
-  //   setIsLoadingStatus(true);
-
-  //   const [products, customerStatusData] = await Promise.all([
-  //     fetchAllProducts(),
-  //     fetchCustomerStatus(),
-  //   ]);
-  //   setStateUtil((prevState) => ({
-  //     ...prevState,
-  //     products: products,
-  //   }));
-  //   setCustomerStatus(customerStatusData);
-
-  //   setIsLoadingStatus(false);
-  // };
-
-  // useEffect(() => {
-  // getProductsAndProvinces();
-  // }, []);
+  useEffect(() => {
+  getProductsAndProvinces();
+  }, []);
   //#endregion
 
   const handleFilter = (newFilters: any) => {
@@ -356,6 +344,11 @@ const TableOrder: React.FC<TableOrderProps> = ({
       dataIndex: "createdUser",
       key: "createdUser",
       render: (user: User) => user.name,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "Ngày tạo",

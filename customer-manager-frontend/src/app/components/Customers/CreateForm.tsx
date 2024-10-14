@@ -137,7 +137,7 @@ export default function CreateCustomerForm({
           onFinish={onFinish}
           initialValues={{
             userInChargeId: (currentUser as any)?.sub || null,
-            status: "Data Mới",
+            status: "Data mới",
           }}
         >
           <Row>
