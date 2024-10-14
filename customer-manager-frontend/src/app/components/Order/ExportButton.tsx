@@ -2,7 +2,11 @@
 import { ExportOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, Modal, Space, message } from "antd";
 import React, { useState } from "react";
-import { getToken, getURL } from "@/app/lib/actions";
+import {
+  getToken,
+  getURL,
+  updateCustomerProductStatus,
+} from "@/app/lib/actions";
 import { useAuthContext } from "../auth";
 import { FilterValues } from "./order.interface";
 import moment from "moment";
@@ -54,7 +58,7 @@ export function ExportButton({
         from: formattedFrom,
         to: formattedTo,
         customerStatus: customerStatus,
-        ids: `${orderIds.join(',')}`
+        ids: `${orderIds.join(",")}`,
       });
     } catch (error) {
       console.error("Error downloading the file:", error);
@@ -88,21 +92,24 @@ export function ExportButton({
 
   const handleChangeStatus = async () => {
     formModal.validateFields().then(async (values) => {
+      console.log({
+        ids: orderIds,
+        status: values.status,
+      })
       try {
-        // update later
-        // const result = await updateCustomersStatus({
-        //   ids: customerIds,
-        //   status: values.status,
-        // });
-        // if (result.statusCode === 500) {
-        //   message.error(
-        //     Array.isArray(result.message) ? result.message[0] : result.message
-        //   );
-        // } else {
+        const result = await updateCustomerProductStatus({
+          ids: orderIds,
+          status: values.status,
+        });
+        if (result.statusCode === 500) {
+          message.error(
+            Array.isArray(result.message) ? result.message[0] : result.message
+          );
+        } else {
           message.success("Cập nhật trạng thái đơn hàng thành công");
-          // formModal.resetFields();
-          // setIsModalVisible(false);
-        // }
+          formModal.resetFields();
+          setIsModalVisible(false);
+        }
         setIsModalVisible(false);
       } catch (error) {
         message.error("Đã có lỗi xảy ra.");
@@ -113,64 +120,68 @@ export function ExportButton({
 
   return (
     <Flex align="flex-end">
-      {orderIds?.length > 0 && (
+      {currentUser?.role === "admin" && (
         <>
-          <Space size={"middle"} style={{ marginLeft: 12 }}>
-            <Button
-              type="primary"
-              onClick={() => setIsModalVisible(true)}
-              style={{ backgroundColor: "green", borderColor: "green" }}
-            >
-              <span style={{ marginRight: 10 }}>Thay đổi trạng thái đơn hàng</span>{" "}
-              <InfoCircleOutlined />
-            </Button>
-          </Space>
-
-          <Modal
-            title="Thay đối trạng thái đơn hàng"
-            open={isModalVisible}
-            onCancel={() => setIsModalVisible(false)}
-            footer={[
-              <Button key="back" onClick={() => setIsModalVisible(false)}>
-                Thoát
-              </Button>,
-              <Button
-                  key="submit"
+          {orderIds?.length > 0 && (
+            <>
+              <Space size={"middle"} style={{ marginLeft: 12 }}>
+                <Button
                   type="primary"
-                  htmlType="submit"
-                  onClick={handleChangeStatus}
-              >
-                Cập nhật
-              </Button>,
-            ]}
-          >
-            <Form
-              form={formModal}
-              layout="vertical"
-              style={{ marginTop: 24 }}
-            >
-              <Form.Item
-                label="Trạng thái mới"
-                name="status"
-                rules={[
-                  { required: true, message: "Vui lòng chọn trạng thái" },
+                  onClick={() => setIsModalVisible(true)}
+                  style={{ backgroundColor: "green", borderColor: "green" }}
+                >
+                  <span style={{ marginRight: 10 }}>
+                    Thay đổi trạng thái đơn hàng
+                  </span>{" "}
+                  <InfoCircleOutlined />
+                </Button>
+              </Space>
+
+              <Modal
+                title="Thay đối trạng thái đơn hàng"
+                open={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={[
+                  <Button key="back" onClick={() => setIsModalVisible(false)}>
+                    Thoát
+                  </Button>,
+                  <Button
+                    key="submit"
+                    type="primary"
+                    htmlType="submit"
+                    onClick={handleChangeStatus}
+                  >
+                    Cập nhật
+                  </Button>,
                 ]}
               >
-                <SettingSelect
-                  type={SETTINGS_TYPE.ORDER_STATUS}
-                  placeholder="- Chọn -"
-                />
-              </Form.Item>
-            </Form>
-          </Modal>
+                <Form
+                  form={formModal}
+                  layout="vertical"
+                  style={{ marginTop: 24 }}
+                >
+                  <Form.Item
+                    label="Trạng thái mới"
+                    name="status"
+                    rules={[
+                      { required: true, message: "Vui lòng chọn trạng thái" },
+                    ]}
+                  >
+                    <SettingSelect
+                      type={SETTINGS_TYPE.ORDER_STATUS}
+                      placeholder="- Chọn -"
+                    />
+                  </Form.Item>
+                </Form>
+              </Modal>
+            </>
+          )}
+          <Space size={"middle"} style={{ marginLeft: 12 }}>
+            <Button type="primary" danger onClick={handleExport}>
+              <span style={{ marginRight: 10 }}>Export</span> <ExportOutlined />
+            </Button>
+          </Space>
         </>
-      )}
-      {currentUser?.role === "admin" && (
-        <Space size={"middle"} style={{ marginLeft: 12 }}>
-          <Button type="primary" danger onClick={handleExport}>
-            <span style={{ marginRight: 10 }}>Export</span> <ExportOutlined />
-          </Button>
-        </Space>
       )}
     </Flex>
   );
