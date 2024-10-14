@@ -87,13 +87,19 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
 
   const handleCustomerStatusChange = (value: string) => {
     onFilter({
+      customerStatus: value,
+    });
+  };
+
+  const handleOrderStatusChange = (value: string) => {
+    onFilter({
       status: value,
     });
   };
 
   return (
     <Row gutter={[16, 16]} style={{ margin: "1rem 0 2rem 0" }}>
-      <Col span={4} style={{ paddingLeft: "0" }}>
+      <Col span={3} style={{ paddingLeft: "0" }}>
         <RangePicker
           onChange={handleDateChange}
           style={{ width: "100%" }}
@@ -132,7 +138,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           ))}
         </Select>
       </Col>
-      <Col span={4}>
+      <Col span={3}>
         <SettingSelect
           type={SETTINGS_TYPE.SOURCE_OF_GOODS}
           style={{ width: "100%" }}
@@ -143,15 +149,26 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           onClear={() => removeFilter(handleFilterReset, OrderFilterKey.SOURCE)}
         />
       </Col>
-      <Col span={4}>
+      <Col span={3}>
         <SettingSelect
-          value={filtersValue.status || null}
-          placeholder="- Chọn trạng thái -"
+          value={filtersValue.customerStatus || null}
+          placeholder="- Chọn trạng thái khách hàng -"
           onChange={handleCustomerStatusChange}
           style={{ width: "100%" }}
           type={SETTINGS_TYPE.STATUS}
           allowClear
           onClear={() => removeFilter(handleFilterReset, OrderFilterKey.CUSTOMER_STATUS)}
+        />
+      </Col>
+      <Col span={3}>
+        <SettingSelect
+            value={filtersValue.status || null}
+            placeholder="- Chọn trạng thái đơn hàng -"
+            onChange={handleOrderStatusChange}
+            style={{ width: "100%" }}
+            type={SETTINGS_TYPE.ORDER_STATUS}
+            allowClear
+            onClear={() => removeFilter(handleFilterReset, OrderFilterKey.STATUS)}
         />
       </Col>
       <Col span={4}>

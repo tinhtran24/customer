@@ -34,6 +34,7 @@ export enum OrderFilterKey {
   SALE = "sale",
   SOURCE = "source",
   CUSTOMER_STATUS = "customerStatus",
+  STATUS = "status",
 }
 
 interface LabelFilterProps {

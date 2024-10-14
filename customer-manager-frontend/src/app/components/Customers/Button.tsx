@@ -123,6 +123,7 @@ export function CreateCustomer({
           setIsModalVisible(false);
         }
         setIsModalVisible(false);
+        window.location.reload();
       } catch (error) {
         message.error("Đã có lỗi xảy ra.");
         setIsModalVisible(false);
@@ -148,6 +149,7 @@ export function CreateCustomer({
           router.refresh();
         }
         setUserInchargeModalVisible(false);
+        window.location.reload();
       } catch (error) {
         message.error("Đã có lỗi xảy ra.");
         setIsModalVisible(false);

@@ -4,6 +4,7 @@ export interface ParamsReset {
   isSourceNull?: boolean;
   isDateNull?: boolean;
   isCustomerStatusNull?: boolean;
+  isOrderStatusNull?: boolean
 }
 
 export interface FilterValues {
@@ -13,4 +14,5 @@ export interface FilterValues {
   sale?: string | null;
   source?: string | null;
   status?: string | null;
+  customerStatus?: string | null
 }

@@ -833,7 +833,8 @@ export async function fetchCustomerDashboard(
   source: string | null,
   from: string | null,
   to: string | null,
-  customerStatus: string | null
+  customerStatus: string | null,
+  status: string | null
 ) {
   try {
     const accessToken = cookies().get("accessToken");
@@ -852,6 +853,9 @@ export async function fetchCustomerDashboard(
     }
     if (customerStatus)
       url.searchParams.append("customerStatus", customerStatus);
+
+    if (status)
+      url.searchParams.append("status", status);
 
     const res = await fetch(url.toString(), {
       cache: "no-store",

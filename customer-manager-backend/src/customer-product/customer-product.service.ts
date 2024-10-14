@@ -175,9 +175,9 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
 
     async updateBulk (data: UpdateCustomerProductBulkDto) {
         const updatedData = await this.repository.createQueryBuilder('CustomerProduct')
-            .update(Customer)
+            .update(CustomerProduct)
             .set({ status: data.status })
-            .where('"CustomerProduct"."id" IN (:...ids)', { ids: data.ids })
+            .where('"customer_product"."id" IN (:...ids)', { ids: data.ids })
             .returning("*") // returns all the column values
             .updateEntity(true)
             .execute();

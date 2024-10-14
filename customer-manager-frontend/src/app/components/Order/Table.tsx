@@ -70,6 +70,7 @@ export const initFilterOrder = {
   customerName: null,
   source: null,
   sale: null,
+  orderStatus: null
 };
 
 interface TableOrderProps {
@@ -161,6 +162,10 @@ const TableOrder: React.FC<TableOrderProps> = ({
         : null;
     const customerStatus = params?.isCustomerStatusNull
       ? null
+      : statusFilter || filters.customerStatus;
+
+    const status = params?.isOrderStatusNull
+      ? null
       : statusFilter || filters.status;
 
     setFilters({
@@ -169,7 +174,8 @@ const TableOrder: React.FC<TableOrderProps> = ({
       source: source,
       from: from ? new Date(from) : null,
       to: to ? new Date(to) : null,
-      status: customerStatus,
+      customerStatus: customerStatus,
+      status: status,
     });
     setFilteredValues({
       customerName: cusName,
@@ -177,7 +183,8 @@ const TableOrder: React.FC<TableOrderProps> = ({
       source: source,
       from: from ? new Date(from) : null,
       to: to ? new Date(to) : null,
-      status: customerStatus,
+      customerStatus: customerStatus,
+      status: status,
     });
 
     const data = await fetchCustomerDashboard(
@@ -188,7 +195,8 @@ const TableOrder: React.FC<TableOrderProps> = ({
       source || null,
       from,
       to,
-      customerStatus || null
+      customerStatus || null,
+        status || null
     );
     if (data.statusCode == 500) {
       message.error(
