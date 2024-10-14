@@ -85,7 +85,7 @@ export class TaskService extends BaseService<Task, TaskRepository> {
 
     async updateBulk (data: UpdateCustomerProductBulkDto) {
         const updatedData = await this.repository.createQueryBuilder('Task')
-            .update(CustomerProduct)
+            .update(Task)
             .set({ status: data.status })
             .where('"task"."id" IN (:...ids)', { ids: data.ids })
             .returning("*") // returns all the column values
@@ -96,9 +96,9 @@ export class TaskService extends BaseService<Task, TaskRepository> {
 
     async updateStatus (id: string, data: UpdateTaskStatusDto) {
         const updatedData = await this.repository.createQueryBuilder('Task')
-            .update(CustomerProduct)
+            .update(Task)
             .set({ status: data.status })
-            .where('"task"."id" IN (:...ids)', { ids: id })
+            .where('"task"."id" = :id', { id: id })
             .returning("*") // returns all the column values
             .updateEntity(true)
             .execute();

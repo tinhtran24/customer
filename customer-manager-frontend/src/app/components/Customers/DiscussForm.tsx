@@ -21,7 +21,7 @@ function NoteList({ isLoading, data }: NoteListProps) {
 
     return dataArray?.map((item) => {
       const date = new Date(item.createdAt);
-      const formattedDate = dayjs(date).format('DD/MM/YYY HH:ss')
+      const formattedDate = dayjs(date).format('DD/MM/YYYY HH:mm:ss')
 
       return `${formattedDate} : ${item.description}`;
     });

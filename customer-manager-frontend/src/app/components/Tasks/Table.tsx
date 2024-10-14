@@ -1,12 +1,13 @@
 "use client";
 import Loading from "@/app/dashboard/loading";
 import { fetchAllTask } from "@/app/lib/actions";
-import { Task } from "@/app/lib/definitions";
+import { Customer, Task } from "@/app/lib/definitions";
 import { DatePicker, Button, Row, Col, Table, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { ModalEdit } from "./ModalEdit";
+import Link from "next/link";
 const { RangePicker } = DatePicker;
 
 export default function TaskTable() {
@@ -83,8 +84,13 @@ export default function TaskTable() {
     },
     {
       title: "Tên KH",
-      dataIndex: ["appoinment", "customer", "fullName"],
+      dataIndex: ["appoinment", "customer"],
       key: "CustomerFullname",
+      render: (customer: Customer) => (
+          <Link href={`/dashboard/customers/${customer.id}`}>
+            {customer.fullName}
+          </Link>
+      ),
     },
     {
       title: "Chi tiết",

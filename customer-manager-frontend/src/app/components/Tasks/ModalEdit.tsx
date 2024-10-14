@@ -29,20 +29,9 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
           id: task.id,
           body: { status: values.status },
         });
-        console.log( {
-          id: task.id,
-          body: { status: values.status },
-        })
-
-        if (result.statusCode !== 200) {
-          message.error(
-            Array.isArray(result.message) ? result.message[0] : result.message
-          );
-        } else {
-          message.success("Cập nhật trạng thái công việc thành công");
-          formModal.resetFields();
-          refetch();
-        }
+        message.success("Cập nhật trạng thái công việc thành công");
+        formModal.resetFields();
+        refetch();
       } catch (error) {
       }
       setVisible(false);
