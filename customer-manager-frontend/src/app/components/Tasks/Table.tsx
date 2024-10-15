@@ -126,6 +126,11 @@ export default function TaskTable() {
       key: "status",
     },
     {
+      title: "Ghi chú",
+      dataIndex: "content",
+      key: "content",
+    },
+    {
       title: "",
       key: "action",
       render: (task) => (
