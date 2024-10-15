@@ -171,7 +171,8 @@ export abstract class BaseService<
                 where: { id } as any,
                 withDeleted: this.enable_trash ? true : undefined,
             });
-        } catch {
+        } catch(e) {
+            console.log(e)
             throw new ForbiddenException(`Can not to update ${this.repository.getQBName()}!`);
         }
     }

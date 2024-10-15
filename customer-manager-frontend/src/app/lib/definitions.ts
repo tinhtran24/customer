@@ -162,7 +162,7 @@ export type CustomerProduct = {
   street: string;
   shippingWardCode: string;
   createdUserId: string;
-  updatedUserId: null;
+  updatedUserId?: null;
   customer: Customer;
   customerProductItems: CustomerProductItem[];
   createdUser: User;
@@ -186,6 +186,27 @@ export type NewCustomerProduct = {
     code: string;
     customerId: string;
     createdUserId: string;
+    street: string;
+    price: number;
+    paymentMethod: string;
+    shipMethod: string;
+    status?: string;
+  };
+};
+//#endregion
+
+
+
+export type UpdateCustomerProduct = {
+  items: {
+    productId: string;
+    quantity: number;
+    unitPrice: number;
+  }[];
+  updateCustomerProduct: {
+    code: string;
+    customerId: string;
+    updatedUserId: string;
     street: string;
     price: number;
     paymentMethod: string;

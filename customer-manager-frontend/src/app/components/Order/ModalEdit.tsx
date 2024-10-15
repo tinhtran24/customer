@@ -49,6 +49,7 @@ export function ModalEdit({
       price: customerProduct.price,
       PaymentMethod: customerProduct.paymentMethod,
       ShipMethod: customerProduct.shipMethod,
+      createdUserId: customerProduct.createdUserId,
     };
 
     setSelected((prevState) => ({

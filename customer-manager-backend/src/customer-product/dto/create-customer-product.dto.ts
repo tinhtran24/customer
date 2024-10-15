@@ -53,35 +53,35 @@ export class UpdateCustomerProductDto {
     @ApiProperty()
     customerId: string
 
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty()
+    updatedUserId: string;
+
+    @IsString()
+    @ApiProperty()
+    street: string;
+
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty()
     price: number
 
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty()
-    quality: number
-
-    @IsString()
-    @ApiProperty()
-    @Transform(({ value }) => {
-      return stringCleaner(value);
-    })
-    street: string;
-    
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     paymentMethod: string;
-  
+
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     shipMethod: string;
 
-    @IsUUID()
+    @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    updatedUserId: string;
+    status: string
+
+    @IsUUID()
+    createdUserId?: string;
 }

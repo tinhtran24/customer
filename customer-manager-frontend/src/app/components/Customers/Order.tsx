@@ -3,7 +3,7 @@ import {
   Customer,
   NewCustomerProduct,
   Product,
-  SETTINGS_TYPE,
+  SETTINGS_TYPE, UpdateCustomerProduct,
 } from "@/app/lib/definitions";
 import {
   Form,
@@ -47,6 +47,8 @@ export interface PaymentInformation {
   price: number;
   PaymentMethod: string;
   ShipMethod: string;
+  createdUserId: string;
+  updatedUserId?: string
 }
 
 interface OrderProductProps {
@@ -68,7 +70,7 @@ export default function OrderProduct({
   refetch,
 }: OrderProductProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
-  const { currentUser } = useAuthContext();
+  const {currentUser } = useAuthContext();
   const [selectedProduct, setSelectedProduct] = useState<Product>();
   const [data, setData] = useState<OrderData[]>(initData?.products || []);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -97,32 +99,32 @@ export default function OrderProduct({
 
   const handleFinish = async (values: any) => {
     setIsFormSubmitting(true);
-    const body: NewCustomerProduct = {
-      items: data.map((item) => ({
-        productId: item.product.id,
-        quantity: Number(item.quantity),
-        unitPrice: item.price,
-        source: item.source,
-      })),
-      createCustomerProduct: {
-        code: code,
-        customerId: customer.id,
-        createdUserId: (currentUser as any).sub,
-        street: values.street,
-        price: data.reduce((acc, item) => acc + item.totalPrice, 0),
-        paymentMethod: values.PaymentMethod,
-        shipMethod: values.ShipMethod,
-        status: values.orderStatus
-      },
-    };
     if (initData) {
+      const body: UpdateCustomerProduct = {
+        items: data.map((item) => ({
+          productId: item.product.id,
+          quantity: Number(item.quantity),
+          unitPrice: item.price,
+          source: item.source,
+        })),
+        updateCustomerProduct: {
+          code: code,
+          customerId: customer.id,
+          updatedUserId: (currentUser as any).sub,
+          street: values.street,
+          price: data.reduce((acc, item) => acc + item.totalPrice, 0),
+          paymentMethod: values.PaymentMethod,
+          shipMethod: values.ShipMethod,
+          status: values.orderStatus
+        },
+      };
+
       const result = await updateCustomerProduct({
         id: initData.id,
         body: body,
       });
       try {
         setIsFormSubmitting(false);
-
         if (result.statusCode) {
           message.error(
             Array.isArray(result.message) ? result.message[0] : result.message
@@ -135,11 +137,27 @@ export default function OrderProduct({
         }
       } catch {}
     } else {
+      const body: NewCustomerProduct = {
+        items: data.map((item) => ({
+          productId: item.product.id,
+          quantity: Number(item.quantity),
+          unitPrice: item.price,
+          source: item.source,
+        })),
+        createCustomerProduct: {
+          code: code,
+          customerId: customer.id,
+          createdUserId: (currentUser as any).sub,
+          street: values.street,
+          price: data.reduce((acc, item) => acc + item.totalPrice, 0),
+          paymentMethod: values.PaymentMethod,
+          shipMethod: values.ShipMethod,
+          status: values.orderStatus
+        },
+      };
       try {
         const result = await createCustomerProduct(body);
-
         setIsFormSubmitting(false);
-
         if (result.statusCode) {
           message.error(
             Array.isArray(result.message) ? result.message[0] : result.message

@@ -150,7 +150,11 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
               'Đơn hàng không tồn tại',
             )
           }
-        const customerOrder = await this.update(item, data.createCustomerProduct)
+        const updateData = {
+            ...data.updateCustomerProductDto,
+            createdUserId : customerProduct.createdUserId
+        }
+        const customerOrder = await this.update(item, updateData)
         await this.customerProductItemRepository.delete({customerProductId: item})
         for (const item of data.items) {
             item.customerProductId = customerOrder.id

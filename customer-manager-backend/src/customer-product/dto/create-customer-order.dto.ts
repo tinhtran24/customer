@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CreateCustomerProductItemDto } from "./create-customer-product-item.dto";
-import { CreateCustomerProductDto } from "./create-customer-product.dto";
-import { IsUUID } from "class-validator";
+import { CreateCustomerProductDto, UpdateCustomerProductDto } from "./create-customer-product.dto";
 
 export class CreateCustomerOrderDto {
    @ApiProperty()
@@ -16,5 +15,5 @@ export class UpdateCustomerOrderDto {
    items: CreateCustomerProductItemDto[]
 
    @ApiProperty()
-   createCustomerProduct: CreateCustomerProductDto 
+   updateCustomerProductDto: UpdateCustomerProductDto
 }

@@ -8,7 +8,7 @@ import {
   NewCustomer,
   NewCustomerProduct,
   NewProduct,
-  NewUser,
+  NewUser, UpdateCustomerProduct,
   UpdateSetting,
   UpdateUser,
 } from "@/app/lib/definitions";
@@ -1010,7 +1010,7 @@ export async function fetchCustomerStatus() {
 
 export async function updateCustomerProduct(params: {
   id: string;
-  body: NewCustomerProduct;
+  body: UpdateCustomerProduct;
 }) {
   const accessToken = cookies().get("accessToken");
   try {
