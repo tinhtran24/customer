@@ -74,13 +74,11 @@ export default function OrderProduct({
   const [selectedProduct, setSelectedProduct] = useState<Product>();
   const [data, setData] = useState<OrderData[]>(initData?.products || []);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [code, setcode] = useState("");
 
   const [form] = Form.useForm();
   const [formModal] = Form.useForm();
 
   useEffect(() => {
-    setcode(generateCode("DH", new Date(), Date.now().valueOf()));
     if (initData) {
       form.resetFields();
       setData(initData.products);
@@ -108,7 +106,7 @@ export default function OrderProduct({
           source: item.source,
         })),
         updateCustomerProduct: {
-          code: code,
+          code: initData.paymentInformation.code,
           customerId: customer.id,
           updatedUserId: (currentUser as any).sub,
           street: values.street,
@@ -145,7 +143,7 @@ export default function OrderProduct({
           source: item.source,
         })),
         createCustomerProduct: {
-          code: code,
+          code: '',
           customerId: customer.id,
           createdUserId: (currentUser as any).sub,
           street: values.street,
