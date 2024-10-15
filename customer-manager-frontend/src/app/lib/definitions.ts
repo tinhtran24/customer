@@ -250,7 +250,8 @@ export type Task = {
   userInChargeId: string;
   appoinment: Appointment;
   userInCharge: User;
-  status: string
+  status: string;
+  content: string; // ghi chú
 };
 //#endregion
 

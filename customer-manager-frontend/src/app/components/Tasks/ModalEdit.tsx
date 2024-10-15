@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { SETTINGS_TYPE, Task } from "@/app/lib/definitions";
 import { FiEdit3 } from "react-icons/fi";
-import { Button, Form, message, Modal } from "antd";
+import { Button, Form, Input, message, Modal } from "antd";
 import Loading from "@/app/dashboard/loading";
 import { SettingSelect } from "../Common/Select";
 import { updateTask } from "@/app/lib/actions";
@@ -27,13 +27,12 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
       try {
         const result = await updateTask({
           id: task.id,
-          body: { status: values.status },
+          body: { status: values.status }, // update content here
         });
         message.success("Cập nhật trạng thái công việc thành công");
         formModal.resetFields();
         refetch();
-      } catch (error) {
-      }
+      } catch (error) {}
       setVisible(false);
       setIsLoading(false);
     });
@@ -72,6 +71,7 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
             style={{ marginTop: 24 }}
             initialValues={{
               status: task.status,
+              content: task.content,
             }}
           >
             <Form.Item
@@ -88,6 +88,14 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
                 type={SETTINGS_TYPE.TASK_STATUS}
                 placeholder="- Chọn -"
               />
+            </Form.Item>
+
+            <Form.Item
+              label="Ghi chú"
+              name="content"
+              rules={[{ required: true, message: "Vui lòng thêm ghi chú" }]}
+            >
+              <Input.TextArea placeholder="Ghi chú..." />
             </Form.Item>
           </Form>
         )}

@@ -7,6 +7,7 @@ import {
 import {
   CreateCustomerAppointmentBody,
   SETTINGS_TYPE,
+  Task,
   User,
 } from "@/app/lib/definitions";
 import {
@@ -33,13 +34,6 @@ import { SettingSelect } from "../Common/Select";
 
 // const { Option } = Select;
 
-interface AppointmentData {
-  code: string;
-  date: string;
-  content: string;
-  // label: string;
-}
-
 interface CreateCustomerAppointmentProps {
   customerId: string;
 }
@@ -50,7 +44,7 @@ export function CreateCustomerAppointment({
   const [formModal] = Form.useForm();
   const { currentUser } = useAuthContext();
 
-  const [data, setData] = useState<AppointmentData[]>([]);
+  const [data, setData] = useState<Task[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -114,7 +108,7 @@ export function CreateCustomerAppointment({
     setIsModalVisible(false);
   };
 
-  const columns: TableColumnsType<AppointmentData> = [
+  const columns: TableColumnsType<Task> = [
     {
       title: "Ngày hẹn",
       dataIndex: "date",
@@ -129,11 +123,22 @@ export function CreateCustomerAppointment({
 
         return `${formattedDate} ${formattedTime}`;
       },
+      width: "20%",
+      ellipsis: true,
     },
     {
       title: "Nội dung",
       dataIndex: "description",
       key: "description",
+      width: "40%",
+      ellipsis: true,
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "content",
+      key: "content",
+      width: "40%",
+      ellipsis: true,
     },
   ];
 
