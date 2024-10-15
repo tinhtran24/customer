@@ -224,7 +224,7 @@ export default function OrderProduct({
       .then((values) => {
         const newData: OrderData = {
           no: data.length + 1,
-          code: code,
+          code: '',
           price: values.price,
           quantity: values.quantity,
           totalPrice: values.price * values.quantity,
