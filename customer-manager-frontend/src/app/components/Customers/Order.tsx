@@ -48,7 +48,7 @@ export interface PaymentInformation {
   PaymentMethod: string;
   ShipMethod: string;
   createdUserId: string;
-  updatedUserId?: string
+  updatedUserId?: string | null;
 }
 
 interface OrderProductProps {

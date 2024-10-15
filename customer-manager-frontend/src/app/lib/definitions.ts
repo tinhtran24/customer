@@ -162,7 +162,7 @@ export type CustomerProduct = {
   street: string;
   shippingWardCode: string;
   createdUserId: string;
-  updatedUserId?: null;
+  updatedUserId?: string | null;
   customer: Customer;
   customerProductItems: CustomerProductItem[];
   createdUser: User;

@@ -108,6 +108,8 @@ export function History({
       price: s.price,
       PaymentMethod: s.paymentMethod,
       ShipMethod: s.shipMethod,
+      createdUserId: s.createdUserId,
+      updatedUserId: s.updatedUserId
     };
 
     setVisible(true);
