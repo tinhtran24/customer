@@ -65,7 +65,7 @@ export class CustomerProduct extends BaseEntity {
   @Column({ name: 'month', nullable: true })
   month: number
 
-  @Column({ name: 'status', nullable: false, default: "Chờ duyệt" })
+  @Column({ name: 'status', nullable: false, default: "Mới" })
   status: string
   
   @BeforeInsert()

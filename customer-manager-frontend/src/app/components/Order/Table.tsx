@@ -359,11 +359,6 @@ const TableOrder: React.FC<TableOrderProps> = ({
       render: (user: User) => user.name,
     },
     {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
