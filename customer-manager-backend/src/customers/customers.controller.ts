@@ -6,7 +6,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   Request,
   UploadedFile,
   UseInterceptors,
@@ -22,7 +21,6 @@ import { UsersService } from 'src/users/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImportCustomerDto } from './dto/import-cusomter.dto';
 import { parse, toDate } from 'date-fns';
-import Role from 'src/roles/roles.entity';
 import { Roles } from "../roles/roles.decorator";
 import { RoleEnum } from "../roles/role.enum";
 

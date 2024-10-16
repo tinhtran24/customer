@@ -1,7 +1,7 @@
 import {
     Entity,
     Column,
-    OneToOne,
+    OneToMany
 } from 'typeorm';
 import { BaseEntity } from "../../core/base/base.entity";
 import { ProductWarehouse } from './product-warehourse.entity';
@@ -20,9 +20,7 @@ export class Product extends BaseEntity {
     @Column({ default: 0 })
     price: number;
 
-    @OneToOne(
-        () => ProductWarehouse,
-        (productWarehouse) => productWarehouse.product,
-      )
-    productWarehouse: ProductWarehouse;
+
+    @OneToMany(() => ProductWarehouse, (productWarehouse) => productWarehouse.product)
+    productWarehouses: ProductWarehouse[];
 }

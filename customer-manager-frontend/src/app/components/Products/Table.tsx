@@ -138,20 +138,20 @@ export default function ProductTable({ products }: { products: Product[] }) {
         return <div style={{ textAlign: "left" }}>{formattedDate}</div>;
       },
     },
-    // {
-    //   title: "Nhập kho",
-    //   width: "5%",
-    //   render: (product) => (
-    //       <ImportOutlined
-    //           onClick={() => handleOpenWarehouseModal(product)}
-    //           size={20}
-    //           style={{
-    //             color: "blue",
-    //             cursor: "pointer",
-    //           }}
-    //       />
-    //   ),
-    // },
+    {
+      title: "Nhập kho",
+      width: "5%",
+      render: (product) => (
+          <ImportOutlined
+              onClick={() => handleOpenWarehouseModal(product)}
+              size={20}
+              style={{
+                color: "blue",
+                cursor: "pointer",
+              }}
+          />
+      ),
+    },
     {
       title: "",
       width: "5%",

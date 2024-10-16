@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import { IsNumber, IsNotEmpty, IsUUID, IsString } from 'class-validator';
-import { stringCleaner } from 'src/utils/stringCleaner';
 
 export class CreateCustomerProductDto {
     @IsString()
@@ -81,7 +79,4 @@ export class UpdateCustomerProductDto {
     @IsNotEmpty()
     @ApiProperty()
     status: string
-
-    @IsUUID()
-    createdUserId?: string;
 }

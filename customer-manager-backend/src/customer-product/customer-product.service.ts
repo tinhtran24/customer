@@ -12,14 +12,17 @@ import { format } from 'date-fns';
 import { Column, Workbook } from 'exceljs';
 import { PassThrough } from 'stream';
 import { UpdateCustomerProductBulkDto } from "./dto/update-customer-order-status.dto";
+import { ProductService } from "../products/product.service";
 
 @Injectable()
 export class CustomerProductService extends BaseService<CustomerProduct, CustomerProductRepository> {
 
     constructor(
         protected customerProductRepository: CustomerProductRepository,
-        protected customerProductItemRepository: CustomerProductItemRepository
-    ) {
+        protected customerProductItemRepository: CustomerProductItemRepository,
+        protected productService: ProductService,
+
+) {
         super(customerProductRepository);
     }
 
@@ -139,26 +142,40 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
+            await this.productService.buy(item.productId, {
+                productWarehouse: {
+                    quantityInStock: 0,
+                    quantityInUse: item.quantity,
+                    source: item.source,
+                    price: item.unitPrice,
+                }
+            })
         }
         return customerOrder
     }
 
-    async updateOrder(item: string, data: UpdateCustomerOrderDto) {
+    async updateOrder(item: string, data: any) {
         const customerProduct = await this.detail(item)
         if (!customerProduct) {
             throw new BadRequestException(
               'Đơn hàng không tồn tại',
             )
-          }
-        const updateData = {
-            ...data.updateCustomerProductDto,
-            createdUserId : customerProduct.createdUserId
         }
-        const customerOrder = await this.update(item, updateData)
+        const customerOrder = await this.update(item, data.updateCustomerProduct)
         await this.customerProductItemRepository.delete({customerProductId: item})
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
+            if(data.updateCustomerProduct.status == 'Hoàn/Hủy') {
+                await this.productService.addStock(item.productId, {
+                    productWarehouse: {
+                        quantityInStock: item.quantity,
+                        quantityInUse: 0,
+                        source: item.source,
+                        price: item.unitPrice,
+                    }
+                })
+            }
         }
         return customerOrder
     }

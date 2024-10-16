@@ -8,4 +8,7 @@ export class ProductRepository extends BaseRepository<Product> {
     protected qbName = 'Product';
 
     protected orderBy = { name: 'updatedAt', order: OrderType.DESC };
+
+    protected relations = ['productWarehouses'];
+
 }

@@ -1,12 +1,15 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 import { Product } from "./product.entity";
 import { BaseEntity } from "../../core/base/base.entity";
 
 @Entity('product_warehouse')
 export class ProductWarehouse extends BaseEntity {
-  @OneToOne(() => Product, { onDelete: 'CASCADE' })
-  @JoinColumn()
+  @ManyToOne(() => Product, (product) => product.productWarehouses)
+  @JoinColumn({name: 'product_id'})
   product: Product;
+
+  @Column({name: 'product_id'})
+  productId: string
 
   @Column({ name: 'quantity_in_stock' })
   quantityInStock: number;

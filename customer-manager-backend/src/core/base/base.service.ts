@@ -95,7 +95,7 @@ export abstract class BaseService<
       }
 
     async findPaginate(
-        options: QueryTaskDto,
+        options: any,
         where?: any
     ): Promise<any> {
         return this.repository.findPaginate(options, where);
@@ -221,13 +221,12 @@ export abstract class BaseService<
     }
 
     /**
-     * @description 
+     * @description
      * @param {string[]} data
-     * @param {PaginateDto<M>} pageOptions
-     * @param {P} [params]
+     * @param options
      * @param {boolean} [trash]
      * @param {QueryHook<E>} [callback]
-     * @returns 
+     * @returns
      */
     async deletePaginate(
         data: string[],

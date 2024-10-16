@@ -21,8 +21,6 @@ import { CreateCustomerOrderDto, UpdateCustomerOrderDto } from "./dto/create-cus
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
 import { Roles } from "src/roles/roles.decorator";
 import { RoleEnum } from "src/roles/role.enum";
-import e from "express";
-import { UpdateCustomerBulkDto } from "../customers/dto/update-customer.dto";
 import { UpdateCustomerProductBulkDto } from "./dto/update-customer-order-status.dto";
 
 @Crud({
@@ -98,13 +96,12 @@ export class CustomerProductController extends BaseController<CustomerProductSer
     }
 
     @Patch('order/:id')
-    @Roles(RoleEnum.Admin)
     @ApiBody({ type: UpdateCustomerOrderDto })
     async updateOrder(
         @Param('id', new ParseUUIDPipe())
-        item: string,
+            item: string,
         @Body()
-        data: any,
+            data: any,
         ...args: any[]
     ) {
         try {

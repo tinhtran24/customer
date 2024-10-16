@@ -1092,9 +1092,9 @@ export async function updateCustomerProductStatus(body: {
 export async function productWarehouse(productId: string,body: ProductWarehouse) {
   const accessToken = cookies().get("accessToken");
   try {
-    const url = process.env.BACKEND_URL + `/product/update-product-warehouse/${productId}`;
+    const url = process.env.BACKEND_URL + `/product/product-warehouse/${productId}`;
     const res = await fetch(url, {
-      method: "PATCH",
+      method: "POST",
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
