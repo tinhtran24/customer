@@ -6,6 +6,7 @@ export class UpdateProductWarehouse {
       quantityInStock: 0,
       quantityInUse: 0,
       source: 'Hà Nội',
+      price: 0,
     },
     required: false,
   })
@@ -13,5 +14,6 @@ export class UpdateProductWarehouse {
     quantityInStock: number;
     quantityInUse: number;
     source: string;
+    price: number;
   };
 }

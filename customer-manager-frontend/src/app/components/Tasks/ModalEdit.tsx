@@ -6,6 +6,8 @@ import { Button, Form, Input, message, Modal } from "antd";
 import Loading from "@/app/dashboard/loading";
 import { SettingSelect } from "../Common/Select";
 import { updateTask } from "@/app/lib/actions";
+import { ModelCreate } from "@/app/components/Tasks/ModelCreate";
+import { PlusOutlined } from "@ant-design/icons";
 
 const cssButton: React.CSSProperties = {
   cursor: "pointer",
@@ -16,6 +18,7 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
   const [formModal] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const openModal = async () => {
     setVisible(true);
@@ -27,7 +30,10 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
       try {
         const result = await updateTask({
           id: task.id,
-          body: { status: values.status }, // update content here
+          body: {
+            status: values.status,
+            description: values.description
+          }, // update content here
         });
         message.success("Cập nhật trạng thái công việc thành công");
         formModal.resetFields();
@@ -41,6 +47,12 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
   return (
     <>
       <FiEdit3 onClick={() => openModal()} size={20} style={cssButton} />
+      <ModelCreate
+          customerId={task.appoinment.customerId}
+          refetch={() => refetch()}
+          setIsModalVisible= {setIsModalVisible}
+          isModalVisible={isModalVisible}
+      />
       <Modal
         visible={visible}
         title="Cập nhật"
@@ -48,6 +60,18 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
           setVisible(false);
         }}
         footer={[
+          <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={
+                () => {
+                  setIsModalVisible(true)
+                  setVisible(false)
+                }
+              }
+          >
+            Thêm lịch hẹn
+          </Button>,
           <Button key="back" onClick={() => setVisible(false)}>
             Thoát
           </Button>,
@@ -59,45 +83,47 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
             loading={isLoading}
           >
             Cập nhật
-          </Button>,
+          </Button>
         ]}
       >
         {!task ? (
           <Loading />
         ) : (
-          <Form
-            form={formModal}
-            layout="vertical"
-            style={{ marginTop: 24 }}
-            initialValues={{
-              status: task.status,
-              content: task.content,
-            }}
-          >
-            <Form.Item
-              label="Trạng thái công việc"
-              name="status"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn trạng thái công việc",
-                },
-              ]}
+          <>
+            <Form
+                form={formModal}
+                layout="vertical"
+                style={{ marginTop: 24 }}
+                initialValues={{
+                  status: task.status,
+                  content: task.content,
+                }}
             >
-              <SettingSelect
-                type={SETTINGS_TYPE.TASK_STATUS}
-                placeholder="- Chọn -"
-              />
-            </Form.Item>
+              <Form.Item
+                  label="Trạng thái công việc"
+                  name="status"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn trạng thái công việc",
+                    },
+                  ]}
+              >
+                <SettingSelect
+                    type={SETTINGS_TYPE.TASK_STATUS}
+                    placeholder="- Chọn -"
+                />
+              </Form.Item>
 
-            <Form.Item
-              label="Ghi chú"
-              name="content"
-              rules={[{ required: true, message: "Vui lòng thêm ghi chú" }]}
-            >
-              <Input.TextArea placeholder="Ghi chú..." />
-            </Form.Item>
-          </Form>
+              <Form.Item
+                  label="Ghi chú"
+                  name="description"
+                  rules={[{ required: true, message: "Vui lòng thêm ghi chú" }]}
+              >
+                <Input.TextArea placeholder="Ghi chú..." />
+              </Form.Item>
+            </Form>
+          </>
         )}
       </Modal>
     </>

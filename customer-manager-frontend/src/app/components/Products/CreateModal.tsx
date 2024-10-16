@@ -81,7 +81,6 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
         >
           <Input.TextArea rows={4} placeholder="Mô tả ..." />
         </Form.Item>
-
       </Form>
     </Modal>
   );

@@ -17,6 +17,9 @@ export class ProductWarehouse extends BaseEntity {
   @Column({ name: 'display_quantity' })
   displayQuantity: number;
 
+  @Column({ default: 0 })
+  price: number;
+
   @Column({ name: 'source', nullable: true })
   source: string
 }

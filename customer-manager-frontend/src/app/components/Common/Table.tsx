@@ -12,6 +12,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { UpdateModal } from "./UpdateModal";
 import { useState } from "react";
 import { deleteSetting, updateSettings } from "@/app/lib/actions";
+import dayjs from "dayjs";
 
 interface CommonTableProps {
   data: Setting[];
@@ -91,12 +92,8 @@ export default function CommonTable({ data, type }: CommonTableProps) {
       key: "createdAt",
       render: (d: string) => {
         const date = new Date(d);
-        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
-          date.getMonth() + 1
-        )
-          .toString()
-          .padStart(2, "0")}/${date.getFullYear()}`;
-        return <div style={{ textAlign: "center" }}>{formattedDate}</div>;
+        const formattedDate = dayjs(date).format('DD/MM/YYYY')
+        return <div style={{ textAlign: "left" }}>{formattedDate}</div>;
       },
     },
     {
@@ -106,12 +103,8 @@ export default function CommonTable({ data, type }: CommonTableProps) {
       key: "updatedAt",
       render: (d: string) => {
         const date = new Date(d);
-        const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(
-          date.getMonth() + 1
-        )
-          .toString()
-          .padStart(2, "0")}/${date.getFullYear()}`;
-        return <div style={{ textAlign: "center" }}>{formattedDate}</div>;
+        const formattedDate = dayjs(date).format('DD/MM/YYYY')
+        return <div style={{ textAlign: "left" }}>{formattedDate}</div>;
       },
     },
     {

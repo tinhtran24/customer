@@ -148,6 +148,15 @@ export type Product = {
 export type NewProduct = { title: string; description: string; code: string };
 //#endregion
 
+export type ProductWarehouse = {
+  productWarehouse: {
+    source: string;
+    quantityInStock: number;
+    quantityInUse: number;
+    price: number
+  };
+};
+
 //#region Customer product
 export type CustomerProduct = {
   id: string;

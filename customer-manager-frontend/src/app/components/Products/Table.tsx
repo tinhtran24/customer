@@ -1,6 +1,6 @@
 "use client";
 import { NewProduct, Product } from "@/app/lib/definitions";
-import { Table, Tooltip, theme, message, Modal } from "antd";
+import { Table, Tooltip, theme, message, Modal, Space, Button } from "antd";
 import { useEffect, useState } from "react";
 import type { TableColumnsType } from "antd";
 import { UpdateProductModal } from "./UpdateModal";
@@ -8,6 +8,9 @@ import { MdDeleteOutline } from "react-icons/md";
 import { FiEdit3 } from "react-icons/fi";
 import { deleteProduct, updateProduct } from "@/app/lib/actions";
 import router from "next/router";
+import Link from "next/link";
+import { ImportOutlined } from "@ant-design/icons";
+import { ProductWarehouseModal } from "@/app/components/Products/ProductWarehouseModal";
 
 export default function ProductTable({ products }: { products: Product[] }) {
   const {
@@ -18,10 +21,21 @@ export default function ProductTable({ products }: { products: Product[] }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isWarehouseVisible, setIsWarehouseVisible] = useState(false);
 
   const handleOpenUpdateModal = (product: Product) => {
     setSelectedProduct(product);
     setIsUpdateModalVisible(true);
+  };
+
+  const handleOpenWarehouseModal = (product: Product) => {
+    setSelectedProduct(product);
+    setIsWarehouseVisible(true);
+  };
+
+  const handleCloseWarehouseModal = () => {
+    setIsWarehouseVisible(false);
+    setSelectedProduct(null);
   };
 
   const handleCloseUpdateModal = () => {
@@ -124,32 +138,44 @@ export default function ProductTable({ products }: { products: Product[] }) {
         return <div style={{ textAlign: "left" }}>{formattedDate}</div>;
       },
     },
+    // {
+    //   title: "Nhập kho",
+    //   width: "5%",
+    //   render: (product) => (
+    //       <ImportOutlined
+    //           onClick={() => handleOpenWarehouseModal(product)}
+    //           size={20}
+    //           style={{
+    //             color: "blue",
+    //             cursor: "pointer",
+    //           }}
+    //       />
+    //   ),
+    // },
     {
       title: "",
       width: "5%",
       render: (product) => (
-        <FiEdit3
-          onClick={() => handleOpenUpdateModal(product)}
-          size={20}
-          style={{
-            color: "green",
-            cursor: "pointer",
-          }}
-        />
-      ),
-    },
-    {
-      title: "",
-      width: "5%",
-      render: (product) => (
-        <MdDeleteOutline
-          onClick={() => showDeleteConfirm(product)}
-          size={20}
-          style={{
-            color: "red",
-            cursor: "pointer",
-          }}
-        />
+        <>
+         <Space size="middle">
+          <FiEdit3
+              onClick={() => handleOpenUpdateModal(product)}
+              size={20}
+              style={{
+                color: "green",
+                cursor: "pointer",
+              }}
+          />
+            <MdDeleteOutline
+                onClick={() => showDeleteConfirm(product)}
+                size={20}
+                style={{
+                  color: "red",
+                  cursor: "pointer",
+                }}
+            />
+          </Space>
+        </>
       ),
     },
   ];
@@ -166,12 +192,19 @@ export default function ProductTable({ products }: { products: Product[] }) {
         dataSource={products}
       />
       {selectedProduct && (
-        <UpdateProductModal
-          visible={isUpdateModalVisible}
-          onClose={handleCloseUpdateModal}
-          onUpdateProduct={handleUpdateProduct}
-          initialValues={selectedProduct}
-        />
+        <>
+          <UpdateProductModal
+              visible={isUpdateModalVisible}
+              onClose={handleCloseUpdateModal}
+              onUpdateProduct={handleUpdateProduct}
+              initialValues={selectedProduct}
+          />
+          <ProductWarehouseModal
+              visible={isWarehouseVisible}
+              onClose={handleCloseWarehouseModal}
+              product={selectedProduct}
+          />
+        </>
       )}
     </>
   );

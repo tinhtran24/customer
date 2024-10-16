@@ -8,7 +8,7 @@ import {
   NewCustomer,
   NewCustomerProduct,
   NewProduct,
-  NewUser, UpdateCustomerProduct,
+  NewUser, ProductWarehouse, UpdateCustomerProduct,
   UpdateSetting,
   UpdateUser,
 } from "@/app/lib/definitions";
@@ -677,7 +677,10 @@ export async function fetchTaskByCustomerId(id: string) {
 
 export async function updateTask(params: {
   id: string;
-  body: {status: string;}
+  body: {
+    status: string;
+    description: string;
+  }
 }) {
   try {
     const accessToken = cookies().get("accessToken");
@@ -1084,6 +1087,32 @@ export async function updateCustomerProductStatus(body: {
     };
   }
 }
+
+
+export async function productWarehouse(productId: string,body: ProductWarehouse) {
+  const accessToken = cookies().get("accessToken");
+  try {
+    const url = process.env.BACKEND_URL + `/product/update-product-warehouse/${productId}`;
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    revalidatePath("/dashboard/products");
+
+    return res.json();
+  } catch {
+    return {
+      statusCode: 500,
+      message: "Có lỗi xảy ra. Không nhập kho được sản phẩm",
+    };
+  }
+}
+//#endregion
 
 export async function getToken() {
   return cookies().get("accessToken");

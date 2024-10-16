@@ -6,10 +6,8 @@ import { PaginateDto } from "src/core/base/base.dto";
 import { BetweenDates } from "src/core/helper/filter-query.decorator.util";
 import { QueryTaskDto } from "./dto/filter.dto";
 import { In, ILike } from "typeorm";
-import { DateUtil } from "../utils/date";
 import { UpdateCustomerProductBulkDto } from "../customer-product/dto/update-customer-order-status.dto";
-import { CustomerProduct } from "../customer-product/entities/product-customer.entity";
-import { UpdateTaskDto, UpdateTaskStatusDto } from "./dto/update-task.dto";
+import { UpdateTaskStatusDto } from "./dto/update-task.dto";
 
 @Injectable()
 export class TaskService extends BaseService<Task, TaskRepository> {
@@ -97,7 +95,10 @@ export class TaskService extends BaseService<Task, TaskRepository> {
     async updateStatus (id: string, data: UpdateTaskStatusDto) {
         const updatedData = await this.repository.createQueryBuilder('Task')
             .update(Task)
-            .set({ status: data.status })
+            .set({
+                status: data.status,
+                description: data.description
+            })
             .where('"task"."id" = :id', { id: id })
             .returning("*") // returns all the column values
             .updateEntity(true)

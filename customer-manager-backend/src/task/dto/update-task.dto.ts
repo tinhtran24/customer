@@ -33,4 +33,9 @@ export class UpdateTaskStatusDto {
     @IsNotEmpty()
     @ApiProperty()
     status: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    description: string
 }
