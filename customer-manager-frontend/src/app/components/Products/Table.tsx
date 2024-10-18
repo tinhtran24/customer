@@ -1,5 +1,5 @@
 "use client";
-import { NewProduct, Product } from "@/app/lib/definitions";
+import { NewProduct, Product, ProductWarehouses } from "@/app/lib/definitions";
 import { Table, Tooltip, theme, message, Modal, Space, Button } from "antd";
 import { useEffect, useState } from "react";
 import type { TableColumnsType } from "antd";
@@ -22,6 +22,7 @@ export default function ProductTable({ products }: { products: Product[] }) {
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isWarehouseVisible, setIsWarehouseVisible] = useState(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
   const handleOpenUpdateModal = (product: Product) => {
     setSelectedProduct(product);
@@ -82,6 +83,60 @@ export default function ProductTable({ products }: { products: Product[] }) {
     if (!products) setIsLoading(true);
   }, [products]);
   //#endregion
+
+  const toggleExpand = (key: React.Key) => {
+    if (expandedRowKeys.includes(key)) {
+      setExpandedRowKeys(expandedRowKeys.filter((k) => k !== key));
+    } else {
+      setExpandedRowKeys([...expandedRowKeys, key]);
+    }
+  };
+  
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(price);
+  };
+
+  const expandedRowRender = (record: Product) => {
+    const miniTableColumns: TableColumnsType<any> = [
+      {
+        title: "Tên kho",
+        key: "productName",
+        render: (_: any, s: ProductWarehouses) => s.source,
+        width: "25%",
+      },
+      {
+        title: "Giá",
+        dataIndex: "price",
+        key: "price",
+        render: (s: number) => formatPrice(s),
+        width: "25%",
+      },
+      {
+        title: "Đã bán",
+        dataIndex: "quantityInUse",
+        key: "quantityInUse",
+        width: "25%",
+      },
+      {
+        title: "Còn lại",
+        dataIndex: "displayQuantity",
+        key: "displayQuantity",
+        width: "25%",
+      },
+    ];
+
+    return (
+      <Table
+        columns={miniTableColumns}
+        dataSource={record.productWarehouses}
+        pagination={false}
+        rowKey="id"
+      />
+    );
+  };
 
   const columns: TableColumnsType<Product> = [
     {
@@ -190,6 +245,12 @@ export default function ProductTable({ products }: { products: Product[] }) {
         }}
         columns={columns}
         dataSource={products}
+        rowKey={(record) => record.id}
+        expandedRowKeys={expandedRowKeys}
+        onExpand={(expanded, record) => toggleExpand(record.id)}
+        expandable={{
+          expandedRowRender,
+        }}
       />
       {selectedProduct && (
         <>

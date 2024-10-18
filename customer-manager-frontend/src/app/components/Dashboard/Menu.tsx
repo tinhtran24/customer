@@ -1,5 +1,5 @@
 "use client";
-import { IdcardOutlined, DownSquareOutlined } from "@ant-design/icons";
+import { IdcardOutlined } from "@ant-design/icons";
 import { FaRegUser, FaShippingFast, FaTasks } from "react-icons/fa";
 import { FaShop } from "react-icons/fa6";
 import { GrDocumentConfig } from "react-icons/gr";

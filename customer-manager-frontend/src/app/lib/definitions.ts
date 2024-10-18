@@ -143,6 +143,20 @@ export type Product = {
   updatedAt: string;
   deletedAt: string;
   code: string;
+  productWarehouses: ProductWarehouses[];
+};
+
+export type ProductWarehouses = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+  productId: string;
+  quantityInStock: number;
+  quantityInUse: number;
+  displayQuantity: number;
+  price: number;
+  source: string;
 };
 
 export type NewProduct = { title: string; description: string; code: string };

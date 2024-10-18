@@ -9,7 +9,7 @@ import { Dayjs } from "dayjs";
 
 export default function CustomerPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [filteredValue, setFilteredValue] = useState({
     searchText: "",
     status: "",
@@ -48,6 +48,7 @@ export default function CustomerPage() {
             filteredValue={filteredValue}
             setFilteredValue={setFilteredValue}
             pageSize={pageSize}
+            setPageSize={setPageSize}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             customerIds={customerIds}

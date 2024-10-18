@@ -3,7 +3,8 @@ import {
   Customer,
   NewCustomerProduct,
   Product,
-  SETTINGS_TYPE, UpdateCustomerProduct,
+  SETTINGS_TYPE,
+  UpdateCustomerProduct,
 } from "@/app/lib/definitions";
 import {
   Form,
@@ -24,6 +25,7 @@ import { generateCode } from "@/app/utils/generateString";
 const { Option } = Select;
 import {
   createCustomerProduct,
+  fetchAllProducts,
   updateCustomerProduct,
 } from "@/app/lib/actions";
 import { SettingSelect } from "../Common/Select";
@@ -63,20 +65,31 @@ interface OrderProductProps {
   refetch?: any;
 }
 export default function OrderProduct({
-  products,
   customer,
   provinces,
   initData,
   refetch,
 }: OrderProductProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
-  const {currentUser } = useAuthContext();
+  const { currentUser } = useAuthContext();
   const [selectedProduct, setSelectedProduct] = useState<Product>();
   const [data, setData] = useState<OrderData[]>(initData?.products || []);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [form] = Form.useForm();
   const [formModal] = Form.useForm();
+
+  const [sourceSelected, setSourceSelected] = useState<string>();
+  const [productsBySource, setProductsBySource] = useState<Product[]>([]);
+
+  const refreshProduct = async () => {
+    setProductsBySource(
+      await fetchAllProducts({ source: sourceSelected || "" })
+    );
+  };
+  useEffect(() => {
+    refreshProduct();
+  }, [sourceSelected]);
 
   useEffect(() => {
     if (initData) {
@@ -113,7 +126,7 @@ export default function OrderProduct({
           price: data.reduce((acc, item) => acc + item.totalPrice, 0),
           paymentMethod: values.PaymentMethod,
           shipMethod: values.ShipMethod,
-          status: values.orderStatus
+          status: values.orderStatus,
         },
       };
 
@@ -143,14 +156,14 @@ export default function OrderProduct({
           source: item.source,
         })),
         createCustomerProduct: {
-          code: '',
+          code: "",
           customerId: customer.id,
           createdUserId: (currentUser as any).sub,
           street: values.street,
           price: data.reduce((acc, item) => acc + item.totalPrice, 0),
           paymentMethod: values.PaymentMethod,
           shipMethod: values.ShipMethod,
-          status: values.orderStatus
+          status: values.orderStatus,
         },
       };
       try {
@@ -179,7 +192,7 @@ export default function OrderProduct({
 
   const columns: TableColumnsType<OrderData> = [
     { title: "STT", dataIndex: "no", key: "no", render: (no: number) => no },
-    { title: "Mã sản phẩm", dataIndex: "code", key: "code" },
+    // { title: "Mã sản phẩm", dataIndex: "code", key: "code" },
     {
       title: "Tên sản phẩm",
       dataIndex: "product",
@@ -224,7 +237,7 @@ export default function OrderProduct({
       .then((values) => {
         const newData: OrderData = {
           no: data.length + 1,
-          code: '',
+          code: "",
           price: values.price,
           quantity: values.quantity,
           totalPrice: values.price * values.quantity,
@@ -245,7 +258,7 @@ export default function OrderProduct({
   };
 
   const handleSelectChange = (value: string) => {
-    const product = products.find((p) => p.id === value);
+    const product = productsBySource.find((p) => p.id === value);
     if (product) {
       setSelectedProduct(product);
       formModal.setFieldsValue({
@@ -313,15 +326,28 @@ export default function OrderProduct({
           form={formModal}
           layout="vertical"
           onFinish={handleOk}
-          initialValues={{ quantity: 1 }}
+          initialValues={{ quantity: 1, source: sourceSelected }}
         >
-          <Form.Item name="source" label="Nguồn hàng">
+          <Form.Item
+            name="source"
+            label="Nguồn hàng"
+            rules={
+              data.length > 0
+                ? []
+                : [{ required: true, message: "Vui lòng chọn nguồn hàng!" }]
+            }
+          >
             <SettingSelect
               notFoundContent="Không tìm thấy"
               showSearch
               placeholder="- Chọn -"
               optionFilterProp="children"
               type={SETTINGS_TYPE.SOURCE_OF_GOODS}
+              disabled={data.length > 0}
+              onChange={(value: string) => {
+                setSourceSelected(value);
+                formModal.setFieldsValue({ product: undefined });
+              }}
             />
           </Form.Item>
 
@@ -339,7 +365,7 @@ export default function OrderProduct({
               }
               onChange={handleSelectChange}
             >
-              {products.map((product) => (
+              {productsBySource.map((product) => (
                 <Option key={product.id} value={product.id}>
                   {product.title}
                 </Option>

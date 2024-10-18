@@ -8,7 +8,9 @@ import {
   NewCustomer,
   NewCustomerProduct,
   NewProduct,
-  NewUser, ProductWarehouse, UpdateCustomerProduct,
+  NewUser,
+  ProductWarehouse,
+  UpdateCustomerProduct,
   UpdateSetting,
   UpdateUser,
 } from "@/app/lib/definitions";
@@ -350,12 +352,17 @@ export async function updateUserIncharge(body: {
 }
 
 //#region Product
-export async function fetchAllProducts() {
+export async function fetchAllProducts(queryParams?: Record<string, string>) {
   try {
     const accessToken = cookies().get("accessToken");
     const url = new URL(
       `${process.env.BACKEND_URL}/product?page=1&limit=9999999999`
     );
+
+    if (queryParams)
+      Object.keys(queryParams).forEach((key) => {
+        url.searchParams.append(key, queryParams[key]);
+      });
 
     const res = await fetch(url.toString(), {
       cache: "no-store",
@@ -607,7 +614,11 @@ export async function deleteAppointment(id: string) {
 //#endregion
 
 //#region Task
-export async function fetchAllTask(params?: { from?: string; to?: string, status?: string }) {
+export async function fetchAllTask(params?: {
+  from?: string;
+  to?: string;
+  status?: string;
+}) {
   try {
     const accessToken = cookies().get("accessToken");
     const url = new URL(`${process.env.BACKEND_URL}/task`);
@@ -680,7 +691,7 @@ export async function updateTask(params: {
   body: {
     status: string;
     description: string;
-  }
+  };
 }) {
   try {
     const accessToken = cookies().get("accessToken");
@@ -1088,11 +1099,14 @@ export async function updateCustomerProductStatus(body: {
   }
 }
 
-
-export async function productWarehouse(productId: string,body: ProductWarehouse) {
+export async function productWarehouse(
+  productId: string,
+  body: ProductWarehouse
+) {
   const accessToken = cookies().get("accessToken");
   try {
-    const url = process.env.BACKEND_URL + `/product/product-warehouse/${productId}`;
+    const url =
+      process.env.BACKEND_URL + `/product/product-warehouse/${productId}`;
     const res = await fetch(url, {
       method: "POST",
       body: JSON.stringify(body),
