@@ -43,6 +43,7 @@ interface CustomerTableProps {
     }>
   >;
   pageSize: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   customerIds:  { page: number; ids: string[] }[];
@@ -53,6 +54,7 @@ export default function CustomerTable({
   filteredValue,
   setFilteredValue,
   pageSize,
+  setPageSize,
   currentPage,
   setCurrentPage,
   customerIds,
@@ -108,6 +110,7 @@ export default function CustomerTable({
 
     const result = await fetchCustomers({
       page: currentPage.toString(),
+      pageSize: pageSize.toString(),
       limit: pageSize.toString(),
       q: q,
       status: s,
@@ -135,7 +138,7 @@ export default function CustomerTable({
     getData();
     if (!data) setIsLoading(true);
     else setIsLoading(false);
-  }, [currentPage]);
+  }, [currentPage, pageSize]);
 
   //#region get customer status to filter
   const [customerStatus, setCustomerStatus] = useState<
@@ -162,6 +165,7 @@ export default function CustomerTable({
 
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);  
     setData(undefined);
     setIsLoading(true);
   };
@@ -417,7 +421,7 @@ export default function CustomerTable({
             current: currentPage,
             pageSize: pageSize,
             total: data?.meta?.totalItems || 0,
-            showSizeChanger: false,
+            showSizeChanger: true,
           }}
           locale={{
             emptyText: "Không tìm thấy khách hàng",
