@@ -8,6 +8,7 @@ import { ListQueryDto } from "src/core/base/base.dto";
 import { UpdateProductWarehouse } from "./dto/update-product-warehouse.dto";
 import { QueryCustomertDto } from "../customers/dto/filter-customer.dto";
 import { QueryProductWarehouseDto } from "./dto/product-warehouse-filter.dto";
+import { QueryProductDto } from "./dto/product-filter.dto";
 
 @Crud({
     id: 'product',
@@ -22,7 +23,7 @@ import { QueryProductWarehouseDto } from "./dto/product-warehouse-filter.dto";
         'restoreMulti',
     ],
     dtos: {
-        query: ListQueryDto,
+        query: QueryProductDto,
         create: CreateProductDto,
         update: UpdateProductDto,
     },
@@ -34,6 +35,15 @@ export class ProductController extends BaseController<ProductService> {
     constructor(protected productService: ProductService) {
         super(productService);
     }
+    @Get('')
+    async listProductPaging(
+        @Query() options: QueryProductDto,
+        @Request() req
+    ) {
+        let where = {}
+        return this.productService.find(options, where);
+    }
+
     @Get('product-warehouse')
     async listPaging(
         @Query() options: QueryProductWarehouseDto,

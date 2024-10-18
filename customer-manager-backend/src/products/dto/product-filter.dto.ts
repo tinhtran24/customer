@@ -8,7 +8,7 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 @Injectable()
 @DtoValidation({ type: 'query' })
-export class QueryProductWarehouseDto implements PaginateDto, TrashedDto {
+export class QueryProductDto implements PaginateDto, TrashedDto {
     @Transform(({ value }) => Boolean(value))
     @IsBoolean()
     @IsOptional()
@@ -32,12 +32,18 @@ export class QueryProductWarehouseDto implements PaginateDto, TrashedDto {
     @ApiProperty()
     limit: number;
 
-    @IsUUID()
     @IsOptional()
     @ApiProperty()
     @ApiPropertyOptional()
-    productId: string;
+    title: string;
 
+    
+    @IsOptional()
+    @ApiProperty()
+    @ApiPropertyOptional()
+    code: string;
+
+    @IsOptional()
     @ApiProperty()
     @ApiPropertyOptional()
     @IsOptional()

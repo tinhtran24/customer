@@ -1,6 +1,8 @@
 import {
     Entity,
     Column,
+    ManyToMany,
+    ManyToOne,
     OneToMany
 } from 'typeorm';
 import { BaseEntity } from "../../core/base/base.entity";

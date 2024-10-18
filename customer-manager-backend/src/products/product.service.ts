@@ -4,9 +4,10 @@ import { BaseService } from "../core/base/base.service";
 import { ProductRepository } from './product.repository';
 import { UpdateProductWarehouse } from './dto/update-product-warehouse.dto';
 import { ProductWarehouseRepository } from './product-warehouse.repository';
-import { ILike } from 'typeorm';
+import { ILike, SelectQueryBuilder } from 'typeorm';
 import { QueryTaskDto } from "../task/dto/filter.dto";
 import { QueryProductWarehouseDto } from "./dto/product-warehouse-filter.dto";
+import { QueryProductDto } from './dto/product-filter.dto';
 
 @Injectable()
 export class ProductService extends BaseService<Product, ProductRepository> {
@@ -19,6 +20,46 @@ export class ProductService extends BaseService<Product, ProductRepository> {
     }
 
     protected enable_trash = true;
+
+    async find(options: QueryProductDto, where) {
+        if(!options.code && !options.title && !options.source) {
+            return this.findPaginate(options, where)
+        }
+        const page = Number(options.page || 1) || 1;
+        const perPage = Number(options.limit || 10) || 10;
+        const skip = page > 0 ? perPage * (page - 1) : 0;
+
+        const qb = this.repository.createQueryBuilder("Product")
+                    .leftJoinAndSelect("Product.productWarehouses", "productWarehouses")
+                    .take(perPage)
+                    .skip(skip)
+                    .where('1 = 1')
+            
+        if (options.code) {
+            qb.andWhere('"Product"."code" LIKE :code', {code: `%${options.code}%`})
+        }
+        if (options.title) {
+            qb.andWhere('"Product"."title" LIKE :title', {title: `%${options.title}%`})
+        }
+        if(options.source) {
+            qb.andWhere('"productWarehouses"."source" LIKE :source', {source: `%${options.source}%`})
+        }
+
+        const [items, total] = await qb.getManyAndCount()
+        const lastPage = Math.ceil(total / options.limit);
+
+        return {
+            items: items,
+            meta: {
+              itemCount: items.length,
+              totalItems: total,
+              itemsPerPage: options.limit,
+              totalPages: lastPage,
+              currentPage: page,
+              next: page < lastPage ? page + 1 : null,
+            },
+          };
+    }
 
     async findPaginateProductWarehouse(
         options: QueryProductWarehouseDto,
