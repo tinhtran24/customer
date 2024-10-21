@@ -98,8 +98,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 const { quantityInStock, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
                 if (productWarehouseResult) {
-                    productWarehouseResult.quantityInStock += quantityInStock;
-                    productWarehouseResult.displayQuantity += quantityInStock;
+                    productWarehouseResult.quantityInStock += Number(quantityInStock);
+                    productWarehouseResult.displayQuantity += Number(quantityInStock);
                     await this.productWarehouseRepository.save(productWarehouseResult, { reload: true });
                 } else {
                     const newProductWarehouse = this.productWarehouseRepository.create({
@@ -147,8 +147,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 const { quantityInStock, quantityInUse, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
                 if (productWarehouseResult) {
-                    productWarehouseResult.quantityInUse += quantityInUse;
-                    productWarehouseResult.displayQuantity -= quantityInUse;
+                    productWarehouseResult.quantityInUse += Number(quantityInUse);
+                    productWarehouseResult.displayQuantity -= Number(quantityInUse);
                     await this.productWarehouseRepository.save(productWarehouseResult);
                 } else {
                     const newProductWarehouse = this.productWarehouseRepository.create({
@@ -196,9 +196,9 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 const { quantityInStock, quantityInUse, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
                 if (productWarehouseResult) {
-                    productWarehouseResult.quantityInStock = quantityInStock;
-                    productWarehouseResult.quantityInUse = quantityInUse;
-                    productWarehouseResult.displayQuantity = quantityInStock - quantityInUse;
+                    productWarehouseResult.quantityInStock = Number(quantityInStock);
+                    productWarehouseResult.quantityInUse = Number(quantityInUse);
+                    productWarehouseResult.displayQuantity = Number(quantityInStock - quantityInUse);
                     await this.productWarehouseRepository.save(productWarehouseResult);
                 } else {
                     const newProductWarehouse = this.productWarehouseRepository.create({

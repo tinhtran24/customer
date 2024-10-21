@@ -56,6 +56,9 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
     if (options.from && options.to) {
       where.createdAt = BetweenDates(options.from, options.to)
     }
+    if(options.userInChargeId) {
+        where['userInChargeId'] = Equal(options.userInChargeId)
+    }
     return this.repository.findPaginate(options, where);
   }
 
