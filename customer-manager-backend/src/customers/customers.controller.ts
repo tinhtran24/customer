@@ -150,6 +150,7 @@ export class CustomersController extends BaseController<CustomersService> {
           where['userInChargeId'] = req.user['userId']
       }
       options.limit = 9999
+      options.page = 1
       const data = await this.customersService.findPaginate(options, where);
       const columns = [
           { header: 'ID', key: 'id', width: 20 },

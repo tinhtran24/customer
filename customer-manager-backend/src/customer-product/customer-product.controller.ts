@@ -132,6 +132,7 @@ export class CustomerProductController extends BaseController<CustomerProductSer
             options.userId = req.user['userId']
         }
         options.limit = 9999
+        options.page = 1
         const data = await this.customerProductService.dashboard(options);
         const columns = [
             { header: 'Ngày đặt hàng', key: 'ngayMua', width: 30},
