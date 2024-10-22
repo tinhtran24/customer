@@ -157,6 +157,7 @@ export type ProductWarehouses = {
   displayQuantity: number;
   price: number;
   source: string;
+  product?: Product;
 };
 
 export type NewProduct = { title: string; description: string; code: string };
