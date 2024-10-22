@@ -19,7 +19,7 @@ import {
   MdProductionQuantityLimits,
 } from "react-icons/md";
 import { RiCustomerServiceLine } from "react-icons/ri";
-import { TbShoppingCartSearch } from "react-icons/tb";
+import { TbBuildingWarehouse, TbShoppingCartSearch } from "react-icons/tb";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
 
@@ -60,6 +60,11 @@ export const DashboardMenu = () => {
       key: "/dashboard/order",
       label: "Đơn hàng",
       icon: <FaShop style={{ fontSize: "16px" }} />,
+    },
+    {
+      key: "/dashboard/warehouse",
+      label: "Kho",
+      icon: <TbBuildingWarehouse style={{ fontSize: "16px" }} />,
     },
     {
       key: "/dashboard/tasks",

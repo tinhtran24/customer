@@ -2,7 +2,7 @@
 import Loading from "@/app/dashboard/loading";
 import { fetchAllTask } from "@/app/lib/actions";
 import { Customer, SETTINGS_TYPE, Task } from "@/app/lib/definitions";
-import { DatePicker, Button, Row, Col, Table, Space } from "antd";
+import { DatePicker, Button, Row, Col, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
@@ -15,6 +15,7 @@ const initFilter = {
   from: null as Dayjs | null,
   to: null as Dayjs | null,
   status: "",
+  customerName: "",
 };
 
 export default function TaskTable() {
@@ -22,9 +23,14 @@ export default function TaskTable() {
   const [isLoading, setLoading] = useState(false);
   const [filtersValue, setFiltersValue] = useState(initFilter);
 
-  const getData = async (from?: string, to?: string, status?: string) => {
+  const getData = async (
+    from?: string,
+    to?: string,
+    status?: string,
+    customerName?: string
+  ) => {
     setLoading(true);
-    const data = await fetchAllTask({ from, to, status });
+    const data = await fetchAllTask({ from, to, status, customerName });
     setTasks(data);
     setLoading(false);
   };
@@ -34,7 +40,7 @@ export default function TaskTable() {
   }, []);
 
   const handleResetAll = () => {
-    setFiltersValue({ from: null, to: null, status: "" });
+    setFiltersValue({ from: null, to: null, status: "", customerName: "" });
     getData();
   };
 
@@ -72,7 +78,8 @@ export default function TaskTable() {
       filtersValue.to
         ? dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
         : "",
-      filtersValue.status
+      filtersValue.status,
+      filtersValue.customerName,
     );
   };
 
@@ -105,7 +112,7 @@ export default function TaskTable() {
       ),
     },
     {
-      title: "Chi tiết",
+      title: "Nội dung",
       dataIndex: "description",
       key: "description",
     },
@@ -164,6 +171,20 @@ export default function TaskTable() {
             value={filtersValue.status || null}
             allowClear
             onClear={() => handleChangeStatus("")}
+          />
+        </Col>
+        <Col span={6}>
+          <Input
+            placeholder="Tên khách hàng"
+            allowClear
+            size="large"
+            onChange={(e) => {
+              setFiltersValue((prevState) => ({
+                ...prevState,
+                customerName: e.target.value,
+              }));
+            }}
+            style={{ height: "33px", fontSize: 14 }}
           />
         </Col>
         <Col span={4}>

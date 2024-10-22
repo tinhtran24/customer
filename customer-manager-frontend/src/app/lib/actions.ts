@@ -618,6 +618,7 @@ export async function fetchAllTask(params?: {
   from?: string;
   to?: string;
   status?: string;
+  customerName?: string;
 }) {
   try {
     const accessToken = cookies().get("accessToken");
@@ -635,7 +636,10 @@ export async function fetchAllTask(params?: {
     if (params?.status) {
       url.searchParams.set("status", params.status);
     }
-
+    if (params?.customerName) {
+      url.searchParams.set("customer", params.customerName);
+    }
+    
     const res = await fetch(url.toString(), {
       method: "GET",
       cache: "no-store",
@@ -1135,3 +1139,72 @@ export async function getToken() {
 export async function getURL() {
   return process.env.BACKEND_URL;
 }
+
+//#region  Ware house
+export async function fetchWareHouse() {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/product/product-warehouse?page=1&limit=99999999999`
+    );
+
+    const res = await fetch(url.toString(), {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch warehouse");
+    }
+
+    // Parse response và lấy items
+    const data = await res.json();
+    return data.items || [];
+  } catch (error) {
+    console.error("Error fetching warehouse:", error);
+    return [];
+  }
+}
+
+export async function updateWareHouse(params: {
+  id: string;
+  body: {
+    productWarehouse: {
+      quantityInStock: number;
+      quantityInUse: number;
+      source: string;
+      price: number;
+    };
+  };
+}) {
+  try {
+    const accessToken = cookies().get("accessToken");
+    const url = new URL(
+      `${process.env.BACKEND_URL}/product/product-warehouse/${params.id}`
+    );
+
+    const res = await fetch(url, {
+      method: "PATCH",
+      body: JSON.stringify(params.body),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken?.value}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch warehouse");
+    }
+
+    revalidatePath("/dashboard/warehouse");
+
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching warehouse:", error);
+    return [];
+  }
+}
+//#endregion
