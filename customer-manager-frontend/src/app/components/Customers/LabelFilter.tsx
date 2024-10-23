@@ -18,12 +18,17 @@ export const removeFilterCustomer = (
   if (filterKey === CustomerFilterKey.DATE) {
     handleFilterReset({ isDateNull: true });
   }
+
+  if (filterKey === CustomerFilterKey.USER_IN_CHARGE) {
+    handleFilterReset({ isUserInChargeNull: true });
+  }
 };
 
 export enum CustomerFilterKey {
   SEARCH_TEXT = "searchText",
   STATUS = "status",
-  DATE = "date"
+  DATE = "date",
+  USER_IN_CHARGE = "userIncharge",
 }
 
 interface LabelFilterProps {
@@ -31,6 +36,7 @@ interface LabelFilterProps {
     searchText: string;
     status: string;
     date: [Dayjs | null, Dayjs | null];
+    userInCharge: string;
   };
   handleFilterReset: (params: FilterCustomer) => void;
 }
@@ -56,6 +62,18 @@ export const LabelFilter = ({
           label={filteredValue.status}
           onClose={() =>
             removeFilterCustomer(handleFilterReset, CustomerFilterKey.STATUS)
+          }
+        />
+      )}
+
+      {filteredValue.userInCharge && (
+        <ReusableTag
+          label={filteredValue.userInCharge.split("@")[1]}
+          onClose={() =>
+            removeFilterCustomer(
+              handleFilterReset,
+              CustomerFilterKey.USER_IN_CHARGE
+            )
           }
         />
       )}

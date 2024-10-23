@@ -14,6 +14,7 @@ export default function CustomerPage() {
     searchText: "",
     status: "",
     date: [null, null] as [Dayjs | null, Dayjs | null],
+    userInCharge: "",
   });
   const [customerIds, setCustomerIds] = useState<
     { page: number; ids: string[] }[]
