@@ -1,7 +1,7 @@
 "use client";
 import Loading from "@/app/dashboard/loading";
 import { fetchWareHouse, updateWareHouse } from "@/app/lib/actions";
-import { ProductWarehouses, SETTINGS_TYPE } from "@/app/lib/definitions";
+import { ProductWarehouses } from "@/app/lib/definitions";
 import {
   Button,
   Table,
@@ -13,7 +13,7 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
-import { FiEdit3 } from "react-icons/fi";
+import { ImportOutlined } from "@ant-design/icons";
 
 // use to display
 type WarehouseUpdate = {
@@ -157,15 +157,15 @@ export default function WarehourseTable() {
         width: "10%",
       },
       {
-        title: "",
+        title: "Nhập kho",
         key: "edit",
         render: (s: any) => {
           return (
-            <FiEdit3
+            <ImportOutlined
               onClick={() => handleOnClickEdit(record, s)}
               size={20}
               style={{
-                color: "green",
+                color: "blue",
                 cursor: "pointer",
               }}
             />
@@ -302,7 +302,7 @@ export default function WarehourseTable() {
                 { required: true, message: "Vui lòng nhập số lượng nhập!" },
               ]}
             >
-              <Input type="number"/>
+              <Input type="number" />
             </Form.Item>
 
             <Form.Item
@@ -312,7 +312,7 @@ export default function WarehourseTable() {
                 { required: true, message: "Vui lòng nhập số lượng đã bán!" },
               ]}
             >
-              <Input type="number"/>
+              <Input type="number" />
             </Form.Item>
           </Form>
         </Modal>
