@@ -233,7 +233,7 @@ export async function fetchCustomers(queryParams: Record<string, string>) {
     const url = new URL(`${process.env.BACKEND_URL}/customers`);
 
     Object.keys(queryParams).forEach((key) => {
-      url.searchParams.append(key, queryParams[key]);
+      if (queryParams[key]) url.searchParams.append(key, queryParams[key]);
     });
 
     const res = await fetch(url.toString(), {
@@ -627,7 +627,10 @@ export async function fetchAllTask(params?: {
     const url = new URL(`${process.env.BACKEND_URL}/task`);
 
     url.searchParams.set("page", params?.page.toString() || "1");
-    url.searchParams.set("limit", params?.pageSize.toString() || "999999999999");
+    url.searchParams.set(
+      "limit",
+      params?.pageSize.toString() || "999999999999"
+    );
 
     if (params?.from) {
       url.searchParams.set("from", params.from);
@@ -641,7 +644,7 @@ export async function fetchAllTask(params?: {
     if (params?.customerName) {
       url.searchParams.set("customerName", params.customerName);
     }
-    
+
     const res = await fetch(url.toString(), {
       method: "GET",
       cache: "no-store",

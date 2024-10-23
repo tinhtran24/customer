@@ -26,6 +26,7 @@ interface CreateCustomerProp {
     searchText: string;
     status: string;
     date: [Dayjs | null, Dayjs | null];
+    userInCharge: string;
   };
   pageSize: number;
   currentPage: number;
@@ -74,6 +75,7 @@ export function CreateCustomer({
         status: filteredValue.status,
         from: formattedFrom,
         to: formattedTo,
+        userInChargeId: filteredValue.userInCharge.split("@")[0],
       });
     } catch (error) {
       console.error("Error downloading the file:", error);

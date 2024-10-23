@@ -34,19 +34,21 @@ interface CustomerTableProps {
     searchText: string;
     status: string;
     date: [Dayjs | null, Dayjs | null];
+    userInCharge: string;
   };
   setFilteredValue: React.Dispatch<
     React.SetStateAction<{
       searchText: string;
       status: string;
       date: [Dayjs | null, Dayjs | null];
+      userInCharge: string;
     }>
   >;
   pageSize: number;
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  customerIds:  { page: number; ids: string[] }[];
+  customerIds: { page: number; ids: string[] }[];
   setCustomerIds: any;
 }
 
@@ -67,6 +69,7 @@ export default function CustomerTable({
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState("");
   const [date, setDate] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
+  const [userIncharge, setUserIncharge] = useState("");
   const { currentUser } = useAuthContext();
 
   //checkbox to change status
@@ -74,15 +77,11 @@ export default function CustomerTable({
     selectedRowKeys: customerIds.map((c) => c.ids).flat(),
     onChange: (newSelectedRowKeys: React.Key[]) => {
       setCustomerIds((prev: any) => {
-        const existingPage = prev.find(
-          (c: any) => c.page === currentPage
-        );
-  
+        const existingPage = prev.find((c: any) => c.page === currentPage);
+
         if (existingPage) {
           return prev.map((c: any) =>
-            c.page === currentPage
-              ? { ...c, ids: newSelectedRowKeys }
-              : c
+            c.page === currentPage ? { ...c, ids: newSelectedRowKeys } : c
           );
         } else {
           return [...prev, { page: currentPage, ids: newSelectedRowKeys }];
@@ -90,7 +89,6 @@ export default function CustomerTable({
       });
     },
   };
-
 
   const {
     token: { colorPrimary },
@@ -103,10 +101,12 @@ export default function CustomerTable({
     const s = params?.isStatusNull ? "" : statusFilter || status;
     const from = params?.isDateNull || !date[0] ? null : date[0];
     const to = params?.isDateNull || !date[1] ? null : date[1];
+    const userIch = params?.isUserInChargeNull ? "" : userIncharge;
 
     setSearchText(q);
     setStatus(s);
     setDate([from, to]);
+    setUserIncharge(userIch);
 
     const result = await fetchCustomers({
       page: currentPage.toString(),
@@ -116,6 +116,7 @@ export default function CustomerTable({
       status: s,
       from: from ? from.format("YYYY-MM-DD") : "",
       to: to ? to.format("YYYY-MM-DD") : "",
+      userInChargeId: userIch.split("@")[0],
     });
     if (result.statusCode === 500) {
       message.error(
@@ -129,6 +130,7 @@ export default function CustomerTable({
       searchText: q,
       status: s,
       date: [from, to],
+      userInCharge: userIch,
     });
 
     setIsLoading(false);
@@ -160,12 +162,17 @@ export default function CustomerTable({
 
   const handleResetFiltersAll = () => {
     setCurrentPage(1);
-    getData({ isKwNull: true, isStatusNull: true });
+    getData({
+      isKwNull: true,
+      isStatusNull: true,
+      isUserInChargeNull: true,
+      isDateNull: true,
+    });
   };
 
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
-    setPageSize(pagination.pageSize);  
+    setPageSize(pagination.pageSize);
     setData(undefined);
     setIsLoading(true);
   };
@@ -381,9 +388,11 @@ export default function CustomerTable({
       <SearchCustomers
         text={searchText}
         date={date}
+        userInCharge={userIncharge}
         handleDateChange={handleDateChange}
         onChangeText={setSearchText}
         onChangeStatus={setStatus}
+        onChangeUserInCharge={setUserIncharge}
         handleFilter={() => {
           setCurrentPage(1);
           getData();
