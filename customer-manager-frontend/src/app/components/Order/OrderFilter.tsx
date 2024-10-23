@@ -103,6 +103,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
         <RangePicker
           onChange={handleDateChange}
           style={{ width: "100%" }}
+          placeholder={["Từ ngày", "Đến ngày"]}
           value={
             filtersValue.from &&
             filtersValue.to &&

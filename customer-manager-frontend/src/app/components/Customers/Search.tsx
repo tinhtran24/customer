@@ -119,7 +119,7 @@ const SearchCustomers = ({
             </Select>
           </Col>
         )}
-        <Col span={5}>
+        <Col span={8}>
           <RangePicker
             onChange={handleDateChange}
             style={{ height: "35px" }}
@@ -127,7 +127,7 @@ const SearchCustomers = ({
             placeholder={["Từ ngày", "Đến ngày"]}
           />
         </Col>
-        <Col span={4}>
+        <Col span={5}>
           <Button
             type="primary"
             onClick={handleFilter}
