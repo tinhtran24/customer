@@ -639,7 +639,7 @@ export async function fetchAllTask(params?: {
       url.searchParams.set("status", params.status);
     }
     if (params?.customerName) {
-      url.searchParams.set("customer", params.customerName);
+      url.searchParams.set("customerName", params.customerName);
     }
     
     const res = await fetch(url.toString(), {

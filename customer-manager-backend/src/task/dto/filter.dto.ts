@@ -46,4 +46,9 @@ export class QueryTaskDto implements PaginateDto, TrashedDto {
     @ApiProperty()
     @ApiPropertyOptional()
     status: string;
+
+    @IsOptional()
+    @ApiProperty()
+    @ApiPropertyOptional()
+    customerName: string;
 }

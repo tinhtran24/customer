@@ -194,9 +194,9 @@ export default function WarehourseTable() {
         body: {
           productWarehouse: {
             quantityInStock: data.quantityInStock,
-            quantityInUse: data.quantityInUse,
+            quantityInUse: 0,
             source: selectedItem.source,
-            price: selectedItem.price,
+            price: data.price,
           },
         },
       });
@@ -227,7 +227,7 @@ export default function WarehourseTable() {
       title: "STT",
       key: "index",
       render: (_: any, __: any, index: number) => (
-        <div style={{ textAlign: "center" }}>{index + 1}</div>
+        <div style={{ textAlign: "left" }}>{index + 1}</div>
       ),
       width: "20%",
     },
@@ -261,9 +261,8 @@ export default function WarehourseTable() {
         <Modal
           key={selectedItem.productName + selectedItem.source}
           visible={visibleModal}
-          title="Cập nhật"
+          title="Nhập hàng"
           onCancel={handleCancelModal}
-          width={"80%"}
           footer={[
             <Button key="back" onClick={handleCancelModal}>
               Thoát
@@ -284,10 +283,6 @@ export default function WarehourseTable() {
             form={formModal}
             layout="vertical"
             onFinish={handleUpdate}
-            initialValues={{
-              quantityInStock: selectedItem.quantityInStock,
-              quantityInUse: selectedItem.quantityInUse,
-            }}
           >
             <Form.Item>
               {
@@ -306,10 +301,10 @@ export default function WarehourseTable() {
             </Form.Item>
 
             <Form.Item
-              name="quantityInUse"
-              label="Số lượng đã bán"
+              name="price"
+              label="Giá (VNĐ)"
               rules={[
-                { required: true, message: "Vui lòng nhập số lượng đã bán!" },
+                { required: true, message: "Vui lòng nhập đơn giá" },
               ]}
             >
               <Input type="number" />

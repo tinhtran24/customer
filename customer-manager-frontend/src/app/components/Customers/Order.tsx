@@ -75,6 +75,7 @@ export default function OrderProduct({
   const [selectedProduct, setSelectedProduct] = useState<Product>();
   const [data, setData] = useState<OrderData[]>(initData?.products || []);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectDisplayQuanlity, setSelectDisplayQuanlity] = useState<number>(0);
 
   const [form] = Form.useForm();
   const [formModal] = Form.useForm();
@@ -244,7 +245,14 @@ export default function OrderProduct({
           product: selectedProduct!,
           source: values.source,
         };
-        setData([...data, newData]);
+        if (selectDisplayQuanlity < values.quantity) {
+          message.error(
+              'Số lượng nhập lớn hơn số lượng tồn kho'
+          );
+        } else {
+          setData([...data, newData]);
+        }
+        setSelectDisplayQuanlity(0);
         formModal.resetFields();
         setIsModalVisible(false);
       })
@@ -261,6 +269,7 @@ export default function OrderProduct({
     const product = productsBySource.find((p) => p.id === value);
     if (product) {
       setSelectedProduct(product);
+      setSelectDisplayQuanlity(product?.productWarehouses[0].displayQuantity || 0)
       formModal.setFieldsValue({
         price: product!.price, /// check it
       });
@@ -395,7 +404,16 @@ export default function OrderProduct({
               parser={(value) => value?.replace(/\ VNĐ\s?|(,*)/g, "") as any}
             />
           </Form.Item>
-
+          <h3
+              style={{
+                textAlign: "left",
+                fontSize: "14px",
+                fontWeight: "600",
+                marginTop: "20px",
+              }}
+          >
+            Số lượng tồn: {selectDisplayQuanlity}
+          </h3>
           <Form.Item
             label="Số lượng"
             name="quantity"

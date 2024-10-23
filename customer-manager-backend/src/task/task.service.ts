@@ -41,6 +41,13 @@ export class TaskService extends BaseService<Task, TaskRepository> {
         if (options.status) {
             where.status = ILike(`%${options.status}%`)
         }
+        if (options.customerName){
+            where.appoinment = {
+                customer: {
+                    fullName: ILike(`%${options.customerName}%`)
+                }
+            }
+        }
         return this.findPaginateWithOutDis(options, where)
     }
 
@@ -55,7 +62,6 @@ export class TaskService extends BaseService<Task, TaskRepository> {
             where: where,
             skip : skip,
             take : perPage,
-            order : { date : "DESC" },
             select : ["id"]
         });
         const [data, total] = await this.repository.findAndCount({
