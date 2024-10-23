@@ -302,7 +302,7 @@ export default function WarehourseTable() {
                 { required: true, message: "Vui lòng nhập số lượng nhập!" },
               ]}
             >
-              <Input />
+              <Input type="number"/>
             </Form.Item>
 
             <Form.Item
@@ -312,7 +312,7 @@ export default function WarehourseTable() {
                 { required: true, message: "Vui lòng nhập số lượng đã bán!" },
               ]}
             >
-              <Input />
+              <Input type="number"/>
             </Form.Item>
           </Form>
         </Modal>
