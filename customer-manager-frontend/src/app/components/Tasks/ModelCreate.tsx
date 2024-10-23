@@ -102,7 +102,7 @@ export function ModelCreate({ customerId, refetch , isModalVisible, setIsModalVi
 
                     <Form.Item
                         name="content"
-                        label="Chi tiết"
+                        label="Nội dung"
                         rules={[{ required: true, message: "Vui lòng thêm chi tiết" }]}
                     >
                         <Input.TextArea placeholder="Chi tiết..." />

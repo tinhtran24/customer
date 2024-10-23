@@ -11,7 +11,7 @@ export default function ProductPage() {
   const [filteredValues, setFilteredValues] =
     useState<FilterValues>(initFilterOrder);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [orderIds, setOrderIds] = useState<{ page: number; ids: string[] }[]>(
     []
   );
@@ -46,6 +46,7 @@ export default function ProductPage() {
               filteredValues={filteredValues}
               setFilteredValues={setFilteredValues}
               pageSize={pageSize}
+              setPageSize={setPageSize}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
               orderIds={orderIds}

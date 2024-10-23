@@ -619,13 +619,15 @@ export async function fetchAllTask(params?: {
   to?: string;
   status?: string;
   customerName?: string;
+  page: number;
+  pageSize: number;
 }) {
   try {
     const accessToken = cookies().get("accessToken");
     const url = new URL(`${process.env.BACKEND_URL}/task`);
 
-    url.searchParams.set("page", "1");
-    url.searchParams.set("limit", "9999999999");
+    url.searchParams.set("page", params?.page.toString() || "1");
+    url.searchParams.set("limit", params?.pageSize.toString() || "999999999999");
 
     if (params?.from) {
       url.searchParams.set("from", params.from);
@@ -655,7 +657,7 @@ export async function fetchAllTask(params?: {
 
     // Parse response và lấy items
     const data = await res.json();
-    return data.items || [];
+    return data;
   } catch (error) {
     console.error("Error fetching customers:", error);
     return [];

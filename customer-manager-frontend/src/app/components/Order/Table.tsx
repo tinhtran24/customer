@@ -78,6 +78,7 @@ interface TableOrderProps {
   filteredValues: FilterValues;
   setFilteredValues: any;
   pageSize: number;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   orderIds: { page: number; ids: string[] }[];
@@ -87,6 +88,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
   filteredValues,
   setFilteredValues,
   pageSize,
+  setPageSize,
   currentPage,
   setCurrentPage,
   orderIds,
@@ -212,7 +214,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
 
   useEffect(() => {
     getData();
-  }, [currentPage]);
+  }, [currentPage, pageSize]);
 
   //#region get data for modal faster and get customer status =)))
   const [stateUtil, setStateUtil] = useState<{
@@ -302,6 +304,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
 
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);  
     setData(undefined);
     setIsLoading(true);
   };
@@ -440,7 +443,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
             current: currentPage,
             pageSize: pageSize,
             total: data?.meta?.totalItems || 0,
-            showSizeChanger: false,
+            showSizeChanger: true,
           }}
           onChange={handleTableChange}
           expandedRowKeys={expandedRowKeys}
