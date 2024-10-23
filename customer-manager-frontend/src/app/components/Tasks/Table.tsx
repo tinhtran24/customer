@@ -1,7 +1,12 @@
 "use client";
 import Loading from "@/app/dashboard/loading";
 import { fetchAllTask } from "@/app/lib/actions";
-import { Customer, SETTINGS_TYPE, Task } from "@/app/lib/definitions";
+import {
+  Customer,
+  Pagination,
+  SETTINGS_TYPE,
+  Task,
+} from "@/app/lib/definitions";
 import { DatePicker, Button, Row, Col, Table, Space, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
@@ -19,7 +24,9 @@ const initFilter = {
 };
 
 export default function TaskTable() {
-  const [tasks, setTasks] = useState<Task[]>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [tasks, setTasks] = useState<Pagination<Task>>();
   const [isLoading, setLoading] = useState(false);
   const [filtersValue, setFiltersValue] = useState(initFilter);
 
@@ -30,14 +37,30 @@ export default function TaskTable() {
     customerName?: string
   ) => {
     setLoading(true);
-    const data = await fetchAllTask({ from, to, status, customerName });
+    const data = await fetchAllTask({
+      from,
+      to,
+      status,
+      customerName,
+      page: currentPage,
+      pageSize,
+    });
     setTasks(data);
     setLoading(false);
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData(
+      filtersValue.from
+        ? dayjs(filtersValue.from).startOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : "",
+      filtersValue.to
+        ? dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
+        : "",
+      filtersValue.status,
+      filtersValue.customerName
+    );
+  }, [currentPage, pageSize]);
 
   const handleResetAll = () => {
     setFiltersValue({ from: null, to: null, status: "", customerName: "" });
@@ -79,8 +102,15 @@ export default function TaskTable() {
         ? dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
         : "",
       filtersValue.status,
-      filtersValue.customerName,
+      filtersValue.customerName
     );
+  };
+
+  const handleTableChange = (pagination: any) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+    setTasks(undefined);
+    setLoading(true);
   };
 
   const columns: ColumnsType<Task> = [
@@ -209,9 +239,16 @@ export default function TaskTable() {
         <Loading />
       ) : (
         <Table
-          dataSource={tasks}
+          dataSource={tasks?.items}
           columns={columns}
           rowKey={(record) => record.id}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: tasks?.meta?.totalItems || 0,
+            showSizeChanger: true,
+          }}
+          onChange={handleTableChange}
         />
       )}
     </>
