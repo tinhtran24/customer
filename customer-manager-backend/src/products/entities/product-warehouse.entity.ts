@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { Product } from "./product.entity";
 import { BaseEntity } from "../../core/base/base.entity";
+import { ProductWarehouseLog } from "./product-warerhouse-log.entity";
 
 @Entity('product_warehouse')
 export class ProductWarehouse extends BaseEntity {
@@ -25,4 +26,7 @@ export class ProductWarehouse extends BaseEntity {
 
   @Column({ name: 'source', nullable: true })
   source: string
+
+  @OneToMany(() => ProductWarehouseLog, (productWarehouse) => productWarehouse.productWarehouse)
+  productWarehouseLogs: ProductWarehouseLog[];
 }

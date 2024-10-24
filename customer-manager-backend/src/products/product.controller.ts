@@ -56,6 +56,7 @@ export class ProductController extends BaseController<ProductService> {
     @ApiBody({ type: UpdateProductWarehouse })
     async addStock(
         @Param('id') id: string,
+        @Request() req,
         @Body()
             data: any,
         ...args: any[]
@@ -63,6 +64,7 @@ export class ProductController extends BaseController<ProductService> {
         return this.productService.addStock(
             id,
             data,
+            req.user['userId']
         );
     }
 

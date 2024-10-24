@@ -4,10 +4,10 @@ import { BaseService } from "../core/base/base.service";
 import { ProductRepository } from './product.repository';
 import { UpdateProductWarehouse } from './dto/update-product-warehouse.dto';
 import { ProductWarehouseRepository } from './product-warehouse.repository';
-import { ILike, SelectQueryBuilder } from 'typeorm';
-import { QueryTaskDto } from "../task/dto/filter.dto";
+import { ILike } from 'typeorm';
 import { QueryProductWarehouseDto } from "./dto/product-warehouse-filter.dto";
 import { QueryProductDto } from './dto/product-filter.dto';
+import { ProductWarehouseLogRepository } from './product-warehouse-log.repository';
 
 @Injectable()
 export class ProductService extends BaseService<Product, ProductRepository> {
@@ -15,6 +15,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
     constructor(
         protected productRepository: ProductRepository,
         protected productWarehouseRepository: ProductWarehouseRepository,
+        protected productWarehouseLogRepository: ProductWarehouseLogRepository,
+
     ) {
         super(productRepository);
     }
@@ -76,6 +78,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
     async addStock(
         id: string,
         updateProductWarehouseDto: UpdateProductWarehouse,
+        userId: string
     ): Promise<Product> {
         try {
             const { productWarehouse } = updateProductWarehouseDto;
@@ -112,6 +115,13 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     await this.productWarehouseRepository.save(newProductWarehouse, { reload: true });
                     product.price = price
                 }
+                await this.productWarehouseLogRepository.save({
+                    quantityInStock: Number(quantityInStock),
+                    created_user: userId,
+                    displayQuantity: productWarehouseResult.displayQuantity,
+                    price: price
+                }, {reload: true})
+
                 await this.update(product.id, product);
             }
             // Return the updated product
@@ -125,6 +135,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
     async buy(
         id: string,
         updateProductWarehouseDto: UpdateProductWarehouse,
+        userId: string
     ): Promise<Product> {
         try {
             const { productWarehouse } = updateProductWarehouseDto;
@@ -161,6 +172,13 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     await this.productWarehouseRepository.save(newProductWarehouse);
                     product.price = price
                 }
+                await this.productWarehouseLogRepository.save({
+                    quantityInUse: Number(quantityInStock),
+                    created_user: userId,
+                    displayQuantity: productWarehouseResult.displayQuantity,
+                    price: price
+                }, {reload: true})
+                
                 await this.productRepository.save(product);
             }
             // Return the updated product

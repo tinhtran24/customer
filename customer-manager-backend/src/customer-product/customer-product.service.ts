@@ -148,8 +148,8 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                     quantityInUse: item.quantity,
                     source: item.source,
                     price: item.unitPrice,
-                }
-            })
+                },
+            }, data.createCustomerProduct.createdUserId)
         }
         return customerOrder
     }
@@ -174,7 +174,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                         source: item.source,
                         price: item.unitPrice,
                     }
-                })
+                },  data.updateCustomerProduct.updatedUserId)
             }
         }
         return customerOrder
