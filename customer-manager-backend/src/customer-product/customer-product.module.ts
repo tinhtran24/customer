@@ -9,6 +9,7 @@ import { CustomerProductItemRepository } from './customer-product-items.reposito
 import { ProductWarehouseRepository } from "../products/product-warehouse.repository";
 import { ProductService } from "../products/product.service";
 import { ProductRepository } from "../products/product.repository";
+import { ProductWarehouseLogRepository } from 'src/products/product-warehouse-log.repository';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductRepository } from "../products/product.repository";
     DatabaseModule.forRepository([CustomerProductItemRepository]),
     DatabaseModule.forRepository([ProductWarehouseRepository]),
     DatabaseModule.forRepository([ProductRepository]),
+    DatabaseModule.forRepository([ProductWarehouseLogRepository]),
   ],
   controllers: [CustomerProductController],
   providers: [CustomerProductService, ProductService],
