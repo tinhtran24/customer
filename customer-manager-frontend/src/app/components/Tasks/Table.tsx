@@ -14,6 +14,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { ModalEdit } from "./ModalEdit";
 import Link from "next/link";
 import { SettingSelect } from "../Common/Select";
+import { UserSelect } from "../Common/UserSelect";
 const { RangePicker } = DatePicker;
 
 const initFilter = {
@@ -21,6 +22,7 @@ const initFilter = {
   to: null as Dayjs | null,
   status: "",
   customerName: "",
+  userIncharge: "",
 };
 
 export default function TaskTable() {
@@ -34,7 +36,8 @@ export default function TaskTable() {
     from?: string,
     to?: string,
     status?: string,
-    customerName?: string
+    customerName?: string,
+    userInChargeId?: string,
   ) => {
     setLoading(true);
     const data = await fetchAllTask({
@@ -44,6 +47,7 @@ export default function TaskTable() {
       customerName,
       page: currentPage,
       pageSize,
+      userInChargeId,
     });
     setTasks(data);
     setLoading(false);
@@ -58,12 +62,13 @@ export default function TaskTable() {
         ? dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
         : "",
       filtersValue.status,
-      filtersValue.customerName
+      filtersValue.customerName,
+      filtersValue.userIncharge,
     );
   }, [currentPage, pageSize]);
 
   const handleResetAll = () => {
-    setFiltersValue({ from: null, to: null, status: "", customerName: "" });
+    setFiltersValue(initFilter);
     getData();
   };
 
@@ -93,6 +98,13 @@ export default function TaskTable() {
     }));
   };
 
+  const handleChangeUserInCharge = (userIncharge: string) => {
+    setFiltersValue((prevState) => ({
+      ...prevState,
+      userIncharge: userIncharge,
+    }));
+  };
+
   const onSearch = () => {
     getData(
       filtersValue.from
@@ -102,7 +114,8 @@ export default function TaskTable() {
         ? dayjs(filtersValue.to).endOf("day").format("YYYY-MM-DD HH:mm:ss")
         : "",
       filtersValue.status,
-      filtersValue.customerName
+      filtersValue.customerName,
+      filtersValue.userIncharge,
     );
   };
 
@@ -181,7 +194,7 @@ export default function TaskTable() {
   return (
     <>
       <Row gutter={[16, 16]} style={{ margin: "1rem 0 2rem 0" }}>
-        <Col span={6} style={{ paddingLeft: "0" }}>
+        <Col span={5} style={{ paddingLeft: "0" }}>
           <RangePicker
             onChange={handleDateChange}
             style={{ width: "100%" }}
@@ -192,7 +205,7 @@ export default function TaskTable() {
             }
           />
         </Col>
-        <Col span={6}>
+        <Col span={5}>
           <SettingSelect
             type={SETTINGS_TYPE.TASK_STATUS}
             style={{ width: "100%" }}
@@ -203,7 +216,7 @@ export default function TaskTable() {
             onClear={() => handleChangeStatus("")}
           />
         </Col>
-        <Col span={6}>
+        <Col span={5}>
           <Input
             placeholder="Tên khách hàng"
             allowClear
@@ -215,6 +228,16 @@ export default function TaskTable() {
               }));
             }}
             style={{ height: "33px", fontSize: 14 }}
+          />
+        </Col>
+        <Col span={5}>
+          <UserSelect
+            style={{ width: "100%" }}
+            placeholder="- Chọn nhân viên -"
+            onChange={handleChangeUserInCharge}
+            value={filtersValue.userIncharge || null}
+            allowClear
+            onClear={() => handleChangeUserInCharge("")}
           />
         </Col>
         <Col span={4}>
