@@ -1,7 +1,7 @@
 "use client";
 import Loading from "@/app/dashboard/loading";
-import { fetchWareHouse, updateWareHouse } from "@/app/lib/actions";
-import { ProductWarehouses } from "@/app/lib/definitions";
+import { fetchWareHouse, productWarehouse, updateWareHouse } from "@/app/lib/actions";
+import { ProductWarehouse, ProductWarehouses } from "@/app/lib/definitions";
 import {
   Button,
   Table,
@@ -189,17 +189,18 @@ export default function WarehourseTable() {
     if (!selectedItem) return;
     setIsFormSubmitting(true);
     try {
-      const result = await updateWareHouse({
-        id: selectedItem.productId,
-        body: {
-          productWarehouse: {
+
+      const body: ProductWarehouse = {
+        productWarehouse: {
+            source: selectedItem.source,
             quantityInStock: data.quantityInStock,
             quantityInUse: 0,
-            source: selectedItem.source,
-            price: data.price,
-          },
-        },
-      });
+            price: data.price
+          }
+      };
+      const result = await productWarehouse(selectedItem.productId, body);
+    
+
       if (result.statusCode === 500) {
         message.error(
           Array.isArray(result.message) ? result.message[0] : result.message
