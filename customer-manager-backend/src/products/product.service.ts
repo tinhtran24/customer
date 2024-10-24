@@ -113,15 +113,17 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                         source
                     });
                     await this.productWarehouseRepository.save(newProductWarehouse, { reload: true });
+                
                     product.price = price
                 }
-                await this.productWarehouseLogRepository.save({
-                    quantityInStock: Number(quantityInStock),
-                    created_user: userId,
-                    displayQuantity: productWarehouseResult.displayQuantity,
-                    price: price
-                }, {reload: true})
-
+                const newProductWarehouseLog = this.productWarehouseLogRepository.create({
+                    product: product,
+                    quantityInStock,
+                    quantityInUse: 0,
+                    displayQuantity: quantityInStock,
+                    source
+                });
+                await this.productWarehouseLogRepository.save(newProductWarehouseLog, {reload: true})
                 await this.update(product.id, product);
             }
             // Return the updated product
@@ -172,13 +174,14 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     await this.productWarehouseRepository.save(newProductWarehouse);
                     product.price = price
                 }
-                await this.productWarehouseLogRepository.save({
-                    quantityInUse: Number(quantityInStock),
-                    created_user: userId,
-                    displayQuantity: productWarehouseResult.displayQuantity,
-                    price: price
-                }, {reload: true})
-                
+                const newProductWarehouseLog = this.productWarehouseLogRepository.create({
+                    product: product,
+                    quantityInStock,
+                    quantityInUse: 0,
+                    displayQuantity: quantityInStock,
+                    source
+                });
+                await this.productWarehouseLogRepository.save(newProductWarehouseLog, {reload: true})
                 await this.productRepository.save(product);
             }
             // Return the updated product
