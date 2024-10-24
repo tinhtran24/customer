@@ -619,6 +619,7 @@ export async function fetchAllTask(params?: {
   to?: string;
   status?: string;
   customerName?: string;
+  userInChargeId?: string;
   page: number;
   pageSize: number;
 }) {
@@ -631,7 +632,6 @@ export async function fetchAllTask(params?: {
       "limit",
       params?.pageSize.toString() || "999999999999"
     );
-
     if (params?.from) {
       url.searchParams.set("from", params.from);
     }
@@ -644,6 +644,12 @@ export async function fetchAllTask(params?: {
     if (params?.customerName) {
       url.searchParams.set("customerName", params.customerName);
     }
+    if (params?.userInChargeId) {
+      url.searchParams.set("userInChargeId", params.userInChargeId);
+    }
+    // Object.keys(params).forEach((key) => {
+    //   if (params[key]) url.searchParams.append(key, queryParams[key]);
+    // });
 
     const res = await fetch(url.toString(), {
       method: "GET",

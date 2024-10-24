@@ -118,7 +118,6 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
               <Form.Item
                   label="Nội dung"
                   name="description"
-                  rules={[{ required: true, message: "Vui lòng thêm nội dung" }]}
               >
                 <Input.TextArea placeholder="Nội dung..." />
               </Form.Item>
