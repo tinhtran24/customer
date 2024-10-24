@@ -48,6 +48,9 @@ export class TaskService extends BaseService<Task, TaskRepository> {
                 }
             }
         }
+        if(options.userInChargeId) {
+            where.userInChargeId = options.userInChargeId
+        }
         return this.findPaginateWithOutDis(options, where)
     }
 
