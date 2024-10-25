@@ -20,6 +20,7 @@ import {
 } from "react-icons/md";
 import { RiCustomerServiceLine } from "react-icons/ri";
 import { TbBuildingWarehouse, TbShoppingCartSearch } from "react-icons/tb";
+import { CgFileDocument } from "react-icons/cg";
 
 type MenuItem = GetProp<MenuProps, "items">[number];
 
@@ -66,6 +67,13 @@ export const DashboardMenu = () => {
       label: "Kho",
       icon: <TbBuildingWarehouse style={{ fontSize: "16px" }} />,
     },
+    currentUser?.role === "admin"
+      ? {
+          key: "/dashboard/log",
+          label: "Log",
+          icon: <CgFileDocument style={{ fontSize: "16px" }} />,
+        }
+      : null,
     {
       key: "/dashboard/tasks",
       label: "Công việc",

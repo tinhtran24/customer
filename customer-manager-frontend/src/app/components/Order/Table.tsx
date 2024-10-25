@@ -16,7 +16,8 @@ import {
   CustomerProduct,
   CustomerProductItem,
   Pagination,
-  Product, Setting,
+  Product,
+  Setting,
   User,
 } from "@/app/lib/definitions";
 import { Card, Col, Row, Statistic } from "antd";
@@ -27,6 +28,9 @@ import { ModalEdit } from "./ModalEdit";
 import { MdDeleteOutline } from "react-icons/md";
 import { useAuthContext } from "../auth";
 import Link from "next/link";
+import { FiEdit3 } from "react-icons/fi";
+
+const statuses = ["Hoàn/Hủy", "Hoàn thành"];
 
 interface DashboardStatsProps {
   totalOrders: string;
@@ -71,7 +75,7 @@ export const initFilterOrder = {
   customerName: null,
   source: null,
   sale: null,
-  orderStatus: null
+  orderStatus: null,
 };
 
 interface TableOrderProps {
@@ -133,7 +137,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
         const existingPage = prev.find(
           (order: any) => order.page === currentPage
         );
-  
+
         if (existingPage) {
           return prev.map((order: any) =>
             order.page === currentPage
@@ -199,7 +203,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
       from,
       to,
       customerStatus || null,
-        status || null
+      status || null
     );
     if (data.statusCode == 500) {
       message.error(
@@ -226,9 +230,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
   });
 
   const getProductsAndProvinces = async () => {
-    const [products] = await Promise.all([
-      fetchAllProducts(),
-    ]);
+    const [products] = await Promise.all([fetchAllProducts()]);
     setStateUtil((prevState) => ({
       ...prevState,
       products: products,
@@ -236,7 +238,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
   };
 
   useEffect(() => {
-  getProductsAndProvinces();
+    getProductsAndProvinces();
   }, []);
   //#endregion
 
@@ -304,7 +306,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
 
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
-    setPageSize(pagination.pageSize);  
+    setPageSize(pagination.pageSize);
     setData(undefined);
     setIsLoading(true);
   };
@@ -334,9 +336,9 @@ const TableOrder: React.FC<TableOrderProps> = ({
       dataIndex: "customer",
       key: "customer",
       render: (customer: Customer) => (
-          <Link href={`/dashboard/customers/${customer.id}`}>
-            {customer.fullName}
-          </Link>
+        <Link href={`/dashboard/customers/${customer.id}`}>
+          {customer.fullName}
+        </Link>
       ),
     },
     {
@@ -375,28 +377,42 @@ const TableOrder: React.FC<TableOrderProps> = ({
     {
       title: "Tương tác ",
       key: "edit",
-      render: (s: any) => (
+      render: (s: any) => {
+        const disable = statuses.includes(s.status);
+        return (
           <Space size="middle">
-            <ModalEdit
+            {disable ? (
+              <FiEdit3
+                size={20}
+                style={{ cursor: "not-allowed", color: "#9f9f9f" }}
+              />
+            ) : (
+              <ModalEdit
                 customerProduct={s}
                 stateUtil={stateUtil}
                 refetch={() => {
                   getData();
                 }}
-            />
+              />
+            )}
+
             {isAdmin && (
               <MdDeleteOutline
-                onClick={() => showDeleteConfirm(s)}
+                onClick={disable ? undefined : () => showDeleteConfirm(s)}
                 size={20}
-                style={{
-                  color: "red",
-                  cursor: "pointer",
-                }}
-            />
+                style={
+                  disable
+                    ? { cursor: "not-allowed", color: "#9f9f9f" }
+                    : {
+                        color: "red",
+                        cursor: "pointer",
+                      }
+                }
+              />
             )}
-          
           </Space>
-      ),
+        );
+      },
     },
   ];
 

@@ -1,0 +1,14 @@
+.custom-row {
+  background-color: #1677ff !important;
+  color: white;
+}
+
+.custom-row:hover,
+.custom-row:hover td {
+  background-color: #1677ff !important;
+  color: white;
+}
+
+.custom-row > td:first-child {
+  color: black;
+}

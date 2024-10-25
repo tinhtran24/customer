@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Kho",
 };
 
-export default function WarehouseLayout({
+export default function LogLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -16,8 +16,7 @@ export default function WarehouseLayout({
         token: {
           padding: 15,
           margin: 15,
-          fontSize: 15,
-          fontWeightStrong: 600,
+          fontSize: 14,
         },
       }}
     >
