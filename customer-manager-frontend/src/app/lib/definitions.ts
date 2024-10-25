@@ -158,6 +158,7 @@ export type ProductWarehouses = {
   price: number;
   source: string;
   product?: Product;
+  productWarehouseLogs?: ProductWarehouseLog[];
 };
 
 export type NewProduct = { title: string; description: string; code: string };
@@ -370,4 +371,29 @@ export type Role = {
   id: number;
   role: string;
   description: string;
+};
+
+export type ProductWarehouseLog = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+  productId: string;
+  quantityInStock: number;
+  quantityInUse: number;
+  displayQuantity: number;
+  price: number;
+  source: string;
+  createdUserId: string;
+  productWareHouseId: string;
+  product: any;
+  createdUser: {
+    id: string;
+    name: string;
+    email: string;
+    roleId: number;
+    session: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 };

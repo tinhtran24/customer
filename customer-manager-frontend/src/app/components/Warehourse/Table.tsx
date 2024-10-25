@@ -14,6 +14,8 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { ImportOutlined } from "@ant-design/icons";
+import './style.css'
+import dayjs from 'dayjs';
 
 // use to display
 type WarehouseUpdate = {
@@ -34,6 +36,7 @@ type ProductCustom = {
   quantityInStock: number;
   quantityInUse: number;
   displayQuantity: number;
+  createdAt: string;
 };
 
 type GroupItem = {
@@ -78,6 +81,7 @@ export default function WarehourseTable() {
         quantityInStock: current.quantityInStock,
         quantityInUse: current.quantityInUse,
         displayQuantity: current.displayQuantity,
+        createdAt: current.product?.updatedAt || "",
       };
 
       if (existingItemIndex >= 0) {
@@ -116,10 +120,6 @@ export default function WarehourseTable() {
       productName: productSelected.title,
     });
 
-    formModal.setFieldsValue({
-      quantityInStock: productSelected.quantityInStock,
-      quantityInUse: productSelected.quantityInUse,
-    });
     setVisibleModal(true);
   };
 
@@ -136,7 +136,7 @@ export default function WarehourseTable() {
         dataIndex: "price",
         key: "price",
         render: (s: number) => formatPrice(s),
-        width: "30%",
+        width: "15%",
       },
       {
         title: "Đã nhập",
@@ -155,6 +155,13 @@ export default function WarehourseTable() {
         dataIndex: "displayQuantity",
         key: "displayQuantity",
         width: "10%",
+      },
+      {
+        title: "Ngày nhập",
+        dataIndex: "createdAt",
+        key: "createdAt",
+        width: "15%",
+        render: (dateStr) => dayjs(dateStr).format('DD/MM/YYYY HH:mm:ss'),
       },
       {
         title: "Nhập kho",
@@ -230,7 +237,7 @@ export default function WarehourseTable() {
       render: (_: any, __: any, index: number) => (
         <div style={{ textAlign: "left" }}>{index + 1}</div>
       ),
-      width: "20%",
+      width: "10%",
     },
     {
       title: "Kho",
@@ -242,7 +249,7 @@ export default function WarehourseTable() {
       title: "Tổng sản phẩm",
       dataIndex: "totalProducts",
       key: "totalProducts",
-      width: "20%",
+      width: "30%",
     },
   ];
 
@@ -254,6 +261,11 @@ export default function WarehourseTable() {
         dataSource={groupedData}
         columns={columns}
         rowKey={(record) => record.id}
+        onRow={(record, rowIndex) => {
+          return {
+              className: 'custom-row',
+          };
+      }}
         expandable={{
           expandedRowRender,
         }}
