@@ -9,6 +9,6 @@ export class ProductWarehouseRepository extends BaseRepository<ProductWarehouse>
 
     protected orderBy = { name: 'updatedAt', order: OrderType.DESC };
 
-    protected relations = ['product', 'productWarehouseLogs'];
+    protected relations = ['product', 'productWarehouseLogs.product', 'productWarehouseLogs.createdUser'];
 
 }

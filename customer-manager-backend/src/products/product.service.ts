@@ -97,6 +97,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 }
             });
 
+            let productWareHouseId;
             if (productWarehouse) {
                 const { quantityInStock, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
@@ -104,16 +105,17 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     productWarehouseResult.quantityInStock += Number(quantityInStock);
                     productWarehouseResult.displayQuantity += Number(quantityInStock);
                     await this.productWarehouseRepository.save(productWarehouseResult, { reload: true });
+                    productWareHouseId = productWarehouseResult.id;
                 } else {
                     const newProductWarehouse = this.productWarehouseRepository.create({
                         product: product,
                         quantityInStock,
                         quantityInUse: 0,
                         displayQuantity: quantityInStock,
-                        source
+                        source,
                     });
-                    await this.productWarehouseRepository.save(newProductWarehouse, { reload: true });
-                
+                    const result = await this.productWarehouseRepository.save(newProductWarehouse, { reload: true });
+                    productWareHouseId = result.id;
                     product.price = price
                 }
                 const newProductWarehouseLog = this.productWarehouseLogRepository.create({
@@ -121,7 +123,9 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     quantityInStock,
                     quantityInUse: 0,
                     displayQuantity: quantityInStock,
-                    source
+                    source,
+                    createdUserId: userId,
+                    productWareHouseId: productWareHouseId,
                 });
                 await this.productWarehouseLogRepository.save(newProductWarehouseLog, {reload: true})
                 await this.update(product.id, product);
@@ -155,7 +159,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     source: ILike(`%${productWarehouse.source}%`)
                 }
             });
-
+            let productWareHouseId;
             if (productWarehouse) {
                 const { quantityInStock, quantityInUse, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
@@ -163,6 +167,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     productWarehouseResult.quantityInUse += Number(quantityInUse);
                     productWarehouseResult.displayQuantity -= Number(quantityInUse);
                     await this.productWarehouseRepository.save(productWarehouseResult);
+                    productWareHouseId = productWarehouseResult.id;
                 } else {
                     const newProductWarehouse = this.productWarehouseRepository.create({
                         product: product,
@@ -171,7 +176,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                         displayQuantity: quantityInStock,
                         source
                     });
-                    await this.productWarehouseRepository.save(newProductWarehouse);
+                    const result = await this.productWarehouseRepository.save(newProductWarehouse);
+                    productWareHouseId = result.id;
                     product.price = price
                 }
                 const newProductWarehouseLog = this.productWarehouseLogRepository.create({
@@ -179,7 +185,9 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     quantityInStock,
                     quantityInUse: 0,
                     displayQuantity: quantityInStock,
-                    source
+                    source,
+                    createdUserId: userId,
+                    productWareHouseId: productWareHouseId,
                 });
                 await this.productWarehouseLogRepository.save(newProductWarehouseLog, {reload: true})
                 await this.productRepository.save(product);
