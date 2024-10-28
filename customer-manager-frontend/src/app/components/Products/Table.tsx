@@ -8,9 +8,6 @@ import { MdDeleteOutline } from "react-icons/md";
 import { FiEdit3 } from "react-icons/fi";
 import { deleteProduct, updateProduct } from "@/app/lib/actions";
 import router from "next/router";
-import Link from "next/link";
-import { ImportOutlined } from "@ant-design/icons";
-import { ProductWarehouseModal } from "@/app/components/Products/ProductWarehouseModal";
 
 export default function ProductTable({ products }: { products: Product[] }) {
   const {
