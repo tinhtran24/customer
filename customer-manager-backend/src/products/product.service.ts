@@ -78,7 +78,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
     async addStock(
         id: string,
         updateProductWarehouseDto: UpdateProductWarehouse,
-        userId: string
+        userId: string,
+        note?: string | 'Nhập hàng'
     ): Promise<Product> {
         try {
             const { productWarehouse } = updateProductWarehouseDto;
@@ -126,6 +127,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     source,
                     createdUserId: userId,
                     productWareHouseId: productWareHouseId,
+                    note: note || 'Nhập hàng',
+                    price,
                 });
                 await this.productWarehouseLogRepository.save(newProductWarehouseLog, {reload: true})
                 await this.update(product.id, product);
@@ -141,7 +144,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
     async buy(
         id: string,
         updateProductWarehouseDto: UpdateProductWarehouse,
-        userId: string
+        userId: string,
+        note?: string | 'Bán hàng'
     ): Promise<Product> {
         try {
             const { productWarehouse } = updateProductWarehouseDto;
@@ -160,6 +164,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 }
             });
             let productWareHouseId;
+            let displayQuantity;
             if (productWarehouse) {
                 const { quantityInStock, quantityInUse, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
@@ -168,26 +173,18 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     productWarehouseResult.displayQuantity -= Number(quantityInUse);
                     await this.productWarehouseRepository.save(productWarehouseResult);
                     productWareHouseId = productWarehouseResult.id;
-                } else {
-                    const newProductWarehouse = this.productWarehouseRepository.create({
-                        product: product,
-                        quantityInStock,
-                        quantityInUse: 0,
-                        displayQuantity: quantityInStock,
-                        source
-                    });
-                    const result = await this.productWarehouseRepository.save(newProductWarehouse);
-                    productWareHouseId = result.id;
-                    product.price = price
+                    displayQuantity = productWarehouseResult.displayQuantity - quantityInUse
                 }
                 const newProductWarehouseLog = this.productWarehouseLogRepository.create({
                     product: product,
                     quantityInStock,
-                    quantityInUse: 0,
-                    displayQuantity: quantityInStock,
-                    source,
+                    quantityInUse: quantityInUse,
+                    displayQuantity: displayQuantity,
+                    source: source,
+                    price: price,
                     createdUserId: userId,
                     productWareHouseId: productWareHouseId,
+                    note: note
                 });
                 await this.productWarehouseLogRepository.save(newProductWarehouseLog, {reload: true})
                 await this.productRepository.save(product);

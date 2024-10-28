@@ -159,6 +159,7 @@ export type ProductWarehouses = {
   source: string;
   product?: Product;
   productWarehouseLogs?: ProductWarehouseLog[];
+  note?: string;
 };
 
 export type NewProduct = { title: string; description: string; code: string };

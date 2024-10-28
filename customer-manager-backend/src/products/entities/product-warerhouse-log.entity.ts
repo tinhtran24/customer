@@ -42,4 +42,7 @@ export class ProductWarehouseLog extends BaseEntity {
 
   @Column({name: 'product_warehouse_id'})
   productWareHouseId: string
+
+  @Column({ nullable: true })
+  note: string
 }

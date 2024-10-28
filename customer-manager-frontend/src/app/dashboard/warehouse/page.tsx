@@ -3,6 +3,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { Suspense } from "react";
 import { shantell } from "@/app/utils/fontSetting";
 import WarehourseTable from "@/app/components/Warehourse/Table";
+import { CreateProductWarehouse } from "@/app/components/Warehourse/WarehouseButton";
 
 export default async function WarehousePage() {
   return (
@@ -21,6 +22,7 @@ export default async function WarehousePage() {
             >
               QUẢN LÝ KHO
             </h2>
+            <CreateProductWarehouse />
           </Flex>
           <Divider style={{ margin: 0 }} />
 

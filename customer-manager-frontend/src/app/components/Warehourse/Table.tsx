@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { ImportOutlined } from "@ant-design/icons";
 import './style.css'
 import dayjs from 'dayjs';
+import { ProductWarehouseModal } from "@/app/components/Warehourse/ProductWarehouseModal";
 
 // use to display
 type WarehouseUpdate = {
@@ -52,8 +53,17 @@ export default function WarehourseTable() {
   const [isLoading, setLoading] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+  const [isWarehouseVisible, setIsWarehouseVisible] = useState(false);
 
   const [formModal] = Form.useForm();
+
+  const handleOpenWarehouseModal = () => {
+    setIsWarehouseVisible(true);
+  };
+
+  const handleCloseWarehouseModal = () => {
+    setIsWarehouseVisible(false);
+  };
 
   const getData = async () => {
     setLoading(true);

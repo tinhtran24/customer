@@ -21,7 +21,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isWarehouseVisible, setIsWarehouseVisible] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
   const handleOpenUpdateModal = (product: Product) => {
@@ -29,15 +28,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
     setIsUpdateModalVisible(true);
   };
 
-  const handleOpenWarehouseModal = (product: Product) => {
-    setSelectedProduct(product);
-    setIsWarehouseVisible(true);
-  };
-
-  const handleCloseWarehouseModal = () => {
-    setIsWarehouseVisible(false);
-    setSelectedProduct(null);
-  };
 
   const handleCloseUpdateModal = () => {
     setIsUpdateModalVisible(false);
@@ -194,20 +184,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
       },
     },
     {
-      title: "Nhập kho",
-      width: "5%",
-      render: (product) => (
-          <ImportOutlined
-              onClick={() => handleOpenWarehouseModal(product)}
-              size={20}
-              style={{
-                color: "blue",
-                cursor: "pointer",
-              }}
-          />
-      ),
-    },
-    {
       title: "",
       width: "5%",
       render: (product) => (
@@ -259,11 +235,6 @@ export default function ProductTable({ products }: { products: Product[] }) {
               onClose={handleCloseUpdateModal}
               onUpdateProduct={handleUpdateProduct}
               initialValues={selectedProduct}
-          />
-          <ProductWarehouseModal
-              visible={isWarehouseVisible}
-              onClose={handleCloseWarehouseModal}
-              product={selectedProduct}
           />
         </>
       )}

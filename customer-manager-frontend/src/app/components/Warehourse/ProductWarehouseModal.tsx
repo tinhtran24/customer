@@ -1,21 +1,44 @@
-import React, { useState } from "react";
-import { Modal, Form, Input, InputNumber, Button, message } from "antd";
-import { Product, ProductWarehouse, SETTINGS_TYPE } from "@/app/lib/definitions";
-import { productWarehouse } from "@/app/lib/actions";
+import React, { useEffect, useMemo, useState } from "react";
+import { Modal, Form, Input, InputNumber, Button, message, Select, SelectProps } from "antd";
+import { Product, ProductWarehouse, Setting, SETTINGS_TYPE } from "@/app/lib/definitions";
+import { fetchAllProducts, productWarehouse } from "@/app/lib/actions";
 import { SettingSelect } from "@/app/components/Common/Select";
 interface AddProductModalProps {
-  product: Product;
   visible: boolean;
   onClose: () => void;
 }
 
 export const ProductWarehouseModal: React.FC<AddProductModalProps> = ({
-  product,
   visible,
   onClose,
 }) => {
-  const [form] = Form.useForm();
-  const [isSubmit, setIsSubmit] = useState(false);
+    const [form] = Form.useForm();
+    const [isSubmit, setIsSubmit] = useState(false);
+    const [sourceSelected, setSourceSelected] = useState<string>();
+    const [products, setProducts] = useState<Product[]>([]);
+
+    const productOption = useMemo<SelectProps['options']>(
+        () => (products as Product[]).map((item) => ({ value: item.id, label: item.title })),
+        [products]
+    );
+
+    const refreshProduct = async () => {
+        setProducts(
+            await fetchAllProducts()
+        );
+    };
+    useEffect(() => {
+        refreshProduct();
+    }, [sourceSelected]);
+
+    const handleSelectChange = (value: string) => {
+        const product = products.find((p) => p.id === value);
+        if (product) {
+            form.setFieldsValue({
+                productId: product!.id, /// check it
+            });
+        }
+    };
 
   const handleOk = () => {
     form
@@ -30,7 +53,7 @@ export const ProductWarehouseModal: React.FC<AddProductModalProps> = ({
                 price: values.price
             }
         };
-        const result = await productWarehouse(product.id, body);
+        const result = await productWarehouse(values.product, body);
 
         setIsSubmit(false);
 
@@ -49,10 +72,11 @@ export const ProductWarehouseModal: React.FC<AddProductModalProps> = ({
       });
   };
 
-  return (
+  // @ts-ignore
+    return (
     <Modal
       visible={visible}
-      title={`Nhập kho sản phẩm : ${product.title}`}
+      title={`Nhập kho sản phẩm`}
       onCancel={onClose}
       onOk={handleOk}
       footer={[
@@ -81,6 +105,22 @@ export const ProductWarehouseModal: React.FC<AddProductModalProps> = ({
               type={SETTINGS_TYPE.SOURCE_OF_GOODS}
             />
         </Form.Item>
+
+          <Form.Item
+              name="product"
+              label="Sản phẩm"
+              rules={[{ required: true, message: "Vui lòng chọn sản phẩm!" }]}
+          >
+              <Select
+                  placeholder="Chọn sản phẩm"
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input: any, option: any) =>
+                      option?.children.toLowerCase().includes(input.toLowerCase())
+                  }
+                  options={productOption}
+              />
+          </Form.Item>
 
         <Form.Item
           name="price"

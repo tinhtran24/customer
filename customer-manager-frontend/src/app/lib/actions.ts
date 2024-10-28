@@ -1068,7 +1068,7 @@ export async function updateCustomerProduct(params: {
 export async function deleteOrder(id: string) {
   try {
     const accessToken = await cookies().get("accessToken");
-    const url = process.env.BACKEND_URL + `/customer-product/${id}`;
+    const url = process.env.BACKEND_URL + `/customer-product/order/${id}`;
     const res = await fetch(url, {
       method: "DELETE",
       headers: {

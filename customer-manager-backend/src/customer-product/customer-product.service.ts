@@ -149,7 +149,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                     source: item.source,
                     price: item.unitPrice,
                 },
-            }, data.createCustomerProduct.createdUserId)
+            }, data.createCustomerProduct.createdUserId, `Bán đơn hàng: ${customerOrder.code}`)
         }
         return customerOrder
     }
@@ -166,7 +166,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
-            if(data.updateCustomerProduct.status == 'Hoàn/Hủy') {
+            if (data.updateCustomerProduct.status == 'Hoàn/Hủy' ) {
                 await this.productService.addStock(item.productId, {
                     productWarehouse: {
                         quantityInStock: item.quantity,
@@ -174,11 +174,39 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                         source: item.source,
                         price: item.unitPrice,
                     }
-                },  data.updateCustomerProduct.updatedUserId)
+                },  data.updateCustomerProduct.updatedUserId, `Hoàn/Hủy đơn hàng: ${customerProduct.code}`)
             }
         }
         return customerOrder
     }
+
+    async deleteOrder(item: string, userId: string) {
+        const customerProduct = await this.detail(item)
+        if (!customerProduct) {
+            throw new BadRequestException(
+                'Đơn hàng không tồn tại',
+            )
+        }
+       const customerProductItems = await this.customerProductItemRepository.findBy({
+           customerProductId: item
+       })
+        const customerOrder = await this.delete(item, true)
+        for (const item of customerProductItems) {
+            item.customerProductId = customerOrder.id
+            await this.customerProductItemRepository.remove(item)
+            await this.productService.addStock(item.productId, {
+                productWarehouse: {
+                    quantityInStock: item.quantity,
+                    quantityInUse: 0,
+                    source: item.source,
+                    price: item.unitPrice,
+                }
+            },userId, `Xóa đơn hàng: ${customerProduct.code}`)
+        }
+        await this.customerProductItemRepository.delete({customerProductId: item})
+        return customerOrder
+    }
+
 
     async export(columns: Partial<Column>[], data: Array<Record<string, any>>, filename: string) {
         const workbook = new Workbook();

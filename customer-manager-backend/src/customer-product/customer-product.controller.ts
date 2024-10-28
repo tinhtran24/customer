@@ -1,7 +1,7 @@
 import { BaseController } from "../core/base/base.controller";
 import {
     Body,
-    Controller,
+    Controller, Delete,
     Get,
     Param,
     ParseArrayPipe,
@@ -106,6 +106,20 @@ export class CustomerProductController extends BaseController<CustomerProductSer
     ) {
         try {
             return await this.customerProductService.updateOrder(item, data);
+        } catch (e) {
+            throw e
+        }
+    }
+
+    @Delete('order/:id')
+    async deleteOrder(
+        @Param('id', new ParseUUIDPipe())
+            item: string,
+        @Request() req
+    ) {
+        try {
+            const userId = req.user['userId']
+            return await this.customerProductService.deleteOrder(item, userId);
         } catch (e) {
             throw e
         }
