@@ -3,7 +3,7 @@ import { DatePicker, Input, Select, Button, Row, Col, message } from "antd";
 import moment, { Moment } from "moment";
 import { SettingSelect } from "../Common/Select";
 import { SETTINGS_TYPE, User } from "@/app/lib/definitions";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { fetchUsers } from "@/app/lib/actions";
 import { FilterValues, ParamsReset } from "./order.interface";
 import { OrderFilterKey, removeFilter } from "./LabelFilter";
@@ -107,7 +107,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
           value={
             filtersValue.from &&
             filtersValue.to &&
-            ([moment(filtersValue.from), moment(filtersValue.to)] as [
+            ([dayjs(filtersValue.from), dayjs(filtersValue.to)] as [
               Dayjs,
               Dayjs
             ])
