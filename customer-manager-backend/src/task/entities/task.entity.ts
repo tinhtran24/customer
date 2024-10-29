@@ -1,7 +1,8 @@
 import { Appoinment } from "src/appointment/entities/appointment.entity";
 import { BaseEntity } from "src/core/base/base.entity";
 import User from "src/users/entities/user.entity";
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { BeforeInsert, Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { DateUtil } from "../../utils/date";
 
 @Entity()
 export class Task extends BaseEntity {
@@ -31,4 +32,9 @@ export class Task extends BaseEntity {
 
   @Column({ name: 'status', nullable: false, default: "Mới" })
   status: string
+
+  @BeforeInsert()
+  updateDates() {
+    this.date = DateUtil.endOfTheDay(this.date)
+  }
 }
