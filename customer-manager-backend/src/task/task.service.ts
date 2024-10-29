@@ -61,20 +61,19 @@ export class TaskService extends BaseService<Task, TaskRepository> {
         const page = Number(options?.page || 1) || 1;
         const perPage = Number(options?.limit || 10) || 10;
         const skip = page > 0 ? perPage * (page - 1) : 0;
-        const taskIds = await this.repository.find( {
+        const [taskIds, total] = await this.repository.findAndCount( {
             where: where,
-            skip : skip,
-            take : perPage,
-            select : ["id"]
+            take: perPage,
+            skip,
+            select : ["id"],
+            order: { date : "ASC" },
         });
-        const [data, total] = await this.repository.findAndCount({
+        const data = await this.repository.find({
             where : { id : In( taskIds.map( task => task.id ) ) },
             relations: ['appoinment.customer', 'userInCharge'],
             take: perPage,
-            skip,
-            order: { date : "DESC" },
+            order: { date : "ASC" },
         });
-
         const lastPage = Math.ceil(total / perPage);
         return {
             items: data,

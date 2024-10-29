@@ -66,11 +66,11 @@ export const BetweenDates = (from?: Date, to?: Date): FindOperator<string> => {
     }
 
     if (!from && to) {
-        return LessThanOrEqual(format(parseISO(to.toISOString()), dateFormat))
+        return LessThanOrEqual(format(parseISO(DateUtil.endOfTheDay(from).toISOString()), dateFormat))
     }
 
     if (from && !to) {
-        return MoreThanOrEqual(format(parseISO(from.toISOString()), dateFormat))
+        return MoreThanOrEqual(format(parseISO(DateUtil.beginOfTheDay(from).toISOString()), dateFormat))
     }
 
     throw new Error('`from` and `to` are both null')
