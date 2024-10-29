@@ -6,13 +6,14 @@ import { PaginateDto } from 'src/core/base/base.dto';
 import { CreateCustomerOrderDto, UpdateCustomerOrderDto } from './dto/create-customer-order.dto';
 import { CustomerProductItemRepository } from './customer-product-items.repository';
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
-import { BetweenDates } from "../core/helper/filter-query.decorator.util";
+import { BetweenDates, dateFormat } from "../core/helper/filter-query.decorator.util";
 import { ILike, In, Not } from "typeorm";
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Column, Workbook } from 'exceljs';
 import { PassThrough } from 'stream';
 import { UpdateCustomerProductBulkDto } from "./dto/update-customer-order-status.dto";
 import { ProductService } from "../products/product.service";
+import { DateUtil } from "../utils/date";
 
 @Injectable()
 export class CustomerProductService extends BaseService<CustomerProduct, CustomerProductRepository> {
@@ -21,8 +22,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         protected customerProductRepository: CustomerProductRepository,
         protected customerProductItemRepository: CustomerProductItemRepository,
         protected productService: ProductService,
-
-) {
+    ) {
         super(customerProductRepository);
     }
 
@@ -31,55 +31,66 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
     protected code_prefix = 'ĐH';
 
     async dashboard(options: QueryCustomerProductDto) {
-        const where: any = {}
+        const qb = this.repository.createQueryBuilder('CustomerProduct')
+            .leftJoinAndSelect('CustomerProduct.createdUser', 'CreatedUser')
+            .leftJoinAndSelect('CustomerProduct.customer', 'Customer')
+            .leftJoinAndSelect('CustomerProduct.customerProductItems', 'CustomerProductItems')
+            .leftJoinAndSelect('CustomerProductItems.product', 'Product')
+
+        qb.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
         if (options.customerName) {
-            where.customer = {
-                fullName: ILike(`%${options.customerName}%`)
-            }
+            qb.andWhere(`"Customer"."fullName" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
         }
         if (options.ids && options.ids.length > 0 && options.ids[0] !== "") {
-            where.id = In(options.ids)
+            qb.andWhere(`"CustomerProduct"."id" IN (:...ids)'`, { ids: options.ids })
         }
         if (options.customerStatus) {
-            where.customer = {
-                status: ILike(`%${options.customerStatus}%`)
-            }
+            qb.andWhere(`"Customer"."status" ILIKE :customerStatus`, {customerStatus: `%${options.customerStatus}%`})
         }
         if (options.saleName) {
-            where.createdUser = { name: ILike(`%${options.saleName}%`) }
+            qb.andWhere(`"CreatedUser"."name" ILIKE :saleName`, {saleName: `%${options.saleName}%`})
         }
 
         if (options.userId) {
-            where.createdUser = { id: options.userId }
+            qb.andWhere(`"CreatedUser"."id" = :userId`, {userId: options.userId })
         }
 
         if (options.source) {
-            where.customerProductItems = { source : options.source}
+            qb.andWhere(`"CustomerProductItems"."source" = :source`, {source: options.source })
         }
 
         if (options.status) {
-            where.status = ILike(`%${options.status}%`)
+            qb.andWhere(`"CustomerProduct"."status" ILIKE :status`, {status: `%${options.status}%` })
         }
 
         if (options.from && options.to) {
-            where.createdAt = BetweenDates(options.from, options.to)
+            qb.andWhere(`"CustomerProduct"."createdAt" BETWEEN :from AND :to`, {
+                from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateFormat),
+                to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateFormat),
+            })
         }
-        where.code = Not("ĐH_CŨ")
-        const data = await this.repository.findPaginate(options, where);
-
-        const orders = await this.repository.find( {
-            where: where,
-            select : ["id", "price"]
-        });
-        let totalPrice = 0
-        for (const  order of orders) {
-            totalPrice += order.price
-        }
-
+        const page = Number(options?.page || 1) || 1;
+        const perPage = Number(options?.limit || 10) || 10;
+        const skip = page > 0 ? perPage * (page - 1) : 0;
+        qb.take(perPage)
+        qb.skip(skip)
+        const [results, total] = await qb.getManyAndCount();
+        const ids = results.map(e => e.id)
+        const totalPrice = await this.repository.sum("price", {
+            id: In(ids)
+        })
+        const lastPage = Math.ceil(total / perPage);
         return {
-            data: data.items,
+            data: results,
             totalPrice: totalPrice,
-            meta: data.meta
+            meta: {
+                itemCount: results.length,
+                totalItems: total,
+                itemsPerPage: perPage,
+                totalPages: lastPage,
+                currentPage: page,
+                next: page < lastPage ? page + 1 : null,
+            },
         }
     }
 

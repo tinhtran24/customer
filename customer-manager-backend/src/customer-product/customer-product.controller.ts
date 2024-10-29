@@ -4,11 +4,9 @@ import {
     Controller, Delete,
     Get,
     Param,
-    ParseArrayPipe,
     ParseUUIDPipe,
     Patch,
     Post,
-    Put,
     Query,
     Request
 } from '@nestjs/common';
@@ -141,7 +139,6 @@ export class CustomerProductController extends BaseController<CustomerProductSer
         @Query() options: QueryCustomerProductDto,
         @Request() req
     ) {
-        let where = {}
         if (req.user['role'] !== 'admin') {
             options.userId = req.user['userId']
         }

@@ -12,6 +12,7 @@ import { FilterValues } from "./order.interface";
 import moment from "moment";
 import { SettingSelect } from "../Common/Select";
 import { SETTINGS_TYPE } from "@/app/lib/definitions";
+import { isNull } from "@antv/util";
 
 interface ExportButtonProp {
   filteredValue: FilterValues;
@@ -37,16 +38,17 @@ export function ExportButton({
     message.info("Đang xử lí ...");
     setIsHandling(true);
 
-    const cusName = filteredValue?.customerName || "";
-    const sale = filteredValue?.sale || "";
-    const source = filteredValue?.source || "";
+    const cusName = filteredValue?.customerName || null;
+    const sale = filteredValue?.sale || null;
+    const source = filteredValue?.source || null;
     const formattedFrom = filteredValue?.from
       ? moment(filteredValue.from).format("YYYY-MM-DD")
-      : "";
+      : null;
     const formattedTo = filteredValue?.to
       ? moment(filteredValue.to).format("YYYY-MM-DD")
-      : "";
-    const customerStatus = filteredValue?.status || "";
+      : null;
+    const status = filteredValue?.status || null;
+    const customerStatus = filteredValue?.customerStatus || null;
 
     try {
       await getFileOrderData({
@@ -58,7 +60,8 @@ export function ExportButton({
         from: formattedFrom,
         to: formattedTo,
         customerStatus: customerStatus,
-        ids: `${orderIds.join(",")}`,
+        status: status,
+        ids: (orderIds.length > 0 && orderIds[0] !== '') ? `${orderIds.join(",")}` : null,
       });
     } catch (error) {
       console.error("Error downloading the file:", error);
@@ -72,7 +75,9 @@ export function ExportButton({
     const url = new URL(`${await getURL()}/customer-product/export`);
 
     Object.keys(queryParams).forEach((key) => {
-      url.searchParams.append(key, queryParams[key]);
+      if (!isNull(queryParams[key])) {
+        url.searchParams.append(key, queryParams[key]);
+      }
     });
 
     const response = await fetch(url, {

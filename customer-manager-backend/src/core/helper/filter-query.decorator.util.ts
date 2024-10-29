@@ -55,7 +55,7 @@ export const FilterQueries = (readFilterDto?: Function): MethodDecorator[] =>
         .filter(Boolean) as MethodDecorator[])
     : []
 
-const dateFormat = 'yyyy-MM-dd HH:mm:ss.SSS'
+export const dateFormat = 'yyyy-MM-dd HH:mm:ss.SSS'
 
 export const BetweenDates = (from?: Date, to?: Date): FindOperator<string> => {
     if (from && to) {
