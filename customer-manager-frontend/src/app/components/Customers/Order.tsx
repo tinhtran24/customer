@@ -200,7 +200,7 @@ export default function OrderProduct({
       key: "name",
       render: (product: Product) => product.title,
     },
-    { title: "Nguồn hàng", dataIndex: "source", key: "source" },
+    { title: "Kho", dataIndex: "source", key: "source" },
     { title: "Số lượng", dataIndex: "quantity", key: "quantity" },
     {
       title: "Đơn giá",
@@ -339,11 +339,11 @@ export default function OrderProduct({
         >
           <Form.Item
             name="source"
-            label="Nguồn hàng"
+            label="Kho"
             rules={
               data.length > 0
                 ? []
-                : [{ required: true, message: "Vui lòng chọn nguồn hàng!" }]
+                : [{ required: true, message: "Vui lòng chọn Kho!" }]
             }
           >
             <SettingSelect

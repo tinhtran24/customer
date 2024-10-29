@@ -173,7 +173,7 @@ export const DashboardMenu = () => {
             },
             {
               key: "/dashboard/source-of-goods",
-              label: "Nguồn hàng",
+              label: "Kho",
               icon: (
                 <span style={{ marginLeft: "10px" }}>
                   <MdProductionQuantityLimits style={{ fontSize: "16px" }} />

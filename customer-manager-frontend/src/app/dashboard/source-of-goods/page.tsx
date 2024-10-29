@@ -26,7 +26,7 @@ export default async function SourceOfGoodsPage() {
                 margin: 0,
               }}
             >
-              QUẢN LÝ NGUỒN HÀNG
+              QUẢN LÝ KHO
             </h2>
             <CreateButton type={type} />
           </Flex>

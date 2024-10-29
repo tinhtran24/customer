@@ -143,7 +143,7 @@ const OrderFilter: React.FC<OrderFilterProps> = ({
         <SettingSelect
           type={SETTINGS_TYPE.SOURCE_OF_GOODS}
           style={{ width: "100%" }}
-          placeholder="- Chọn nguồn hàng -"
+          placeholder="- Chọn Kho -"
           onChange={handleSourceOfGoodChange}
           value={filtersValue?.source}
           allowClear

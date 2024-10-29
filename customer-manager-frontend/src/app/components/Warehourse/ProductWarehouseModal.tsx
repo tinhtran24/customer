@@ -96,7 +96,7 @@ export const ProductWarehouseModal: React.FC<AddProductModalProps> = ({
     >
       <Form form={form} layout="vertical">
 
-        <Form.Item name="source" label="Nguồn hàng">
+        <Form.Item name="source" label="Kho">
             <SettingSelect
               notFoundContent="Không tìm thấy"
               showSearch
