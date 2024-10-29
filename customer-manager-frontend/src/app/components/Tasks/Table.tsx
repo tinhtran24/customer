@@ -149,7 +149,7 @@ export default function TaskTable() {
       dataIndex: ["appoinment", "customer"],
       key: "CustomerFullname",
       render: (customer: Customer) => (
-        <Link href={`/dashboard/customers/${customer.id}`}>
+        <Link href={`/dashboard/customers/${customer.id}`} target="_blank">
           {customer.fullName}
         </Link>
       ),

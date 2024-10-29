@@ -94,9 +94,8 @@ export function ModelCreate({ customerId, refetch , isModalVisible, setIsModalVi
                         rules={[{ required: true, message: "Vui lòng chọn ngày hẹn" }]}
                     >
                         <DatePicker
-                            placeholder="Chọn ngày và giờ ..."
-                            showTime={{ format: "HH:mm" }}
-                            format="YYYY-MM-DD HH:mm"
+                            placeholder="Chọn ngày ..."
+                            style={{width: "100%"}}
                         />
                     </Form.Item>
 
