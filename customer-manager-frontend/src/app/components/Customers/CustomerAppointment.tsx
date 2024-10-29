@@ -31,6 +31,7 @@ import { useAuthContext } from "../auth";
 import { generateCode } from "@/app/utils/generateString";
 import { SettingSelect } from "../Common/Select";
 import { ModelCreate } from "@/app/components/Tasks/ModelCreate";
+import { ModalEdit } from "../Tasks/ModalEdit";
 // import { SettingSelect } from "../Common/Select";
 
 // const { Option } = Select;
@@ -78,6 +79,27 @@ export function CreateCustomerAppointment({
       width: "40%",
       ellipsis: true,
     },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      width: "30%",
+      ellipsis: true,
+    },
+    {
+      title: "Tương tác",
+      key: "action",
+      render: (task) => (
+        <Space size="middle">
+          <ModalEdit
+            task={task}
+            refetch={() => {
+              getData();
+            }}
+          />
+        </Space>
+      ),
+    },
   ];
 
   if (isLoading)
@@ -96,10 +118,10 @@ export function CreateCustomerAppointment({
   return (
     <>
       <ModelCreate
-          customerId={customerId}
-          refetch={() => getData()}
-          setIsModalVisible= {setIsModalVisible}
-          isModalVisible={isModalVisible}
+        customerId={customerId}
+        refetch={() => getData()}
+        setIsModalVisible={setIsModalVisible}
+        isModalVisible={isModalVisible}
       />
       <Button
         type="primary"

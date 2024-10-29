@@ -96,7 +96,7 @@ export function ModalEdit({ task, refetch }: { task: Task; refetch: any }) {
                 style={{ marginTop: 24 }}
                 initialValues={{
                   status: task.status,
-                  content: task.content,
+                  description: task.description,
                 }}
             >
               <Form.Item
