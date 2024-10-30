@@ -46,8 +46,8 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         qb.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
         qbSum.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
         if (options.customerName) {
-            qb.andWhere(`"Customer"."fullName" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
-            qbSum.andWhere(`"Customer"."fullName" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
+            qb.andWhere(`"Customer"."full_name" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
+            qbSum.andWhere(`"Customer"."full_name" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
         }
         if (options.ids && options.ids.length > 0 && options.ids[0] !== "") {
             qb.andWhere(`"CustomerProduct"."id" IN (:...ids)'`, { ids: options.ids })
@@ -78,11 +78,11 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         }
 
         if (options.from && options.to) {
-            qb.andWhere(`"CustomerProduct"."createdAt" BETWEEN :from AND :to`, {
+            qb.andWhere(`"CustomerProduct"."created_at" BETWEEN :from AND :to`, {
                 from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateFormat),
                 to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateFormat),
             })
-            qbSum.andWhere(`"CustomerProduct"."createdAt" BETWEEN :from AND :to`, {
+            qbSum.andWhere(`"CustomerProduct"."created_at" BETWEEN :from AND :to`, {
                 from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateFormat),
                 to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateFormat),
             })
