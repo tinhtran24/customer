@@ -22,6 +22,9 @@ dayjs.extend(isToday);
 dayjs.extend(isTomorrow);
 dayjs.extend(relativeTime);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
+const tzDayjs = (...args: any[]) => {
+    return dayjs(...args).tz('Asia/Ho_Chi_Minh');
+};
 
 dayjs.locale('vi');
 export {
@@ -36,5 +39,6 @@ export {
     isYesterday,
     isToday,
     isTomorrow,
-    relativeTime
+    relativeTime,
+    tzDayjs
 };

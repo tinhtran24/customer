@@ -5,6 +5,7 @@ import { useState } from "react";
 import { generateCode } from "@/app/utils/generateString";
 import { createAppointmentForCustomer } from "@/app/lib/actions";
 import { useAuthContext } from "@/app/components/auth";
+import { tzDayjs } from "@/app/utils/date";
 
 export function ModelCreate({ customerId, refetch , isModalVisible, setIsModalVisible}: { customerId: string; refetch: any, isModalVisible: boolean, setIsModalVisible: any }) {
     const [formModal] = Form.useForm();
@@ -25,7 +26,7 @@ export function ModelCreate({ customerId, refetch , isModalVisible, setIsModalVi
                             {
                                 code: generateCode("LH", new Date(), Date.now().valueOf()),
                                 description: values.content,
-                                date: values.date,
+                                date: tzDayjs(values.date).format('YYYY-MM-DD'),
                                 status: values.taskStatus,
                                 // label: values.label,
                                 userInChargeId: (currentUser as any).sub,

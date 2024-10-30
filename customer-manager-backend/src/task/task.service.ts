@@ -66,7 +66,7 @@ export class TaskService extends BaseService<Task, TaskRepository> {
             take: perPage,
             skip,
             select : ["id"],
-            order: { date : "ASC" },
+            order: { date : "ASC", updatedAt: "DESC" },
         });
         const data = await this.repository.find({
             where : { id : In( taskIds.map( task => task.id ) ) },

@@ -1,14 +1,6 @@
 import type { Metadata } from "next";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AuthProvider } from "@/app/components/auth";
-import dayjs from "dayjs";
-const utc = require('dayjs/plugin/utc');
-const timezone = require('dayjs/plugin/timezone');
-
-// Initialize dayjs with timezone plugin; timzone plugin requires utc plugin
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
 
 export const metadata: Metadata = {
   title: {

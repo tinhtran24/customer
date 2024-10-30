@@ -55,7 +55,8 @@ export const FilterQueries = (readFilterDto?: Function): MethodDecorator[] =>
         .filter(Boolean) as MethodDecorator[])
     : []
 
-export const dateFormat = 'yyyy-MM-dd HH:mm:ss.SSS'
+export const dateTimeFormat = 'yyyy-MM-dd HH:mm:ss.SSS'
+export const dateFormat = 'yyyy-MM-dd'
 
 export const BetweenDates = (from?: Date, to?: Date): FindOperator<string> => {
     if (from && to) {
@@ -71,6 +72,25 @@ export const BetweenDates = (from?: Date, to?: Date): FindOperator<string> => {
 
     if (from && !to) {
         return MoreThanOrEqual(format(parseISO(DateUtil.beginOfTheDay(from).toISOString()), dateFormat))
+    }
+
+    throw new Error('`from` and `to` are both null')
+}
+
+export const BetweenDateTimes = (from?: Date, to?: Date): FindOperator<string> => {
+    if (from && to) {
+        return Between(
+            format(parseISO(DateUtil.beginOfTheDay(from).toISOString()), dateTimeFormat),
+            format(parseISO(DateUtil.endOfTheDay(to).toISOString()), dateTimeFormat),
+        )
+    }
+
+    if (!from && to) {
+        return LessThanOrEqual(format(parseISO(DateUtil.endOfTheDay(from).toISOString()), dateTimeFormat))
+    }
+
+    if (from && !to) {
+        return MoreThanOrEqual(format(parseISO(DateUtil.beginOfTheDay(from).toISOString()), dateTimeFormat))
     }
 
     throw new Error('`from` and `to` are both null')
