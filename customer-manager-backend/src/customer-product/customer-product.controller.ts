@@ -177,45 +177,43 @@ export class CustomerProductController extends BaseController<CustomerProductSer
             { header: 'Trạng thái', key: 'status', width: 30 },
             { header: 'Kho hàng', key: 'source', width: 30 },
         ]
-        let res = []
+        let res:any[] = []
         for (const item of data.data) {
-            let index = 0
-            for(const productItem of item.customerProductItems) {
-                if (index == 0) {
-                    res.push(
-                        {
-                            ...item,
-                            ...productItem,
-                            price: item.price,
-                            ngayMua: item.createdAt.toLocaleDateString(),
-                            createdAt: item.createdAt.toLocaleDateString(),
-                            nguoiThucHien: item.createdUser?.name,
-                            customerFullname: item.customer?.fullName,
-                            customerStatus:  item.customer?.status,
-                            lhFullname: item.customer?.fullName,
-                            customerEmail:'',
-                            customerPhoneNumber: item.customer?.phoneNumber,
-                            lhPhoneNumber: item.customer?.phoneNumber,
-                            customerCode:  item.customer?.code,
-                            customerSource: item.customer?.source,
-                            createdUserName: item.createdUser?.name,
-                            productCode: productItem.product.code,
-                            productName: productItem.product.title,
-                            productNameDescription: productItem.product.description,
-                            zero: '',
-                            giaVon: productItem.unitPrice,
-                            thanhtien: item.price,
-                            loinhuan: item.price,
-                            doanhso: item.price,
-                            doanhthu:item.price,
-                            truocthue: item.price,
-                            conlai: item.price,
-                            sauck: item.price,
-                            unitPrice: productItem.unitPrice
-                        }
-                    )
-                    index++
-                } else {
+            res.push(
+                {
+                    ...item,
+                    ...item.customerProductItems[0],
+                    price: item.price,
+                    ngayMua: item.createdAt.toLocaleDateString(),
+                    createdAt: item.createdAt.toLocaleDateString(),
+                    nguoiThucHien: item.createdUser?.name,
+                    customerFullname: item.customer?.fullName,
+                    customerStatus:  item.customer?.status,
+                    lhFullname: item.customer?.fullName,
+                    customerEmail:'',
+                    customerPhoneNumber: item.customer?.phoneNumber,
+                    lhPhoneNumber: item.customer?.phoneNumber,
+                    customerCode:  item.customer?.code,
+                    customerSource: item.customer?.source,
+                    createdUserName: item.createdUser?.name,
+                    productCode: item.customerProductItems[0].product.code,
+                    productName: item.customerProductItems[0].product.title,
+                    productNameDescription: item.customerProductItems[0].product.description,
+                    zero: '',
+                    giaVon: item.customerProductItems[0].unitPrice,
+                    thanhtien: item.price,
+                    loinhuan: item.price,
+                    doanhso: item.price,
+                    doanhthu:item.price,
+                    truocthue: item.price,
+                    conlai: item.price,
+                    sauck: item.price,
+                    unitPrice: item.customerProductItems[0].unitPrice
+                }
+            )
+            if(item.customerProductItems.length > 1) {
+                item.customerProductItems.shift()
+                for(const productItem of item.customerProductItems) {
                     res.push(
                         {
                             ...productItem,
@@ -233,6 +231,7 @@ export class CustomerProductController extends BaseController<CustomerProductSer
                 }
             }
         }
+        console.log(res.length)
         return this.customerProductService.export(columns, res, 'donhang.xlsx')
     }
 }

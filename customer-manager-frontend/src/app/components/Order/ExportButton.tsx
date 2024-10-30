@@ -52,8 +52,6 @@ export function ExportButton({
 
     try {
       await getFileOrderData({
-        page: currentPage.toString(),
-        limit: pageSize.toString(),
         customerName: cusName,
         saleName: sale,
         source: source,

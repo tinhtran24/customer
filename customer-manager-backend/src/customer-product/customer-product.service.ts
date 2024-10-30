@@ -37,44 +37,45 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             .leftJoinAndSelect('CustomerProduct.customerProductItems', 'CustomerProductItems')
             .leftJoinAndSelect('CustomerProductItems.product', 'Product')
 
-        const qbSum = this.repository.createQueryBuilder('CustomerProduct')
-            .select(`SUM("CustomerProduct"."price") as value`)
+        const qbDistinct = this.repository.createQueryBuilder('CustomerProduct')
+            .select(`DISTINCT "CustomerProduct"."id"`)
             .leftJoin('CustomerProduct.createdUser', 'CreatedUser')
             .leftJoin('CustomerProduct.customer', 'Customer')
             .leftJoin('CustomerProduct.customerProductItems', 'CustomerProductItems')
 
         qb.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
-        qbSum.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
+
+        qbDistinct.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
         if (options.customerName) {
             qb.andWhere(`"Customer"."full_name" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
-            qbSum.andWhere(`"Customer"."full_name" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
+            qbDistinct.andWhere(`"Customer"."full_name" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
         }
         if (options.ids && options.ids.length > 0 && options.ids[0] !== "") {
             qb.andWhere(`"CustomerProduct"."id" IN (:...ids)'`, { ids: options.ids })
-            qbSum.andWhere(`"CustomerProduct"."id" IN (:...ids)'`, { ids: options.ids })
+            qbDistinct.andWhere(`"CustomerProduct"."id" IN (:...ids)'`, { ids: options.ids })
         }
         if (options.customerStatus) {
             qb.andWhere(`"Customer"."status" ILIKE :customerStatus`, {customerStatus: `%${options.customerStatus}%`})
-            qbSum.andWhere(`"Customer"."status" ILIKE :customerStatus`, {customerStatus: `%${options.customerStatus}%`})
+            qbDistinct.andWhere(`"Customer"."status" ILIKE :customerStatus`, {customerStatus: `%${options.customerStatus}%`})
         }
         if (options.saleName) {
             qb.andWhere(`"CreatedUser"."name" ILIKE :saleName`, {saleName: `%${options.saleName}%`})
-            qbSum.andWhere(`"CreatedUser"."name" ILIKE :saleName`, {saleName: `%${options.saleName}%`})
+            qbDistinct.andWhere(`"CreatedUser"."name" ILIKE :saleName`, {saleName: `%${options.saleName}%`})
         }
 
         if (options.userId) {
             qb.andWhere(`"CreatedUser"."id" = :userId`, {userId: options.userId })
-            qbSum.andWhere(`"CreatedUser"."id" = :userId`, {userId: options.userId })
+            qbDistinct.andWhere(`"CreatedUser"."id" = :userId`, {userId: options.userId })
         }
 
         if (options.source) {
             qb.andWhere(`"CustomerProductItems"."source" = :source`, {source: options.source })
-            qbSum.andWhere(`"CustomerProductItems"."source" = :source`, {source: options.source })
+            qbDistinct.andWhere(`"CustomerProductItems"."source" = :source`, {source: options.source })
         }
 
         if (options.status) {
             qb.andWhere(`"CustomerProduct"."status" ILIKE :status`, {status: `%${options.status}%` })
-            qbSum.andWhere(`"CustomerProduct"."status" ILIKE :status`, {status: `%${options.status}%` })
+            qbDistinct.andWhere(`"CustomerProduct"."status" ILIKE :status`, {status: `%${options.status}%` })
         }
 
         if (options.from && options.to) {
@@ -82,7 +83,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateFormat),
                 to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateFormat),
             })
-            qbSum.andWhere(`"CustomerProduct"."created_at" BETWEEN :from AND :to`, {
+            qbDistinct.andWhere(`"CustomerProduct"."created_at" BETWEEN :from AND :to`, {
                 from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateFormat),
                 to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateFormat),
             })
@@ -93,9 +94,16 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         qb.take(perPage)
         qb.skip(skip)
         const [results, total] = await qb.getManyAndCount();
+
+        const qbSum = this.repository.createQueryBuilder('CustomerProduct')
+            .select(`SUM("CustomerProduct"."price") as value`)
+            .innerJoin("(" + qbDistinct.getQuery() + ")", "CustomerProductDis", `"CustomerProductDis".id = CustomerProduct.id`)
+            .setParameters(qbDistinct.getParameters())
         const totalPrice = await qbSum.getRawOne()
+
         qbSum.addSelect(`"CustomerProduct"."status" as status`).groupBy(`"CustomerProduct"."status"`)
         const totalPriceByStatus = await qbSum.getRawMany()
+
         const lastPage = Math.ceil(total / perPage);
         return {
             data: results,
