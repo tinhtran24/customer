@@ -6,7 +6,7 @@ import { PaginateDto } from 'src/core/base/base.dto';
 import { CreateCustomerOrderDto, UpdateCustomerOrderDto } from './dto/create-customer-order.dto';
 import { CustomerProductItemRepository } from './customer-product-items.repository';
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
-import { BetweenDates, dateFormat } from "../core/helper/filter-query.decorator.util";
+import { BetweenDates, dateFormat, dateTimeFormat } from "../core/helper/filter-query.decorator.util";
 import { ILike, In, Not } from "typeorm";
 import { format, parseISO } from 'date-fns';
 import { Column, Workbook } from 'exceljs';
@@ -80,12 +80,12 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
 
         if (options.from && options.to) {
             qb.andWhere(`"CustomerProduct"."created_at" BETWEEN :from AND :to`, {
-                from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateFormat),
-                to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateFormat),
+                from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateTimeFormat),
+                to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateTimeFormat),
             })
             qbDistinct.andWhere(`"CustomerProduct"."created_at" BETWEEN :from AND :to`, {
-                from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateFormat),
-                to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateFormat),
+                from: format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateTimeFormat),
+                to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateTimeFormat),
             })
         }
         const page = Number(options?.page || 1) || 1;
@@ -137,7 +137,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             groupBy = '"CustomerProduct"."month"'
         } else if (options.from && options.to) {
             qb.select(['"CustomerProduct"."buy_date" as key'])
-            qb.where(`"CustomerProduct"."created_at" BETWEEN '${options.from}' AND '${options.to}'`)
+            qb.where(`"CustomerProduct"."created_at" BETWEEN '${format(parseISO(DateUtil.beginOfTheDay(options.from).toISOString()), dateTimeFormat)}' AND '${format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateTimeFormat)}'`)
             groupBy = '"CustomerProduct"."buy_date"'
         }
         if (options.saleName) {
@@ -155,6 +155,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         qb.andWhere(`"CustomerProduct"."code" != 'ĐH_CŨ'`)
         qb.addSelect(`SUM("CustomerProduct"."price") as value`).groupBy(groupBy)
         const result = await qb.getRawMany();
+        console.log(result)
         return {
             data: result
         }
