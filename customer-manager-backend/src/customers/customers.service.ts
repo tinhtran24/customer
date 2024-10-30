@@ -13,7 +13,7 @@ import { CustomerRepository } from './customer.repository';
 import { QueryHook } from 'src/core/type/query';
 import { QueryCustomertDto } from './dto/filter-customer.dto';
 import { Equal, In, Raw } from 'typeorm';
-import { BetweenDates } from 'src/core/helper/filter-query.decorator.util';
+import { BetweenDates, BetweenDateTimes } from 'src/core/helper/filter-query.decorator.util';
 import { PassThrough } from 'stream';
 import { Column, Workbook } from 'exceljs';
 
@@ -54,7 +54,7 @@ export class CustomersService extends BaseService<Customer, CustomerRepository> 
       where['status'] = Equal(options.status)
     }
     if (options.from && options.to) {
-      where.createdAt = BetweenDates(options.from, options.to)
+      where.createdAt = BetweenDateTimes(options.from, options.to)
     }
     if(options.userInChargeId) {
         where['userInChargeId'] = Equal(options.userInChargeId)
