@@ -19,7 +19,7 @@ export class Task extends BaseEntity {
   @JoinColumn({ name: 'appoinment_id' })
   appoinment: Appoinment;
 
-  @Column({ name: 'date', nullable: true })
+  @Column({ name: 'date', nullable: true, type: 'date' })
   date: Date
 
   @Index()
