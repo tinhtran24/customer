@@ -340,7 +340,10 @@ export type PaginationMeta = {
   totalPages: number;
   currentPage: number;
 };
-
+export type TotalPriceByStatus = {
+  value: number;
+  status: string;
+}
 export type Pagination<T> = {
   items: T[];
   meta: PaginationMeta;
@@ -348,6 +351,7 @@ export type Pagination<T> = {
   //
   data?:T[];
   totalPrice?: number;
+  totalPriceByStatus?: TotalPriceByStatus[]
 };
 
 export enum ENUM_STATUS_TYPE {

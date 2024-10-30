@@ -17,7 +17,7 @@ import {
   CustomerProductItem,
   Pagination,
   Product,
-  Setting,
+  Setting, TotalPriceByStatus,
   User,
 } from "@/app/lib/definitions";
 import { Card, Col, Row, Statistic } from "antd";
@@ -29,21 +29,24 @@ import { MdDeleteOutline } from "react-icons/md";
 import { useAuthContext } from "../auth";
 import Link from "next/link";
 import { FiEdit3 } from "react-icons/fi";
+import { formatPrice } from "@/app/utils/price";
 
 const statuses = ["Hoàn/Hủy", "Hoàn thành"];
 
 interface DashboardStatsProps {
   totalOrders: string;
   totalValue: string;
+  totalValueByStatus: TotalPriceByStatus[]
 }
 
 const DashboardStats: React.FC<DashboardStatsProps> = ({
   totalOrders,
   totalValue,
+  totalValueByStatus
 }) => {
   return (
     <Row gutter={16}>
-      <Col span={12}>
+      <Col span={4}>
         <Card>
           <Statistic
             title="Tổng Đơn Hàng"
@@ -52,17 +55,41 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({
           />
         </Card>
       </Col>
-      <Col span={12}>
+      <Col span={20}>
         <Card>
-          <Statistic
-            title="Tổng Doanh Thu"
-            value={totalValue}
-            valueStyle={{
-              fontSize: "24px",
-              fontWeight: "bold",
-              color: "#3f8600",
-            }}
-          />
+          <Card.Grid style={{
+            width: '20%',
+            textAlign: 'center',
+          }}>
+            <Statistic
+                title="Tổng Doanh Thu"
+                value={totalValue}
+                valueStyle={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  color: "#3f8600",
+                }}
+            />
+          </Card.Grid>
+
+          {totalValueByStatus.map((e) => {
+            return (
+                <Card.Grid style={{
+                  width: '20%',
+                  textAlign: 'center',
+                }}>
+                  <Statistic
+                      title={`Trạng thái ${e.status}`}
+                      value={formatPrice(e.value)}
+                      valueStyle={{
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        color: "#3f8600",
+                      }}
+                  />
+                </Card.Grid>
+            )
+          })}
         </Card>
       </Col>
     </Row>
@@ -249,13 +276,6 @@ const TableOrder: React.FC<TableOrderProps> = ({
     }));
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  };
-
   const handleReset = () => {
     // router.refresh();
     window.location.reload();
@@ -421,6 +441,7 @@ const TableOrder: React.FC<TableOrderProps> = ({
       <DashboardStats
         totalOrders={data?.meta?.totalItems?.toString() || "_"}
         totalValue={data?.totalPrice ? formatPrice(data?.totalPrice) : "_"}
+        totalValueByStatus = {data?.totalPriceByStatus || [] }
       />
       <OrderFilter
         filtersValue={filters}
