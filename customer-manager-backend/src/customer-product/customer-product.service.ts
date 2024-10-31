@@ -207,6 +207,16 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
               'Đơn hàng không tồn tại',
             )
         }
+        for(const item of customerProduct.customerProductItems) {
+            await this.productService.addStock(item.productId, {
+                productWarehouse: {
+                    quantityInStock: item.quantity,
+                    quantityInUse: 0,
+                    source: item.source,
+                    price: item.unitPrice,
+                }
+            },  data.updateCustomerProduct.updatedUserId, `Cập nhật đơn hàng: ${customerProduct.code}`)
+        }
         const customerOrder = await this.update(item, data.updateCustomerProduct)
         await this.customerProductItemRepository.delete({customerProductId: item})
         for (const item of data.items) {
@@ -221,6 +231,23 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                         price: item.unitPrice,
                     }
                 },  data.updateCustomerProduct.updatedUserId, `Hoàn/Hủy đơn hàng: ${customerProduct.code}`)
+            } else {
+                const product = await this.productService.detail(item.productId)
+                for ( const warehouse of product.productWarehouses) {
+                    if (warehouse.source === item.source && item.quantity > warehouse.displayQuantity) {
+                        throw new BadRequestException(
+                            `Số lượng trong kho không đủ`,
+                        )
+                    }
+                }
+                await this.productService.buy(item.productId, {
+                    productWarehouse: {
+                        quantityInStock: 0,
+                        quantityInUse: item.quantity,
+                        source: item.source,
+                        price: item.unitPrice,
+                    },
+                }, data.createCustomerProduct.createdUserId, `Cập nhật đơn hàng: ${customerOrder.code}`)
             }
         }
         return customerOrder
