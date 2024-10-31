@@ -93,7 +93,7 @@ export default function LogTable() {
         key: "createdUser",
         dataIndex: "createdUser",
         render: (s: any) => s.name,
-        width: "12%"
+        width: "15%"
       },
       {
         title: "Note",
@@ -106,27 +106,20 @@ export default function LogTable() {
         dataIndex: "price",
         key: "price",
         render: (s: number) => formatPrice(s),
-        width: "8%"
+        width: "10%"
       },
       {
         title: "Đã nhập",
         dataIndex: "quantityInStock",
         key: "quantityInStock",
-        width: "8%"
+        width: "10%"
       },
       {
         title: "Đã bán",
         dataIndex: "quantityInUse",
         key: "quantityInUse",
-        width: "8%"
+        width: "10%"
       },
-      {
-        title: "Còn lại",
-        dataIndex: "displayQuantity",
-        key: "displayQuantity",
-        width: "8%"
-      },
-
     ];
 
     return (
