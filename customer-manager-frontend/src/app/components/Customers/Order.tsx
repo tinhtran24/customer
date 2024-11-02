@@ -63,12 +63,14 @@ interface OrderProductProps {
     paymentInformation: PaymentInformation;
   };
   refetch?: any;
+  sourceSelectedInit?: string;
 }
 export default function OrderProduct({
   customer,
   provinces,
   initData,
   refetch,
+  sourceSelectedInit,
 }: OrderProductProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const { currentUser } = useAuthContext();
@@ -80,7 +82,7 @@ export default function OrderProduct({
   const [form] = Form.useForm();
   const [formModal] = Form.useForm();
 
-  const [sourceSelected, setSourceSelected] = useState<string>();
+  const [sourceSelected, setSourceSelected] = useState<string | undefined>(sourceSelectedInit);
   const [productsBySource, setProductsBySource] = useState<Product[]>([]);
 
   const refreshProduct = async () => {
