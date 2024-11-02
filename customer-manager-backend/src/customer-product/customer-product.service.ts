@@ -205,7 +205,12 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
               'Đơn hàng không tồn tại',
             )
         }
-        for(const item of customerProduct.customerProductItems) {
+        const customerProductItems = await this.customerProductItemRepository.find(
+            {
+                where: {customerProductId: item}
+            }
+        )
+        for(const item of customerProductItems) {
             await this.productService.addStock(item.productId, {
                 productWarehouse: {
                     quantityInStock: item.quantity,
@@ -215,6 +220,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 }
             },  data.updateCustomerProduct.updatedUserId, `Cập nhật đơn hàng: ${customerProduct.code}`)
         }
+
         const customerOrder = await this.update(item, data.updateCustomerProduct)
         await this.customerProductItemRepository.delete({customerProductId: item})
         for (const item of data.items) {
