@@ -85,6 +85,7 @@ export function ModalEdit({
               setVisible(false);
               refetch();
             }}
+            sourceSelectedInit={selected?.products[0].source || undefined}
           />
         )}
       </Modal>
