@@ -8,6 +8,7 @@ import { ILike } from 'typeorm';
 import { QueryProductWarehouseDto } from "./dto/product-warehouse-filter.dto";
 import { QueryProductDto } from './dto/product-filter.dto';
 import { ProductWarehouseLogRepository } from './product-warehouse-log.repository';
+import { ProductWarehouse } from './entities/product-warehouse.entity';
 
 @Injectable()
 export class ProductService extends BaseService<Product, ProductRepository> {
@@ -74,6 +75,19 @@ export class ProductService extends BaseService<Product, ProductRepository> {
             where.productId =  options.productId
         }
         return this.productWarehouseRepository.findPaginate(options, where);
+    }
+
+    async findProductWareHouseBySource(
+        id: string,
+        source: string
+    ): Promise<ProductWarehouse> {
+        return await this.productWarehouseRepository.findOne({
+            where: {
+                productId: id,
+                source: ILike(`%${source}%`)
+            },
+            relations: ['productWarehouseLogs']
+        });
     }
 
     async addStock(

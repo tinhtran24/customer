@@ -178,13 +178,11 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         }
         const customerOrder = await this.create(dataCustomerOrder)
         for (const item of data.items) {
-            const product = await this.productService.detail(item.productId)
-            for ( const warehouse of product.productWarehouses) {
-                if (warehouse.source === item.source && item.quantity > warehouse.displayQuantity) {
-                    throw new BadRequestException(
-                        `Số lượng trong kho không đủ`,
-                      )
-                }
+            const warehouse = await this.productService.findProductWareHouseBySource(item.productId, item.source)
+            if (item.quantity > warehouse.displayQuantity) {
+                throw new BadRequestException(
+                    `Số lượng trong kho không đủ`,
+                  )
             }
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
@@ -232,13 +230,11 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                     }
                 },  data.updateCustomerProduct.updatedUserId, `Hoàn/Hủy đơn hàng: ${customerProduct.code}`)
             } else {
-                const product = await this.productService.detail(item.productId)
-                for ( const warehouse of product.productWarehouses) {
-                    if (warehouse.source === item.source && item.quantity > warehouse.displayQuantity) {
-                        throw new BadRequestException(
-                            `Số lượng trong kho không đủ`,
-                        )
-                    }
+                const warehouse = await this.productService.findProductWareHouseBySource(item.productId, item.source)
+                if (item.quantity > warehouse.displayQuantity) {
+                    throw new BadRequestException(
+                        `Số lượng trong kho không đủ`,
+                    )
                 }
                 await this.productService.buy(item.productId, {
                     productWarehouse: {
