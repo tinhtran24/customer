@@ -249,7 +249,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                         source: item.source,
                         price: item.unitPrice,
                     },
-                }, data.createCustomerProduct.createdUserId, `Cập nhật đơn hàng: ${customerOrder.code}`)
+                }, data.updateCustomerProduct.updatedUserId, `Cập nhật đơn hàng: ${customerOrder.code}`)
             }
         }
         return customerOrder
