@@ -75,6 +75,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
         }
         return this.productWarehouseRepository.findPaginate(options, where);
     }
+
     async addStock(
         id: string,
         updateProductWarehouseDto: UpdateProductWarehouse,
@@ -91,6 +92,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
             if (!product) {
                 throw new Error(`Sản phẩm với ID ${id} không tồn tại`);
             }
+            
             const productWarehouseResult = await this.productWarehouseRepository.findOne({
                 where: {
                     productId: id,
@@ -103,8 +105,17 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 const { quantityInStock, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
                 if (productWarehouseResult) {
-                    productWarehouseResult.quantityInStock += Number(quantityInStock);
-                    productWarehouseResult.displayQuantity += Number(quantityInStock);
+                    const sumInStock = productWarehouseResult.productWarehouseLogs
+                    .reduce((sum, current) => sum + current.quantityInStock, 0);
+
+                    const sumInUse = productWarehouseResult.productWarehouseLogs
+                    .reduce((sum, current) => sum + current.quantityInUse, 0);
+
+                    const quantityInStockPlus = sumInStock +  Number(quantityInStock)
+                    productWarehouseResult.quantityInStock = quantityInStockPlus;
+                    productWarehouseResult.displayQuantity = quantityInStockPlus;
+                    productWarehouseResult.quantityInUse = sumInUse;
+                
                     await this.productWarehouseRepository.save(productWarehouseResult, { reload: true });
                     productWareHouseId = productWarehouseResult.id;
                 } else {
@@ -169,8 +180,18 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 const { quantityInStock, quantityInUse, source, price } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
                 if (productWarehouseResult) {
-                    productWarehouseResult.quantityInUse += Number(quantityInUse);
-                    productWarehouseResult.displayQuantity -= Number(quantityInUse);
+                    const sumInStock = productWarehouseResult.productWarehouseLogs
+                    .reduce((sum, current) => sum + current.quantityInStock, 0);
+
+                    const sumInUse = productWarehouseResult.productWarehouseLogs
+                    .reduce((sum, current) => sum + current.quantityInUse, 0);
+
+                    const quantityInStocklus = sumInStock -  Number(quantityInUse);
+                    
+                    productWarehouseResult.quantityInStock = sumInStock;
+                    productWarehouseResult.displayQuantity = quantityInStocklus;
+                    productWarehouseResult.quantityInUse = sumInUse;
+
                     await this.productWarehouseRepository.save(productWarehouseResult);
                     productWareHouseId = productWarehouseResult.id;
                     displayQuantity = productWarehouseResult.displayQuantity - quantityInUse
