@@ -188,9 +188,9 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     const sumInUse = productWarehouseResult.productWarehouseLogs
                     .reduce((sum, current) => sum + current.quantityInUse, 0);
 
-                    const quantityInStocklus = sumInStock -  Number(quantityInUse);
+                    const quantityInStocklus = sumInStock - sumInUse - Number(quantityInUse);
                     
-                    productWarehouseResult.quantityInStock = quantityInStocklus;
+                    productWarehouseResult.quantityInStock = sumInStock;
                     productWarehouseResult.displayQuantity = quantityInStocklus;
                     productWarehouseResult.quantityInUse = sumInUse + Number(quantityInUse);
 
