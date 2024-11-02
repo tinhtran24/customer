@@ -97,7 +97,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 where: {
                     productId: id,
                     source: ILike(`%${productWarehouse.source}%`)
-                }
+                },
+                relations: ['productWarehouseLogs']
             });
 
             let productWareHouseId;
@@ -172,7 +173,8 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                 where: {
                     productId: id,
                     source: ILike(`%${productWarehouse.source}%`)
-                }
+                },
+                relations: ['productWarehouseLogs']
             });
             let productWareHouseId;
             let displayQuantity;
@@ -188,9 +190,9 @@ export class ProductService extends BaseService<Product, ProductRepository> {
 
                     const quantityInStocklus = sumInStock -  Number(quantityInUse);
                     
-                    productWarehouseResult.quantityInStock = sumInStock;
+                    productWarehouseResult.quantityInStock = quantityInStocklus;
                     productWarehouseResult.displayQuantity = quantityInStocklus;
-                    productWarehouseResult.quantityInUse = sumInUse;
+                    productWarehouseResult.quantityInUse = sumInUse + Number(quantityInUse);
 
                     await this.productWarehouseRepository.save(productWarehouseResult);
                     productWareHouseId = productWarehouseResult.id;
