@@ -6,8 +6,7 @@ import { PaginateDto } from 'src/core/base/base.dto';
 import { CreateCustomerOrderDto, UpdateCustomerOrderDto } from './dto/create-customer-order.dto';
 import { CustomerProductItemRepository } from './customer-product-items.repository';
 import { QueryChartCustomerProductDto, QueryCustomerProductDto } from "./dto/customer-product-filter.dto";
-import { BetweenDates, dateFormat, dateTimeFormat } from "../core/helper/filter-query.decorator.util";
-import { ILike, In, Not } from "typeorm";
+import { dateTimeFormat } from "../core/helper/filter-query.decorator.util";
 import { format, parseISO } from 'date-fns';
 import { Column, Workbook } from 'exceljs';
 import { PassThrough } from 'stream';
@@ -211,6 +210,10 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             }
         )
         for(const item of customerProductItems) {
+            let note = `Cập nhật đơn hàng: ${customerProduct.code}`
+            if (data.updateCustomerProduct.status == 'Hoàn/Hủy' ) {
+                 note = `Hoàn/Hủy đơn hàng: ${customerProduct.code}`
+            }
             await this.productService.addStock(item.productId, {
                 productWarehouse: {
                     quantityInStock: item.quantity,
@@ -218,23 +221,15 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                     source: item.source,
                     price: item.unitPrice,
                 }
-            },  data.updateCustomerProduct.updatedUserId, `Cập nhật đơn hàng: ${customerProduct.code}`)
+            },  data.updateCustomerProduct.updatedUserId, note)
         }
-
         const customerOrder = await this.update(item, data.updateCustomerProduct)
         await this.customerProductItemRepository.delete({customerProductId: item})
         for (const item of data.items) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
             if (data.updateCustomerProduct.status == 'Hoàn/Hủy' ) {
-                await this.productService.addStock(item.productId, {
-                    productWarehouse: {
-                        quantityInStock: item.quantity,
-                        quantityInUse: 0,
-                        source: item.source,
-                        price: item.unitPrice,
-                    }
-                },  data.updateCustomerProduct.updatedUserId, `Hoàn/Hủy đơn hàng: ${customerProduct.code}`)
+               continue
             } else {
                 const warehouse = await this.productService.findProductWareHouseBySource(item.productId, item.source)
                 if (item.quantity > warehouse.displayQuantity) {
