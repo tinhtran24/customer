@@ -31,7 +31,7 @@ import Link from "next/link";
 import { FiEdit3 } from "react-icons/fi";
 import { formatPrice } from "@/app/utils/price";
 
-const statuses = ["Hoàn/Hủy", "Hoàn thành"];
+export const statuses = ["Hoàn/Hủy", "Hoàn thành"];
 
 interface DashboardStatsProps {
   totalOrders: string;
