@@ -43,8 +43,8 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             .leftJoin('CustomerProduct.customerProductItems', 'CustomerProductItems')
 
         qb.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
-
         qbDistinct.where(`"CustomerProduct"."code" != :code`, { code: "ĐH_CŨ" })
+
         if (options.customerName) {
             qb.andWhere(`"Customer"."full_name" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
             qbDistinct.andWhere(`"Customer"."full_name" ILIKE :customerName`, {customerName: `%${options.customerName}%`})
@@ -87,11 +87,12 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 to: format(parseISO(DateUtil.endOfTheDay(options.to).toISOString()), dateTimeFormat),
             })
         }
+        qb.addOrderBy(`"CustomerProduct"."updated_at"`, 'DESC')
         const page = Number(options?.page || 1) || 1;
         const perPage = Number(options?.limit || 10) || 10;
         const skip = page > 0 ? perPage * (page - 1) : 0;
-        qb.take(perPage)
-        qb.skip(skip)
+        qb.limit(perPage)
+        qb.offset(skip)
         const [results, total] = await qb.getManyAndCount();
 
         const qbSum = this.repository.createQueryBuilder('CustomerProduct')
@@ -154,7 +155,6 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         qb.andWhere(`"CustomerProduct"."code" != 'ĐH_CŨ'`)
         qb.addSelect(`SUM("CustomerProduct"."price") as value`).groupBy(groupBy)
         const result = await qb.getRawMany();
-        console.log(result)
         return {
             data: result
         }
@@ -176,7 +176,17 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             buyDate: format(dateObj, 'yyyy-MM-dd')
         }
         const customerOrder = await this.create(dataCustomerOrder)
-        for (const item of data.items) {
+
+        const totals = [];
+        data.items.forEach(x => {
+            const obj = totals.find(o => o.productId === x.productId);
+            if (obj) {
+                obj.quantity = obj.quantity + x.quantity;
+            } else {
+                totals.push(x);
+            }
+        });
+        for (const item of totals) {
             const warehouse = await this.productService.findProductWareHouseBySource(item.productId, item.source)
             if (item.quantity > warehouse.displayQuantity) {
                 throw new BadRequestException(
@@ -209,43 +219,79 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 where: {customerProductId: item}
             }
         )
+        const totals = [];
+        data.items.forEach(x => {
+            const obj = totals.find(o => o.productId === x.productId);
+            if (obj) {
+                obj.quantity = obj.quantity + x.quantity;
+            } else {
+                totals.push(x);
+            }
+        });
+
         for(const item of customerProductItems) {
             let note = `Cập nhật đơn hàng: ${customerProduct.code}`
             if (data.updateCustomerProduct.status == 'Hoàn/Hủy' ) {
-                 note = `Hoàn/Hủy đơn hàng: ${customerProduct.code}`
-            }
-            await this.productService.addStock(item.productId, {
-                productWarehouse: {
-                    quantityInStock: item.quantity,
-                    quantityInUse: 0,
-                    source: item.source,
-                    price: item.unitPrice,
+                note = `Hoàn/Hủy đơn hàng: ${customerProduct.code}`
+                await this.productService.addStock(item.productId, {
+                    productWarehouse: {
+                        quantityInStock: item.quantity,
+                        quantityInUse: 0,
+                        source: item.source,
+                        price: item.unitPrice,
+                    }
+                },  data.updateCustomerProduct.updatedUserId, note)
+            } else {
+                if (!totals.some(e => e.productId === item.productId)){
+                    await this.productService.addStock(item.productId, {
+                        productWarehouse: {
+                            quantityInStock: item.quantity,
+                            quantityInUse: 0,
+                            source: item.source,
+                            price: item.unitPrice,
+                        }
+                    },  data.updateCustomerProduct.updatedUserId, note)
                 }
-            },  data.updateCustomerProduct.updatedUserId, note)
+                for (const s of totals) {
+                    if (!customerProductItems.some(e => e.productId === s.productId)) {
+                        await this.productService.buy(s.productId, {
+                            productWarehouse: {
+                                quantityInStock: 0,
+                                quantityInUse: s.quantity,
+                                source: s.source,
+                                price: s.unitPrice,
+                            },
+                        }, data.updateCustomerProduct.updatedUserId, note)
+                    }
+                    if (s.productId === item.productId) {
+                        if(item.quantity > s.quantity) {
+                            await this.productService.addStock(item.productId, {
+                                productWarehouse: {
+                                    quantityInStock: item.quantity - s.quantity,
+                                    quantityInUse: 0,
+                                    source: s.source,
+                                    price: s.unitPrice,
+                                }
+                            },  data.updateCustomerProduct.updatedUserId, note)
+                        } else if (item.quantity < s.quantity) {
+                            await this.productService.buy(s.productId, {
+                                productWarehouse: {
+                                    quantityInStock: 0,
+                                    quantityInUse: s.quantity - item.quantity,
+                                    source: s.source,
+                                    price: s.unitPrice,
+                                },
+                            }, data.updateCustomerProduct.updatedUserId, note)
+                        }
+                    }
+                }
+            }
         }
         const customerOrder = await this.update(item, data.updateCustomerProduct)
         await this.customerProductItemRepository.delete({customerProductId: item})
-        for (const item of data.items) {
+        for (const item of totals) {
             item.customerProductId = customerOrder.id
             await this.customerProductItemRepository.save(item, { reload: true })
-            if (data.updateCustomerProduct.status == 'Hoàn/Hủy' ) {
-               continue
-            } else {
-                const warehouse = await this.productService.findProductWareHouseBySource(item.productId, item.source)
-                if (item.quantity > warehouse.displayQuantity) {
-                    throw new BadRequestException(
-                        `Số lượng trong kho không đủ`,
-                    )
-                }
-                await this.productService.buy(item.productId, {
-                    productWarehouse: {
-                        quantityInStock: 0,
-                        quantityInUse: item.quantity,
-                        source: item.source,
-                        price: item.unitPrice,
-                    },
-                }, data.updateCustomerProduct.updatedUserId, `Cập nhật đơn hàng: ${customerOrder.code}`)
-            }
         }
         return customerOrder
     }
