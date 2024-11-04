@@ -14,6 +14,7 @@ import { deleteOrder, fetchCustomerProducts } from "@/app/lib/actions";
 import Loading from "@/app/dashboard/loading";
 import { MdDeleteOutline } from "react-icons/md";
 import { useAuthContext } from "../auth";
+import { statuses } from "../Order/Table";
 
 const cssButton: React.CSSProperties = {
   cursor: "pointer",
@@ -42,7 +43,7 @@ export function History({
   }>();
   const { currentUser } = useAuthContext();
   const isAdmin = currentUser?.role === "admin";
-  
+
   const getData = async () => {
     setIsLoading(true);
     setCustomerProducts(await fetchCustomerProducts(customer.id));
@@ -109,7 +110,7 @@ export function History({
       PaymentMethod: s.paymentMethod,
       ShipMethod: s.shipMethod,
       createdUserId: s.createdUserId,
-      updatedUserId: s.updatedUserId
+      updatedUserId: s.updatedUserId,
     };
 
     setVisible(true);
@@ -166,21 +167,39 @@ export function History({
     {
       title: "",
       key: "edit",
-      render: (s: any) => (
+      render: (s: any) => {
+        const disable = statuses.includes(s.status);
+        return (
           <Space size="middle">
-            <FiEdit3 onClick={() => openModal(s)} size={20} style={cssButton} />
+            {disable ? (
+              <FiEdit3
+                size={20}
+                style={{ cursor: "not-allowed", color: "#9f9f9f" }}
+              />
+            ) : (
+              <FiEdit3
+                onClick={() => openModal(s)}
+                size={20}
+                style={cssButton}
+              />
+            )}
             {isAdmin && (
               <MdDeleteOutline
-                onClick={() => showDeleteConfirm(s)}
+                onClick={disable ? undefined : () => showDeleteConfirm(s)}
                 size={20}
-                style={{
-                  color: "red",
-                  cursor: "pointer",
-                }}
-            />
+                style={
+                  disable
+                    ? { cursor: "not-allowed", color: "#9f9f9f" }
+                    : {
+                        color: "red",
+                        cursor: "pointer",
+                      }
+                }
+              />
             )}
           </Space>
-      ),
+        );
+      },
     },
   ];
 
