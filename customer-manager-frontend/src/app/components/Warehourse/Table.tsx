@@ -155,12 +155,6 @@ export default function WarehourseTable() {
         width: "10%",
       },
       {
-        title: "Đã bán",
-        dataIndex: "quantityInUse",
-        key: "quantityInUse",
-        width: "10%",
-      },
-      {
         title: "Còn lại",
         dataIndex: "displayQuantity",
         key: "displayQuantity",

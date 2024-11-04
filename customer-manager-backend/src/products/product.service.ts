@@ -9,6 +9,7 @@ import { QueryProductWarehouseDto } from "./dto/product-warehouse-filter.dto";
 import { QueryProductDto } from './dto/product-filter.dto';
 import { ProductWarehouseLogRepository } from './product-warehouse-log.repository';
 import { ProductWarehouse } from './entities/product-warehouse.entity';
+import { isUndefined } from "@nestjs/common/utils/shared.utils";
 
 @Injectable()
 export class ProductService extends BaseService<Product, ProductRepository> {
@@ -117,7 +118,7 @@ export class ProductService extends BaseService<Product, ProductRepository> {
 
             let productWareHouseId;
             if (productWarehouse) {
-                const { quantityInStock, source, price } = productWarehouse;
+                const { quantityInStock, source, price, quantityInUse } = productWarehouse;
                 // Update existing product warehouse or create a new one if not present
                 if (productWarehouseResult) {
                     const sumInStock = productWarehouseResult.productWarehouseLogs
@@ -126,10 +127,14 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     const sumInUse = productWarehouseResult.productWarehouseLogs
                     .reduce((sum, current) => sum + current.quantityInUse, 0);
 
-                    const quantityInStockPlus = sumInStock +  Number(quantityInStock)
-                    productWarehouseResult.quantityInStock = quantityInStockPlus;
-                    productWarehouseResult.displayQuantity = quantityInStockPlus;
-                    productWarehouseResult.quantityInUse = sumInUse;
+                    const sumInput = productWarehouseResult.productWarehouseLogs.filter((e) => e.note === 'Nhập hàng')
+                        .reduce((sum, current) =>  sum + current.quantityInStock, 0);
+
+                    const quantityInStockPlus = sumInStock - sumInUse +  Number(quantityInStock)
+                    const sumInUsePlus = sumInUse -  Number(quantityInUse)
+                    productWarehouseResult.quantityInStock =  isUndefined(note) ? sumInput + Number(quantityInStock) : sumInput;
+                    productWarehouseResult.displayQuantity = quantityInStockPlus - sumInUsePlus;
+                    productWarehouseResult.quantityInUse = sumInUsePlus;
                 
                     await this.productWarehouseRepository.save(productWarehouseResult, { reload: true });
                     productWareHouseId = productWarehouseResult.id;
@@ -202,11 +207,10 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                     const sumInUse = productWarehouseResult.productWarehouseLogs
                     .reduce((sum, current) => sum + current.quantityInUse, 0);
 
-                    const quantityInStocklus = sumInStock - sumInUse - Number(quantityInUse);
-                    
-                    productWarehouseResult.quantityInStock = sumInStock;
-                    productWarehouseResult.displayQuantity = quantityInStocklus;
-                    productWarehouseResult.quantityInUse = sumInUse + Number(quantityInUse);
+                    const sumInUsePlus = sumInUse + Number(quantityInUse)
+
+                    productWarehouseResult.displayQuantity = sumInStock - sumInUsePlus;
+                    productWarehouseResult.quantityInUse = sumInUsePlus;
 
                     await this.productWarehouseRepository.save(productWarehouseResult);
                     productWareHouseId = productWarehouseResult.id;

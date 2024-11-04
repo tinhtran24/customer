@@ -236,7 +236,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
                 await this.productService.addStock(item.productId, {
                     productWarehouse: {
                         quantityInStock: item.quantity,
-                        quantityInUse: 0,
+                        quantityInUse: item.quantity,
                         source: item.source,
                         price: item.unitPrice,
                     }
