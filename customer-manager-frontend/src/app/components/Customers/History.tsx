@@ -266,6 +266,7 @@ export function History({
             getData();
             setVisible(false);
           }}
+          sourceSelectedInit={selected?.products[0].source || undefined}
         />
       </Modal>
     </>
