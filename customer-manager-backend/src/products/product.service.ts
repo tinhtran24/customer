@@ -131,10 +131,9 @@ export class ProductService extends BaseService<Product, ProductRepository> {
                         .reduce((sum, current) =>  sum + current.quantityInStock, 0);
 
                     const quantityInStockPlus = sumInStock - sumInUse +  Number(quantityInStock)
-                    const sumInUsePlus = sumInUse -  Number(quantityInUse)
                     productWarehouseResult.quantityInStock =  isUndefined(note) ? sumInput + Number(quantityInStock) : sumInput;
-                    productWarehouseResult.displayQuantity = quantityInStockPlus - sumInUsePlus;
-                    productWarehouseResult.quantityInUse = sumInUsePlus;
+                    productWarehouseResult.displayQuantity = quantityInStockPlus;
+                    productWarehouseResult.quantityInUse = sumInput - quantityInStockPlus;
                 
                     await this.productWarehouseRepository.save(productWarehouseResult, { reload: true });
                     productWareHouseId = productWarehouseResult.id;
