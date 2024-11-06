@@ -23,8 +23,7 @@ export class TaskService extends BaseService<Task, TaskRepository> {
         let where = {
             appoinment: {
                 customerId
-            },
-            date: BetweenDates(new Date())
+            }
         }
         if (user['role'] !== 'admin') {
             where['userInChargeId'] = user['userId']
