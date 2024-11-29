@@ -337,7 +337,7 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
         });
     }
 
-    async updateBulk (data: UpdateCustomerProductBulkDto) {
+    async updateBulk (data: UpdateCustomerProductBulkDto, userId: string) {
         const updatedData = await this.repository.createQueryBuilder('CustomerProduct')
             .update(CustomerProduct)
             .set({
@@ -347,6 +347,33 @@ export class CustomerProductService extends BaseService<CustomerProduct, Custome
             .returning("*") // returns all the column values
             .updateEntity(true)
             .execute();
+
+        if (data.status === 'Hoàn/Hủy') {
+            for (const item of data.ids) {
+                const customerProduct = await this.detail(item)
+                if (!customerProduct) {
+                    throw new BadRequestException(
+                    'Đơn hàng không tồn tại',
+                    )
+                }
+                const customerProductItems = await this.customerProductItemRepository.find(
+                    {
+                        where: {customerProductId: item}
+                    }
+                )
+                const note = `Hoàn/Hủy đơn hàng: ${customerProduct.code}`
+                for(const customerProductitem of customerProductItems) {
+                    await this.productService.addStock(customerProductitem.productId, {
+                        productWarehouse: {
+                            quantityInStock: customerProductitem.quantity,
+                            quantityInUse: customerProductitem.quantity,
+                            source: customerProductitem.source,
+                            price: customerProductitem.unitPrice,
+                        }
+                    },  userId, note)
+                }
+            }
+        }
         return updatedData.raw[0];
     }
 }

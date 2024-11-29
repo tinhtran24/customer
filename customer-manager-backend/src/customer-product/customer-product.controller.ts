@@ -127,11 +127,13 @@ export class CustomerProductController extends BaseController<CustomerProductSer
     @Roles(RoleEnum.Admin)
     @ApiBody({ type: UpdateCustomerProductBulkDto })
     async bulkUpdateUserInCharge(
+        @Request() req,
         @Body()
             data: any,
         ...args: any[]
     ) {
-        return this.customerProductService.updateBulk(data)
+        const userId = req.user['userId']
+        return this.customerProductService.updateBulk(data, userId)
     }
 
     @Get('export')
