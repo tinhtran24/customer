@@ -49,7 +49,7 @@ export const DashboardMenu = () => {
       .then((data) => {
         const currentTime = Math.floor(Date.now() / 1000);
         if (data?.user.exp < currentTime) {
-          console.log(1111)
+          setCurrentUser(null)
         } else {
           setCurrentUser(data?.user);
         }

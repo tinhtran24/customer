@@ -1,6 +1,7 @@
 "use client";
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { User } from "@/app/lib/definitions";
+import { useRouter } from "next/navigation";
 
 type AuthContextType = {
     loading: boolean;
@@ -41,7 +42,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 export const useAuthContext = () => {
     const context = useContext(AuthContext);
     if (context === null)
-        throw new Error("useAuthContextはAuthProvider内で使用してください");
+        throw new Error("useAuthContextAuthProvider");
 
     return context;
 };

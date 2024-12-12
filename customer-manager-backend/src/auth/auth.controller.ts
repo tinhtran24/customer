@@ -22,6 +22,7 @@ import { RefreshTokenDto } from 'src/auth/dto/refreshToken.dto';
 import { RefreshAuthGuard } from 'src/auth/refresh.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { JwtAuthGuard } from "./jwt.guard";
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -53,6 +54,13 @@ export class AuthController {
       throw new NotFoundException(EMAIL_OR_PASSWORD_WRONG);
     }
     return loginUser;
+  }
+
+  @Get('me')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async getMe(@Request() req: any) {
+    return req?.user
   }
 
   @Get('logout')
