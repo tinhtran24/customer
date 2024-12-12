@@ -13,7 +13,6 @@ import { Request } from 'express';
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
-      @Inject(forwardRef(() => AuthHelper))
       private reflector: Reflector,
       private readonly authHelper: AuthHelper
   ) {

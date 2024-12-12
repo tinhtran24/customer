@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { type JwtDecodedPayload } from "@/app/lib/definitions";
 
 export async function GET(request: NextRequest) {

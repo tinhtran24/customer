@@ -20,7 +20,7 @@ import { Crud } from 'src/core/decorator/crud.decorator';
 import { UsersService } from 'src/users/users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImportCustomerDto } from './dto/import-cusomter.dto';
-import { parse, toDate } from 'date-fns';
+import { parse } from 'date-fns';
 import { Roles } from "../roles/roles.decorator";
 import { RoleEnum } from "../roles/role.enum";
 

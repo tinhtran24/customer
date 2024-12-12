@@ -47,7 +47,12 @@ export const DashboardMenu = () => {
     fetch("/api/getUser")
       .then((res) => res.json())
       .then((data) => {
-        setCurrentUser(data?.user);
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (data?.user.exp < currentTime) {
+          console.log(1111)
+        } else {
+          setCurrentUser(data?.user);
+        }
       });
   }, []);
 
