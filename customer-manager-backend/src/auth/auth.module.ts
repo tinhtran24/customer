@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersService } from 'src/users/users.service';
 import { RefreshStrategy } from 'src/auth/refresh.strategy';
+import { AuthHelper } from "./jwt.helper";
 
 @Module({
   imports: [
@@ -29,12 +30,13 @@ import { RefreshStrategy } from 'src/auth/refresh.strategy';
   ],
   controllers: [AuthController],
   providers: [
+    AuthHelper,
     AuthService,
     JwtStrategy,
     UsersService,
     ConfigService,
     RefreshStrategy,
   ],
-  exports: [JwtStrategy, PassportModule],
+  exports: [AuthHelper, JwtStrategy, PassportModule],
 })
 export class AuthModule {}
